@@ -1,0 +1,54 @@
+<div id="container">
+    <div class="section-title" >Customers // Paul Harris</div>
+    <div class="line-gap" ></div>
+    <div id="customer-name" >Paul Harris</div>
+    <div id="policy-details-holder">
+        <div id="customer-details" >
+            Owner of an <b>{{car.vehicleDetails.make}} {{car.vehicleDetails.modelType}}</b><br />
+            With Prince Insurance since November 2014<br />
+            Insured on <b>{{car.logEntries[car.logEntries.length-1].timestamp | date:'d MMM y'}}</b><br /><br />
+            Lives at:<br />
+            40 Garick Pass<br />
+            Newbury<br />
+            United Kingdom
+        </div>
+        <div id="car-details" >
+            <span><b>{{car.vehicleDetails.make}} {{car.vehicleDetails.modelType}}</b></span><br />
+            New Vehicle<br />
+            Owned by: <span>Paul Harris</span><br />
+            Registered on: {{car.logEntries[car.logEntries.length-1].timestamp | date:'d MMM y'}}<br />
+            2.5L Engine 240bhp<br />
+            5 Doors<br />
+            Colour: <span>{{car.vehicleDetails.colour}}</span>
+        </div>
+    </div>
+    <div class="section-title" >Live Vehicle Information</div>
+    <div class="line-gap" ></div>
+    <div class="small-title" >Sensor Test</div>
+    <div id="connection-test" >Click device button to test connection</div>
+    <div id="live-data" >
+        <div class="data-field" id="acc-data">
+            <div class="small-title" >Acceleration</div>
+            <span>-.--</span>
+        </div>
+        <div class="data-field" id="temp-data">
+            <div class="small-title" >Air Temperature</div>
+            <span>-.--</span>
+        </div>
+        <div class="data-field" id="humidity-data">
+            <div class="small-title" >Engine Temperature</div>
+            <span>-.--</span>
+        </div>
+        <div class="data-field" id="light-data" >
+            <div class="small-title" >Light</div>
+            <span>-.--</span>
+        </div>
+    </div>
+    <div class="small-title" >Location</div>
+    <div class="car-location" id="mapid">
+    </div>
+    <div class="section-title" >Alert Information</div>
+    <div class="line-gap" ></div>
+    <div id="alert-holder" ></div> <!-- ALERTS AT BOTTOM ADDED HERE DYNAMICALLY -->
+</div>
+<app-alert-sidebar id="alert-stream"></app-alert-sidebar>

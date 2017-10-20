@@ -1,0 +1,74 @@
+<div id="container">
+    <div class="section-title" >Dashboard</div>
+    <div class="line-gap" ></div>
+    <div id="information" >Information from <span id="today">today</span></div>
+    <div id="insurancestatus">
+        <div id="box1" >
+          <div class="status">
+            <div class="textstatuswrapper">
+            <span class="strong">{{num_policies}}</span> Registered Vehicles <br>
+            <span class="date">As of {{date | date:'dd MMM y'}}</span>
+            </div>
+            <div class="picture">
+              <img src="assets/images/car_red.svg" class="logo"/>
+            </div>
+          </div>
+        </div>
+        <div id="box2" >
+          <div class="status">
+            <div class="textstatuswrapper">
+              <span class="strong">{{num_policies}}</span> Customers <br>
+              <span class="date">As of {{date | date:'dd MMM y'}}</span>
+            </div>
+            <div class="picture">
+              <img src="assets/images/head.svg" class="logo"/>
+            </div>
+          </div>
+        </div>
+        <div id="box3" >
+          <div class="status">
+            <div class="textstatuswrapper">
+              <span class="strong">{{num_alerts}}</span> Vehicle Alerts <br>
+              <span class="date">As of {{date | date:'dd MMM y'}}</span>
+            </div>
+            <div class="picture">
+              <img src="assets/images/alert.svg" class="logoalert"/>
+            </div>
+           </div>
+        </div>
+    </div>
+    <div id="graph">
+        
+    </div>
+    <div id="alerts">
+      <div class="wrapper">
+        <div class="title">
+          Recent Vehicle Alerts
+        </div>
+
+      
+        <table class="table" id="alerts-table">
+          <tr class="header">
+          <td>Event ID</td>
+          <td>Time</td>
+          <td>Event type</td>
+          </tr>
+          </table>
+       
+      
+       
+           
+      </div>
+    </div>
+    <div id="circle">
+        <div class="title">
+          Claim Breakdown
+        </div>
+        <div class="line-gap3">
+        </div>
+        <div id="circle-graph" ></div>
+    </div>
+</div>
+<div id="notification-window" class="hidden">
+  <app-popup></app-popup>
+</div>

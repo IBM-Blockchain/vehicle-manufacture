@@ -1,0 +1,111 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ionic-plugin-keyboard@~2.2.1",
+        "scope": null,
+        "escapedName": "ionic-plugin-keyboard",
+        "name": "ionic-plugin-keyboard",
+        "rawSpec": "~2.2.1",
+        "spec": ">=2.2.1 <2.3.0",
+        "type": "range"
+      },
+      "/Users/user/Documents/Composer/composer-sample-applications/packages/vehicle-lifecycle-car-builder/node_modules"
+    ]
+  ],
+  "_from": "ionic-plugin-keyboard@>=2.2.1 <2.3.0",
+  "_id": "ionic-plugin-keyboard@2.2.1",
+  "_inCache": true,
+  "_location": "/ionic-plugin-keyboard",
+  "_nodeVersion": "5.11.1",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/ionic-plugin-keyboard-2.2.1.tgz_1466455438454_0.6977111059240997"
+  },
+  "_npmUser": {
+    "name": "tlancina",
+    "email": "tim@ionic.io"
+  },
+  "_npmVersion": "3.8.6",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "ionic-plugin-keyboard@~2.2.1",
+    "scope": null,
+    "escapedName": "ionic-plugin-keyboard",
+    "name": "ionic-plugin-keyboard",
+    "rawSpec": "~2.2.1",
+    "spec": ">=2.2.1 <2.3.0",
+    "type": "range"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ionic-plugin-keyboard/-/ionic-plugin-keyboard-2.2.1.tgz",
+  "_shasum": "f2a9e169bbe9b5522400347c9fd6d3467ee3fa12",
+  "_shrinkwrap": null,
+  "_spec": "ionic-plugin-keyboard@~2.2.1",
+  "_where": "/Users/user/Documents/Composer/composer-sample-applications/packages/vehicle-lifecycle-car-builder/node_modules",
+  "author": {
+    "name": "Ionic"
+  },
+  "bugs": {
+    "url": "https://github.com/driftyco/ionic-plugin-keyboard/issues"
+  },
+  "cordova": {
+    "id": "ionic-plugin-keyboard",
+    "platforms": [
+      "android",
+      "ios",
+      "blackberry10",
+      "wp8",
+      "windows"
+    ]
+  },
+  "dependencies": {},
+  "description": "Ionic Keyboard Plugin",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "f2a9e169bbe9b5522400347c9fd6d3467ee3fa12",
+    "tarball": "https://registry.npmjs.org/ionic-plugin-keyboard/-/ionic-plugin-keyboard-2.2.1.tgz"
+  },
+  "gitHead": "011283b781a94ba9db9d87fc9531790fcd8aa7e7",
+  "homepage": "https://github.com/driftyco/ionic-plugin-keyboard#readme",
+  "issue": "https://github.com/driftyco/ionic-plugin-keyboard/issues",
+  "keywords": [
+    "ionic",
+    "cordova",
+    "keyboard",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-blackberry10",
+    "cordova-wp8",
+    "cordova-windows"
+  ],
+  "license": "Apache 2.0",
+  "maintainers": [
+    {
+      "name": "drifty",
+      "email": "max@drifty.com"
+    },
+    {
+      "name": "ionicjs",
+      "email": "hi@ionicframework.com"
+    },
+    {
+      "name": "tlancina",
+      "email": "tim@ionic.io"
+    }
+  ],
+  "name": "ionic-plugin-keyboard",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/driftyco/ionic-plugin-keyboard.git"
+  },
+  "scripts": {},
+  "version": "2.2.1"
+}

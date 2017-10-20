@@ -1,0 +1,74 @@
+<div class="background"></div>
+
+<div id="container">
+  <div id="wrapper">
+    <div id="title">
+      New Vehicle Insurance
+    </div>
+    <div id="body">
+      <div id="text1">
+        <div class="texttitle">
+        Paul Harris<br>
+        </div>
+        <br>
+        With Prince Insurance since<br>
+        November 2014<br>
+        <br>
+        Lives at: <br>
+        40 Garick Pass<br>
+        Newbury<br>
+        United Kingdom
+        <div id="risk">
+            Risk Rating
+        </div>
+        <div id="dots">
+          <div class="dot">
+            <div class="filldot">
+            </div>
+          </div>
+          <div class="dot">
+            <div class="filldot">
+            </div>
+          </div>
+          <div class="dot">
+            <div class="filldot">
+            </div>
+          </div>
+          <div class="dot">
+          </div>
+          <div class="dot">
+          </div>
+        </div>
+      </div>
+      <div id="text2">
+        <div class="texttitle">
+          Arium <span class="capitalise" id="vehicle-type"></span> <br>
+        </div>
+        <br>
+        New Vehicle<br>
+        Owned by: Paul Harris<br>
+        Registered on: <span id="reg-on"></span><br>
+        2.4L Engine, 340 bhp<br>
+        5 Doors<br>
+        <span id="trim" class="capitalise" ></span> Trim <br />
+        <span id="extras" class="capitalise"></span>
+        Colour: <span class="capitalise" id="colour"></span>
+      </div>
+      <div id="pic">
+        <img id="car-pic" src="assets/images/bmw_1.jpeg" width="200px" height="200px">
+      </div>
+    </div>
+    <div class="footer" >
+      <div id="approve" class="button" (click)="approve()">
+        Approve Insurance
+      </div>
+      <div id="approve-waiting" class="button hidden">
+          waiting...
+        </div>
+      <div id="cancel" class="button" (click)="cancel()">
+          Cancel
+        </div>
+    </div>
+    <input type="hidden" id="vin" value="" />
+ </div>
+</div>

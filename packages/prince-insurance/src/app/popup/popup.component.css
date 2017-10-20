@@ -1,0 +1,176 @@
+.background{
+    background: white;
+    opacity: 0.5;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#wrapper {
+    box-shadow:0 2px 25px 0 rgba(0,0,0,0.20);
+    background: white;
+    padding: 40px;
+}
+
+#wrapper::after /* CSS CLEAR FIX TO FORCE HEIGHT INCLUSION OF FLOATED ELEMENTS */
+{
+    content: "";
+    display: block;
+    clear: both;
+}
+
+#title{
+    font-family:OpenSans-Semibold;
+    font-size:22px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+
+#body
+{
+    margin-top: 30px;
+}
+
+#body::after /* CSS CLEAR FIX TO FORCE HEIGHT INCLUSION OF FLOATED ELEMENTS */
+{
+    content: "";
+    display: block;
+    clear: both;
+}
+
+#text1{
+    font-family:OpenSans;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    float: left;
+}
+
+.texttitle{
+    font-family:OpenSans-Bold;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+
+.texttitle > span
+{
+    font-family:OpenSans-Bold;
+}
+
+#risk{
+    font-family:OpenSans-Bold;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    margin-top: 16px;
+}
+
+#dots{
+    margin-top: 10px;
+}
+
+.dot{
+    background:#ffffff;
+    border:1px solid #454856;
+    width:19px;
+    height:19px;
+    border-radius:100%;
+    float: left;
+    margin-right: 9px;
+}
+
+.filldot{
+    background:#785ef0;
+    border:1px solid #473793;
+    width:11px;
+    height:11px;
+    border-radius:100%;
+    margin-top: 3px;
+    margin-left: 3px;
+}
+
+#text2{
+    float: left;
+    margin-left: 63px;
+}
+
+#pic{
+    height: 200px;
+    width: 200px; 
+    border-color: grey;
+    float: right;
+    margin-left: 63px;
+}
+
+.footer
+{
+    margin-top: 30px;
+}
+
+.button
+{
+    padding: 10px;
+    cursor: pointer;
+    font-family:OpenSans;
+    font-size:14px;
+    letter-spacing:0;
+    text-align:left;
+    float: right;
+    padding: 15px 63px;
+}
+
+#cancel
+{
+    color:#454856;
+}
+
+#approve
+{
+    background-color: #5a3ec8;
+    color: #FFF;
+}
+#approve.hidden
+{
+    display: none;
+}
+#approve:hover
+{
+    background-color: #473793;
+}
+
+#approve-waiting
+{
+    background-color: #5a3ec8;
+    color: #FFF;
+    cursor: default!important;
+    float: right;
+}
+#approve-waiting.hidden
+{
+    display: none;
+}
+
+.capitalise
+{
+    text-transform: capitalize;
+}
+

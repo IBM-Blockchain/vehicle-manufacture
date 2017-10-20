@@ -1,0 +1,223 @@
+#container
+{
+    margin-top: 25px;
+    width: calc(100% - 350px);
+    position: absolute;
+}
+.section-title
+{
+    font-family:OpenSans;
+    font-size:16px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.line-gap
+{
+    margin-top: 25px;
+    margin-bottom: 25px;
+    background-color: #dcd4f7;
+    width:100%;
+    height:2px;
+}
+#information
+{
+    font-family:OpenSans;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+
+#today{
+    font-family:OpenSans-Semibold;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    text-decoration: underline;
+}
+
+#insurancestatus{
+    width: 100%;
+    height: 200px;
+    margin-top: 28px;
+}
+
+.status{
+    font-family:OpenSans;
+    margin-left: 0px;
+    margin-top: 30px;
+    font-size: 25px;
+}
+
+.textstatuswrapper{
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+.strong{
+    font-family:OpenSans;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.date{
+    font-style: italic;
+    font-size: 12px;
+}
+
+.logo{
+    margin-left: 28px;
+    margin-bottom: 27px;
+    margin-top: 27px;
+    opacity:0.1;
+}
+
+.logoalert{
+    margin-left: 28px;
+    margin-bottom: 27px;
+    margin-top: 27px;
+}
+
+
+#box1{
+    border:1px solid #dcd4f7;
+    width:calc(33% - 12px);
+    height:197px;
+    float: left;
+    margin-right:20px;
+}
+
+#box2{
+    border:1px solid #dcd4f7;
+    width:calc(33% - 12px);
+    height:197px;
+    float: left;
+    
+}
+
+#box3{
+    border:1px solid #dcd4f7;
+    width:calc(33% - 12px);
+    height:197px;
+    float: right;
+}
+
+#graph{
+    border: 1px solid #dcd4f7;
+    width: 100%;
+    padding-top: 22%;
+    margin-top: 19px;
+    background-image: url(/assets/images/Graph_1.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#alerts{
+    border:1px solid #dcd4f7;
+    width:calc(67% - 22px);
+    height:335px;
+    margin-top: 20px;
+    float: left;
+}
+
+#circle{
+    padding: 20px;
+    border:1px solid #dcd4f7;
+    width:calc(33% - 40px);
+    height:295px;
+    margin-top: 20px;
+    float: right;
+    margin-bottom: 25px;
+}
+
+#circle-graph
+{
+    height: 225px;
+    width: 100%;
+    background-image: url(/assets/images/Graph_2.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.title{
+    font-family:OpenSans;
+    font-size:16px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+
+#tabletitle{
+    margin-top: 20px;
+}
+
+.event{
+   
+    width: 33.3%;
+    height: 20px;
+    float: left;
+    margin-right: 10px;
+    float: left;
+}
+
+#tablewrapper{
+    height: 150px;
+    background-color: grey;
+}
+
+.table{
+    width: calc(100% - 20px);
+    font-family:OpenSans;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    margin-top: 22px;
+    border-collapse: collapse;
+}
+
+.table td{
+    padding: 12px 0 12px 0;
+}
+
+.table tr.header td{
+    border-bottom: #dcd4f7 solid 1px;
+    opacity: 0.5;
+}
+
+.table tr:nth-child(2) td {
+    padding-top: 24px;
+}
+
+.line-gap3{
+    margin-top: 10px;
+    margin-bottom: 25px;
+    background-color: #dcd4f7;
+    width:100%;
+    height:2px;
+}
+
+.wrapper{
+    margin-top: 20px;
+    margin-left: 20px;
+  }
+
+#container::after
+{
+    content: "";
+    display: block;
+    clear: block;
+}
+
+#notification-window.hidden
+{
+    display: none;
+}
+
+.circlepic{
+    margin-top: -15px;
+}

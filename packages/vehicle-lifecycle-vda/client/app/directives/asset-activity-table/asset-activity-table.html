@@ -1,0 +1,13 @@
+<table>
+    <tr>
+        <td class="cell col1"><div class="names"> Transaction Type</div> </td>
+        <td class="cell" colspan="4" ><div class="names">Transaction Validators</div></td>
+    </tr>
+    <tr ng-repeat="t in transactions | orderBy: order.key : order.reverse" class="{{ t.transaction_class }}">
+        <td class="cell col1"><span>{{ t.transaction_type }}</span> <br /><span class="id">{{ t.transaction_id }}</span></td>
+        <td class="cell col2"><span class="validator1 {{ t.transaction_validator_1.toLowerCase().split(' ').join('_') }}" >{{ t.transaction_validator_1 }}</span></td>
+        <td class="cell col3"><span class="sign" >{{t.transaction_sign}}</span></td>
+        <td class="cell col4"><span class="validator2 {{ t.transaction_validator_2.toLowerCase().split(' ').join('_') }}" >{{ t.transaction_validator_2 }}</span></td>
+        <td class="cell"><span>&nbsp;</span></td>
+    </tr>
+</table>

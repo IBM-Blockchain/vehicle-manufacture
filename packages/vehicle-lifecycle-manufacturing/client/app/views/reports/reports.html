@@ -1,0 +1,98 @@
+<bc-man-sidebar></bc-man-sidebar>
+
+<div class="bc-man-reports" >
+  <h1>
+    Reports
+    <div class="search">
+      <input type="text" name="search" placeholder="Search Arium"></input>
+      <img src="../../../assets/images/paul.png" alt="Profile">
+    </div>
+  </h1>
+
+  <h5>Post-manufacture failures</h5>
+
+  <div ng-show="event.car_model != null" class="report-section" >
+    <div class="left" >
+      <div class="big-card card">
+        <div class="card-block">
+            <div class="card-header">
+                <h5>FAILURE</h5>
+                <h3><strong>Arium </strong>{{event.car_model}}</h3>
+                <p style="margin: 10px 0 5px;">Occurred: {{event.time}}</p>
+                <p style="margin: 10px 0 5px;">S/N {{event.serial_number}}</p>
+            </div>
+        </div>
+        <hr>
+        <div class="card-block">
+          <div class="card-header">
+              <h5>FAILURE</h5>
+              <h3 style="text-transform: uppercase"><strong>overheat</strong></h3>
+          </div>
+          <p class="alert-data alert-data-red" >
+            <span class="field">Engine Temp.</span><span class="data">{{event.engine_temperature}}C</span>
+          </p>
+          <p class="alert-data alert-data-green" >
+            <span class="field">Air Temp.</span><span class="data">{{event.air_temperature}}C</span>
+          </p>
+          <p class="alert-data alert-data-green" >
+            <span class="field">Acceleration</span><span class="data">{{event.acceleration}}G</span>
+          </p>
+          <p class="alert-data alert-data-green" >
+            <span class="field">Roll</span><span class="data">{{event.roll}}&deg;</span>
+          </p>
+          <p class="alert-data alert-data-green" >
+            <span class="field">Pitch</span><span class="data">{{event.pitch}}&deg;</span>
+          </p>
+          <p class="alert-data alert-data-green" >
+            <span class="field">Light</span><span class="data">{{event.light_level}}LUX</span>
+          </p>
+        </div>
+        <hr>
+        <div class="card-block" >
+          <div class="card-header">
+            <h5>INSIGHT</h5>
+            <h3><strong>{{event.num_failed}}</strong> Arium {{event.car_model}} failure this week due to Overheating</h3>
+          </div>
+          <div class="common-factor-block">
+            <span>Common Factor</span>
+            <h3><strong>Mileage &lt; 100,000</strong></h3>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-holder" >
+        <div class="card card-secondary">
+          <div class="card-block">
+            <h5 class="card-title">Actionable Insights</h5>
+            <h3>More information needed for actionable insights</h3>
+          </div>
+        </div>
+        <div class="card card-yellow">
+          Send report to engineering
+        </div>
+      </div>
+    </div>
+    <div class="right" >
+      <div class="card" ng-repeat="similar_failure in event.similar_failures" >
+          <div class="card-block">
+              <div class="card-header">
+                  <h5>SIMILAR FAILURE</h5>
+                  <h3><strong>Arium </strong>{{similar_failure.car_model}}</h3>
+                  <p style="margin: 10px 0 5px;">Occurred {{similar_failure.time}}</p>
+                  <p style="margin: 10px 0 5px;">S/N {{similar_failure.serial_number}}</p>
+              </div>
+              <p class="alert-data alert-data-red" >
+                  <span class="field">Engine Temp.</span><span class="data">{{similar_failure.engine_temperature}}C</span>
+              </p>
+          </div>
+      </div>
+      <div class="card not-shown" ng-show="event.not_shown > 0" >
+          <div class="card-block">
+              <div class="card-header">
+                <h5>+ {{event.not_shown}} MORE</h5>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</div>
+</div>

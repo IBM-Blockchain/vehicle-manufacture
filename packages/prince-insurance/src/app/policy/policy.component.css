@@ -1,0 +1,227 @@
+#container
+{
+    margin-top: 25px;
+    width: calc(100% - 360px);
+    float: left;
+}
+.section-title
+{
+    font-family:OpenSans;
+    font-size:16px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.line-gap
+{
+    margin-top: 25px;
+    margin-bottom: 25px;
+    background-color: #dcd4f7;
+    width:100%;
+    height:2px;
+}
+#customer-name
+{
+    font-family:OpenSans;
+    font-weight: 100;
+    font-size:26px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    margin-bottom: 10px;
+}
+#policy-details-holder
+{
+    font-family: OpenSans;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    line-height: 26px;
+    margin-bottom: 50px;
+}
+#policy-details-holder::after /* CSS CLEAR FIX TO FORCE HEIGHT INCLUSION OF FLOATED ELEMENTS */
+{
+    content: "";
+    display: block;
+    clear: both;
+}
+#policy-details-holder > div
+{
+    width: 50%;
+    float: left;
+}
+#car-details span
+{
+    text-transform: capitalize;
+}
+.small-title
+{
+    font-family:OpenSans-Bold;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+#connection-test
+{
+    font-family:OpenSans;
+    font-size:14px;
+    letter-spacing:0;
+    text-align:left;
+}
+#connection-test.connected
+{
+    color:#473793;
+}
+#live-data::after /* CSS CLEAR FIX TO FORCE HEIGHT INCLUSION OF FLOATED ELEMENTS */
+{
+    content: "";
+    display: block;
+    clear: both;
+}
+#live-data > .data-field
+{
+    margin-top: 25px;
+    width: 25%;
+    float: left;
+}
+#live-data > .data-field:last-child
+{
+    margin-bottom: 25px;
+}
+#live-data > .data-field > span
+{
+    text-transform: uppercase;
+    font-family:OpenSans;
+    font-weight: 100;
+    font-size:26px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.car-location
+{
+    background:#d8d8d8;
+    border:1px solid #473793;
+    padding-top: 50%;
+    margin-top: 5px;
+    margin-bottom: 50px;
+}
+@keyframes border-fade
+{  
+    0% { border-color: #5a3ec8; }
+    100% { border-color: transparent; }
+}
+.alert-block
+{
+    line-height: 26px;
+    background:rgba(233, 232, 255, 0.5);
+    padding: 13px;
+    margin-bottom: 25px;
+    border: 2px solid transparent;
+}
+.alert-block.highlight
+{
+    animation-name: border-fade;  
+    animation-iteration-count: 1;  
+    animation-duration: 2s;
+    border: 2px solid transparent;
+}
+.alert-block::after /* CSS CLEAR FIX TO FORCE HEIGHT INCLUSION OF FLOATED ELEMENTS */
+{
+    content: "";
+    display: block;
+    clear: both;
+}
+@keyframes background-fade
+{  
+    0% { border-color: #5a3ec8; }
+    100% { border-color: transparent; }
+}
+.alert-block.new-block:first-child
+{
+    animation-name: background-fade;  
+    animation-iteration-count: 1;  
+    animation-duration: 2s;
+    border: 2px solid transparent;
+}
+.left-column
+{
+    width: 34%;
+    float: left;
+}
+.notification-title
+{
+    font-family:OpenSans;
+    font-size:16px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    margin-bottom: 10px;
+}
+.notification-title > img
+{
+    margin-right: 15px;
+}
+.alert-time
+{
+    font-family:OpenSans;
+    font-size:14px;
+    color:#454856;
+}
+.event-details
+{
+    margin-top: 10px;
+    font-family:OpenSans;
+    font-size:12px;
+    font-style: italic;
+    color:#454856;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 25px;
+}
+.tiny-header
+{
+    opacity:0.5;
+    font-family:OpenSans-Semibold;
+    font-weight: 600;
+    font-size:12px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.alert-detailed-data
+{
+    float: left;
+    width: 66%;
+}
+.alert-detailed-data > .data-field:nth-child(-n+3)
+{
+    margin-top: 0px;
+}
+.alert-detailed-data > .data-field
+{
+    width: 33%;
+    float: left;
+    margin-top: 15px;
+}
+.alert-detailed-data > .data-field > span
+{
+    text-transform: uppercase;
+    font-family:OpenSans;
+    font-weight: 100;
+    font-size:26px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.alert-img
+{
+    margin-left: 20px;
+}
+#alert-stream
+{
+    float: right;
+}
