@@ -23,6 +23,8 @@ cat installers/hlfv1/install.sh | bash
 
 This should open each of the demonstration pages in your default browser.
 
+(Note: This repository is designed to run using fixed versions of Hyperledger Fabric and Composer rather than the latest cuts. Installation may result in npm warnings)
+
 ## Running the car builder application on your phone
 The car builder application can be run on a smart phone by following the instructions available on the [ionic website](https://ionicframework.com/docs/intro/deploying/)
 
