@@ -18,23 +18,29 @@ angular.module('bc-vda')
         var type = split[split.length - 1];
         var time = Date.parse(transaction.transactionTimestamp);
 
-        var transaction_submitter = "Arium Vehicles"
+        var transaction_submitter = “”
         switch(type)
         {
-          case "SetupDemo": transaction_submitter = "Admin"; break;
-          case "PlaceOrder": transaction_submitter = "Paul Harris"; break;
-          case "CreatePolicy": transaction_submitter = "Prince Insurance"; break;
-          case "AddUsageEvent": transaction_submitter = "Vehicle ("+transaction.eventsEmitted[0].vin+")"; break;
+          case “SetupDemo”: transaction_submitter = “Admin”; break;
+          case “PlaceOrder”: transaction_submitter = “Paul Harris”; break;
+          case “CreatePolicy”: transaction_submitter = “Prince Insurance”; break;
+          case “AddUsageEvent”: transaction_submitter = “Vehicle (“+transaction.eventsEmitted[0].vin+“)”; break;
+          case “UpdateOrderStatus”: transaction_submitter = “Arium Vehicles”; break;
+          case “CreateUsageRecord”: transaction_submitter = “Arium Vehicles”; break;
+          default: transaction_submitter = “”; break;
         }
 
-        $scope.transactions.push({
-          timestamp: time,
-          transaction_id: transaction.transactionId,
-          transaction_type: type,
-          transaction_submitter: transaction_submitter,
-          transaction_class: "existing-row"
-        });
-        
+        if(transaction_submitter != "")
+        {
+          $scope.transactions.push({
+            timestamp: time,
+            transaction_id: transaction.transactionId,
+            transaction_type: type,
+            transaction_submitter: transaction_submitter,
+            transaction_class: "existing-row"
+          });
+        }
+
         console.log(transaction)
 
         var status = ""
@@ -149,7 +155,7 @@ angular.module('bc-vda')
       $scope.$apply();
     }
   }
-  
+
   function openCreateUsageWebSocket() {
     console.log("HELLO WORLD")
     createUsageRecord = new WebSocket('ws://' + location.host + '/ws/createusagerecord');
@@ -192,7 +198,7 @@ angular.module('bc-vda')
     }
 
     addUsageEvent.onmessage = function(event) {
-      
+
       var order = JSON.parse(event.data);
       $scope.addBlock(order.eventId.split('#')[0], 'AddUsageEvent', 'Vehicle('+order.vin+')', order.usageEvent.eventType);
       $scope.$apply();
