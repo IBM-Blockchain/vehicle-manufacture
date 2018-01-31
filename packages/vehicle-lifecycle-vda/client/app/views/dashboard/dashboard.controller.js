@@ -18,16 +18,16 @@ angular.module('bc-vda')
         var type = split[split.length - 1];
         var time = Date.parse(transaction.transactionTimestamp);
 
-        var transaction_submitter = “”
+        var transaction_submitter = ""
         switch(type)
         {
-          case “SetupDemo”: transaction_submitter = “Admin”; break;
-          case “PlaceOrder”: transaction_submitter = “Paul Harris”; break;
-          case “CreatePolicy”: transaction_submitter = “Prince Insurance”; break;
-          case “AddUsageEvent”: transaction_submitter = “Vehicle (“+transaction.eventsEmitted[0].vin+“)”; break;
-          case “UpdateOrderStatus”: transaction_submitter = “Arium Vehicles”; break;
-          case “CreateUsageRecord”: transaction_submitter = “Arium Vehicles”; break;
-          default: transaction_submitter = “”; break;
+          case "SetupDemo": transaction_submitter = "Admin"; break;
+          case "PlaceOrder": transaction_submitter = "Paul Harris"; break;
+          case "CreatePolicy": transaction_submitter = "Prince Insurance"; break;
+          case "AddUsageEvent": transaction_submitter = "Vehicle ("+transaction.eventsEmitted[0].vin+")"; break;
+          case "UpdateOrderStatus": transaction_submitter = "Arium Vehicles"; break;
+          case "CreateUsageRecord": transaction_submitter = "Arium Vehicles"; break;
+          default: transaction_submitter = ""; break;
         }
 
         if(transaction_submitter != "")
@@ -62,6 +62,20 @@ angular.module('bc-vda')
       $scope.chain.sort(function(t1, t2) {
         return t1.time - t2.time;
       })
+      
+      $scope.chain = $scope.chain.filter(function(block) {
+        switch(block.type)
+        {
+          case "SetupDemo":
+          case "PlaceOrder":
+          case "CreatePolicy": 
+          case "AddUsageEvent": 
+          case "UpdateOrderStatus": 
+          case "CreateUsageRecord": 
+          case "SetupDemo": return true;
+          default: return false;
+        }
+      });
 
       $scope.chain.map(function(transaction) {
         transaction.id = i++;
@@ -157,7 +171,6 @@ angular.module('bc-vda')
   }
 
   function openCreateUsageWebSocket() {
-    console.log("HELLO WORLD")
     createUsageRecord = new WebSocket('ws://' + location.host + '/ws/createusagerecord');
 
     createUsageRecord.onopen = function() {
