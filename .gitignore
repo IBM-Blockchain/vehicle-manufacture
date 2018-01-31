@@ -45,3 +45,6 @@ fabric-tools/**
 
 # Ignore DS_Store
 .DS_Store
+
+# Ignore install folders
+/packages/vehicle-lifecycle/composer-data-latest
