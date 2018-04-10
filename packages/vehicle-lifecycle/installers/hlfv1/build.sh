@@ -8,7 +8,7 @@ cd $ROOT
 npm install
 
 cd "${DIR}"
-cat install.sh.in | sed 's/{{ENV}}/latest/g' > install.sh
+cat install.sh.in | sed 's/{{ENV}}/0.16.6/g' > install.sh
 echo "PAYLOAD:" >> install.sh
 tar czf - -C ${DIR} vehicle-lifecycle-network.bna -C $DIR flows.json fabric-dev-servers >> install.sh
 #tar czf - -C $ROOT/node_modules/vehicle-lifecycle-network/dist vehicle-lifecycle-network.bna -C $DIR flows.json fabric-dev-servers >> install.sh
