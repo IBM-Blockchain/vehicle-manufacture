@@ -3,8 +3,8 @@
 This repository contains an application that adds IoT features and new views to the Hypeledger Composer vehicle lifeycle sample application.
 
 To run this demonstration you should have installed:
-- NodeJS v6.x.x
-- Npm v3.x.x 
+- NodeJS v8.x.x
+- Npm v5.x.x 
 - Docker
 - IoT sensortag (optional)
 
