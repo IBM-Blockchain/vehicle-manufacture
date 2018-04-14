@@ -15,7 +15,7 @@ rm -f fabric-dev-servers.zip
 curl -O https://raw.githubusercontent.com/hyperledger/composer-tools/master/packages/fabric-dev-servers/fabric-dev-servers.zip
 
 # Build all of the installers.
-VERSION=hlfv1
+VERSION=hlfv11
 unzip -q fabric-dev-servers.zip -d $VERSION/fabric-dev-servers/
 $VERSION/build.sh
 
