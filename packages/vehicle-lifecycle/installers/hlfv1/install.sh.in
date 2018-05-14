@@ -190,7 +190,7 @@ docker run \
 docker exec \
   -e NPM_CONFIG_LOGLEVEL=warn \
   node-red \
-  bash -c "cd /data && npm install node-red-contrib-composer && npm install node-red-contrib-scx-ibmiotapp"
+  bash -c "cd /data && npm install node-red-contrib-composer@0.0.10 && npm install node-red-contrib-scx-ibmiotapp"
 docker restart node-red
 
 # Wait for Node-RED to start and initialize.
