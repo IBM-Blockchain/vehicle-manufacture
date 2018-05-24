@@ -1,0 +1,12 @@
+{
+  "name": "iot-extension-vehicle-manufacture",
+  "private": true,
+  "version": "0.0.3",
+  "description": "## Installation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "IBM Blockchain",
+  "license": "Apache-2.0"
+}
