@@ -1,0 +1,100 @@
+<div id="container">
+    <div *ngIf="ready" class="details" >
+        <div class="section-title" >Customers // {{ policy.holder.username }} Harris</div>
+        <div class="line-gap" ></div>
+        <div id="customer-name" >{{ policy.holder.username }} Harris</div>
+        <div id="policy-details-holder">
+            <div id="customer-details" >
+                Owner of an <b>{{ policy.vehicle.vehicleDetails.make.name }} {{policy.vehicle.vehicleDetails.modelType}}</b><br />
+                With Prince Insurance since November 2014<br />
+                Insured on <b>{{ policy.startDate | date:'d MMM y'}}</b><br /><br />
+                Lives at:<br />
+                40 Garick Pass<br />
+                Newbury<br />
+                United Kingdom
+            </div>
+            <div id="car-details" >
+                <span><b>{{ policy.vehicle.vehicleDetails.make.name }} {{ policy.vehicle.vehicleDetails.modelType }}</b></span><br />
+                New Vehicle<br />
+                Owned by: <span>{{ policy.holder.username }} Harris</span><br />
+                Registered on: {{ policy.startDate | date:'d MMM y'}}<br />
+                2.5L Engine 240bhp<br />
+                5 Doors<br />
+                Colour: <span>{{policy.vehicle.vehicleDetails.colour}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="section-title" >Live Vehicle Information</div>
+    <div class="line-gap" ></div>
+    <div class="small-title" >Sensor Test</div>
+    <div id="connection-test" >Click device button to test connection</div>
+    <div id="live-data" >
+        <div class="data-field" id="acc-data">
+            <div class="small-title" >Acceleration</div>
+            <span>{{ liveData.acc }}</span>
+        </div>
+        <div class="data-field" id="temp-data">
+            <div class="small-title" >Air Temperature</div>
+            <span>{{ liveData.airTemp }}</span>
+        </div>
+        <div class="data-field" id="humidity-data">
+            <div class="small-title" >Engine Temperature</div>
+            <span>{{ liveData.engineTemp }}</span>
+        </div>
+        <div class="data-field" id="light-data" >
+            <div class="small-title" >Light</div>
+            <span>{{ liveData.light }}</span>
+        </div>
+    </div>
+    <div class="small-title" >Location</div>
+    <div class="car-location" id="mapid">
+    </div>
+    <div class="section-title" >Alert Information</div>
+    <div class="line-gap" ></div>
+    <div *ngIf="ready" id="alert-holder" >
+        <div id="{{ event.eventID }}" class="alert-block" [ngClass]="{'highlight': event.new}" *ngFor="let event of policy.vehicle.usageRecord" >
+            <div class="left-column" >
+                <div class="notification-title" ><img src="assets/images/loudspeaker.png" width="22px" height="14px" alt="loudspeaker icon" />Alert!</div>
+                <div class="alert-time" >
+                    <div class="small-title"  >
+                    {{ event.eventType.split('_').join(' ') }}
+                    </div>
+                    {{ event.timestamp | date:'d MMM y' }}
+                </div>
+                <div class="event-details"  >
+                    <div class="tiny-header"  >Event ID</div>
+                    {{ event.eventID }}
+                </div>
+            </div>
+            <div class="alert-detailed-data" >
+                <div class="data-field" >
+                    <div class="small-title" >Acceleration</div>
+                    <span  >{{ event.acceleration | number:'1.0-2' }}G<img *ngIf="event.eventType === 'CRASHED'" class='alert-img' src='assets/images/Alert_small.svg' /></span>
+                </div>
+                <div class="data-field" >
+                <div class="small-title" >Pitch</div>
+                <span  >{{ event.pitch | number:'1.0-2' }}&deg;</span>
+                </div>
+                <div class="data-field" >
+                <div class="small-title" >Roll</div>
+                <span  >{{ event.roll | number:'1.0-2' }}&deg;</span>
+                </div>
+                <div class="data-field" >
+                    <div class="small-title" >Air Temperature</div>
+                    <span  >{{ event.air_temperature | number:'1.0-2' }}C</span>
+                </div>
+                <div class="data-field"  >
+                    <div class="small-title" >Engine Temperature</div>
+                    <span  >{{ event.engine_temperature | number:'1.0-2' }}C<img *ngIf="event.eventType === 'OVERHEATED' || event.eventType === 'OIL_FREEZING'" class='alert-img' src='assets/images/Alert_small.svg' /></span>
+                </div>
+                <div class="data-field"  >
+                    <div class="small-title" >Light</div>
+                    <span  >{{ event.light_level | number:'1.0-2' }}LUX</span>
+                </div>
+            </div>
+        </div>
+    </div> <!-- ALERTS AT BOTTOM ADDED HERE DYNAMICALLY -->
+</div>
+<div *ngIf="ready">
+    <app-alert-sidebar id="alert-stream" [usageRecord]="policy.vehicle.usageRecord" ></app-alert-sidebar>
+</div>

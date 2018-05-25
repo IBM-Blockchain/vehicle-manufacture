@@ -1,17 +1,12 @@
 {
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
-  "author": "Hyperledger Composer",
+  "author": "IBM Blockchain",
   "license": "Apache-2.0",
   "scripts": {
     "start": "node info",
     "preinstall": "npm install -g cordova && npm install -g bower",
-    "postinstall": "npm run pkgcheck && npm run bootstrap",
-    "bootstrap": "git submodule init && git submodule update && lerna bootstrap",
-    "test": "lerna run test",
-    "pkgcheck": "node ./scripts/pkgcheck.js",
-    "pkgstamp": "node ./scripts/pkgstamp.js",
-    "pkgbump": "node ./scripts/pkgbump.js && node ./scripts/pkgcheck.js --fix"
+    "test": "lerna run test"
   },
   "dependencies": {
     "chalk": "^1.1.3",

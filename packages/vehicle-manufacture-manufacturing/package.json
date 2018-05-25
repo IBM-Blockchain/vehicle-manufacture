@@ -1,0 +1,24 @@
+{
+  "name": "iot-extension-vehicle-manufacture-manufacturer",
+  "private": true,
+  "version": "0.0.3",
+  "description": "Vehicle Manufacture - A manufacturers view",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "author": "IBM Blockchain",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cfenv": "^1.0.4",
+    "config": "^1.26.1",
+    "express": "^4.15.2",
+    "express-less": "^0.1.0",
+    "request": "^2.81.0",
+    "ws": "^2.3.1"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0"
+  }
+}
