@@ -239,12 +239,14 @@ sleep 10
 # Start the VDA application.
 cd $(pwd)/../../vehicle-manufacture-vda
 npm install
+bower install
 npm build
 npm start > /dev/null 2>&1 &
 
 # Start the manufacturing application.
 cd $(pwd)/../vehicle-manufacture-manufacturing
 npm install
+bower install
 npm build
 npm start > /dev/null 2>&1 &
 
