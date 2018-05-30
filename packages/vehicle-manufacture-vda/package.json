@@ -1,0 +1,22 @@
+{
+  "name": "iot-extension-vehicle-manufacture-vda",
+  "private": true,
+  "version": "0.0.3",
+  "description": "Vehicle Manufacture - A regulators view",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "author": "IBM Blockchain",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "cfenv": "^1.0.4",
+    "config": "^1.26.1",
+    "express": "^4.15.2",
+    "express-less": "^0.1.0",
+    "ws": "^2.3.1"
+  },
+  "devDependencies": {
+    "bower": "^1.8.0"
+  }
+}

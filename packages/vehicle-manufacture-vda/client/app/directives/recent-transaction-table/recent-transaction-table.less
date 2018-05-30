@@ -1,0 +1,70 @@
+/*
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+@import (less) "../../../assets/stylesheets/colors.less";
+
+.bc-vda-recent-transactions-table {
+	color: @dark;
+
+	.bc-vda-recent-transactions-table-header {
+		p {
+			display: inline-block;
+		}
+		p.bc-vda-recent-transactions-table-header-text {
+			font-family: 'WorkSans-SemiBold';
+		}
+		p.bc-vda-recent-transactions-table-filter {
+			float: right;
+			font-family: 'WorkSans-Medium';
+			
+
+			.active {
+				color: @blue;
+				opacity: 1 !important;
+			}
+
+			.bc-vda-24-hours, .bc-vda-week, .bc-vda-month {
+				opacity: 0.5;
+				cursor: pointer;
+			}
+		}
+	}
+
+	table {
+		width: 100%;
+		margin-top: 25px;
+		thead {
+			tr {
+				th {
+					text-align: left;
+					opacity: 0.5;
+					border-bottom:1px solid #e3ecec;
+					padding: 17.5px 17.5px;
+				}
+			}
+		}
+		tbody {
+			tr {
+				td {
+					border-bottom:1px solid #e3ecec;
+					padding: 17.5px 17.5px;
+				}
+				
+				&:hover {
+					background-color: @table-hover;
+				}
+				
+			}
+		}
+	}
+}

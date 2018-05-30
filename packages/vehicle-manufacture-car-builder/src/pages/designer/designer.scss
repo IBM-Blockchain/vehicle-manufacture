@@ -1,0 +1,68 @@
+/*
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+page-designer {
+
+  .slide-zoom {
+    height: 100%;
+  }
+
+  ion-card.card {
+    height: calc(100% - 60px);
+    width: calc(100% - 80px);
+    display: flex;
+    flex-direction: column;
+  }
+
+  ion-card.card:first-of-type {
+    margin-left: 40px;
+  }
+
+  .image {
+    flex-grow: 5;
+    background-position: center;
+    margin-top: 25px;
+  }
+
+  .build {
+    bottom: 0;
+  }
+
+  .build button {
+    width: 100%;
+    margin: 0 0 -1px 0;
+    border-radius: 0;
+    height: 60px;
+    color: map-get($colors, dark);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .swiper-pagination-bullet {
+    width: 6px;
+    height: 6px;
+  }
+
+  .swiper-container-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet {
+    margin: 0 12px;
+  }
+
+  .swiper-pagination-bullet-active {
+    background: map-get($colors, dark);
+    width: 8px;
+    height: 8px;
+    top: 1px;
+    position: relative;
+  }
+
+}

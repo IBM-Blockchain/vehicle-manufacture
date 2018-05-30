@@ -1,0 +1,63 @@
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<div class="bc-vda-header">
+  <div class="bc-vda-logo" ui-sref="regulator_dashboard">
+    <img src="regulator/assets/images/VDA_Logo.svg"/>
+    <p>Vehicle &<br>
+    Drivers<br>
+    Authority</p>
+  </div>
+
+  <div class="bc-vda-header-search">
+    <div class="bc-vda-header-search-bar">
+        <img class="search" src="regulator/assets/images/search.svg"/>
+        <input type="text" placeholder="Search GOV.IO" />
+    </div>
+    <img class="user" src="regulator/assets/images/user.png" />
+  </div>
+  <div class="bc-vda-header-stats-container">
+    <div class="bc-vda-stats-item">
+      <p class="bc-vda-stats-item-header">REGISTERED VEHICLES</p>
+      <div class="bc-vda-item-value-container">
+        <p class="bc-vda-stats-item-value">{{registered_vehicles | number:0}}</p>
+        <img src="regulator/assets/images/up.svg" class="bc-vda-stats-item-arrow" />
+      </div>
+    </div>
+    <div class="bc-vda-stats-item">
+      <p class="bc-vda-stats-item-header">VIN ASSIGNED</p>
+      <div class="bc-vda-item-value-container">
+        <p class="bc-vda-stats-item-value">{{vin_assigned | number:0}}</p>
+        <img src="regulator/assets/images/up.svg" class="bc-vda-stats-item-arrow" />
+      </div>
+    </div>
+    <div class="bc-vda-stats-item">
+      <p class="bc-vda-stats-item-header">OWNER ISSUED</p>
+      <div class="bc-vda-item-value-container">
+        <p class="bc-vda-stats-item-value">{{v5c_issued | number:0}}</p>
+        <img src="regulator/assets/images/up.svg" class="bc-vda-stats-item-arrow" />
+      </div>
+    </div>
+    <div class="bc-vda-stats-item" ng-class="{active:isActive('/asset-activity')}" ui-sref="asset_activity">
+      <p class="bc-vda-stats-item-header">ASSET ACTIVITY</p>
+      <div class="bc-vda-item-value-container">
+        <p class="bc-vda-stats-item-value">{{total_events | number:0}}</p>
+        <img src="regulator/assets/images/up.svg" class="bc-vda-stats-item-arrow" />
+      </div>
+    </div>
+    <div class="bc-vda-stats-filter">
+      <p class="bc-vda-stats-filter-text">IN THE LAST <span class="bc-vda-week">WEEK</span></p>
+      <img src="regulator/assets/images/down-white.png" class="bc-vda-stats-item-arrow" />
+    </div>
+  </div>
+</div>

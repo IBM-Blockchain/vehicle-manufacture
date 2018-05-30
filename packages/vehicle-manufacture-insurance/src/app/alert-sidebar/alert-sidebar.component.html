@@ -1,0 +1,33 @@
+<div class="side-line" ></div>
+<div class="container" id="stream-holder" >
+  <div id="stream-header" >
+    Alert Stream
+  </div>
+  <div id="stream-sub" >
+    Information history <span>6 months</span>
+  </div>
+  <button class="button" (click)="clear_stream()">
+    Clear Alert Stream
+  </button>
+  <div id="alert-block-holder" >
+    <div *ngFor="let event of usageRecord">
+      <div class="alert-block" [ngClass]="{'added-element': event.new}" >
+        <div class="alert-header" >
+        <img src="assets/images/loudspeaker.png" width="22px" height="14px" alt="loudspeaker icon" />Alert!
+      </div>
+      <div class="alert-time" >
+          <div class="small-title" >
+          {{ event.eventType.split('_').join(' ') }}
+          </div>
+          {{ event.timestamp | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+      <div class="event-details" >
+          <div class="tiny-header" >Event ID</div>
+          {{ event.eventID }}
+      </div>
+      <button class="button" (click)="scrollTo(event.eventID)" >
+        See more
+      </button>
+    </div>
+  </div>
+</div>
