@@ -12,8 +12,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
 import { DesignerPage } from '../designer/designer';
+import { SettingsPage } from '../settings/settings';
 
 /**
  * Generated class for the LoginPage page.
@@ -21,7 +22,6 @@ import { DesignerPage } from '../designer/designer';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-@IonicPage()
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html',
@@ -29,11 +29,18 @@ import { DesignerPage } from '../designer/designer';
 export class LoginPage {
   designerPage: DesignerPage;
 
-  constructor(public navController: NavController, public navParams: NavParams) {
-  }
+  config: Object;
+
+  constructor(public navController: NavController, public navParams: NavParams) {}
 
   login() {
-    this.navController.push(DesignerPage);
+    this.navController.push(DesignerPage, {
+      config: this.config
+    });
+  }
+
+  settings() {
+    this.navController.push(SettingsPage);
   }
 
 }

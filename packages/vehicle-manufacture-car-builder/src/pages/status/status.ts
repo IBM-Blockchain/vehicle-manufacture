@@ -12,9 +12,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { Http, Response } from '@angular/http';
+import { NavController, NavParams } from 'ionic-angular';
+import { Http } from '@angular/http';
 import { Geolocation } from '@ionic-native/geolocation';
+import { ConfigProvider } from '../../providers/config/config';
 
 /**
  * Generated class for the StatusPage page.
@@ -22,7 +23,6 @@ import { Geolocation } from '@ionic-native/geolocation';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-@IonicPage()
 @Component({
   selector: 'page-status',
   templateUrl: 'status.html',
@@ -37,7 +37,7 @@ export class StatusPage {
   config: any;
   insurerWebSocket: WebSocket;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private geolocation: Geolocation) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private http: Http, private geolocation: Geolocation, private configProvider: ConfigProvider) {
     this.ready = false;
     this.car = navParams.get('car');
     this.stage = [Date.now() + ''];
@@ -108,20 +108,14 @@ export class StatusPage {
       }
     }
 
-    this.loadConfig()
-      .then((config) => {
-        this.config = config;
+    this.configProvider.ready.subscribe((ready) => {
+      if (ready) {
+        this.config = this.configProvider.getConfig();
         openWebSocket();
         openInsurerWebSocket();
         this.ready = true;
-      });
-  }
-
-  loadConfig(): Promise<any> {
-      // Load the config data.
-      return this.http.get('/assets/config.json')
-      .map((res: Response) => res.json())
-      .toPromise();
+      }
+    });
   }
 
   insure() {

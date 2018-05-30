@@ -18,6 +18,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Geolocation } from '@ionic-native/geolocation';
 import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
+import { Keyboard } from '@ionic-native/keyboard';
 import { HttpModule } from '@angular/http';
 
 import { MyApp } from './app.component';
@@ -27,6 +28,8 @@ import { BuilderPage } from '../pages/builder/builder';
 import { StatusPage } from '../pages/status/status';
 import { CarSlideComponent } from '../components/car-slide/car-slide';
 import { HeaderComponent } from '../components/header/header';
+import { SettingsPage } from '../pages/settings/settings';
+import { ConfigProvider } from '../providers/config/config';
 
 // This needs to be changed if interacting with Ionic services - https://docs.ionic.io/setup.html
 const cloudSettings: CloudSettings = {
@@ -39,6 +42,7 @@ const cloudSettings: CloudSettings = {
   declarations: [
     MyApp,
     LoginPage,
+    SettingsPage,
     DesignerPage,
     BuilderPage,
     StatusPage,
@@ -55,6 +59,7 @@ const cloudSettings: CloudSettings = {
   entryComponents: [
     MyApp,
     LoginPage,
+    SettingsPage,
     DesignerPage,
     BuilderPage,
     StatusPage
@@ -63,7 +68,9 @@ const cloudSettings: CloudSettings = {
     StatusBar,
     SplashScreen,
     Geolocation,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    Keyboard,
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    ConfigProvider
   ]
 })
 export class AppModule {}
