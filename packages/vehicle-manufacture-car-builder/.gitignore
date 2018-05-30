@@ -71,3 +71,5 @@ typings/
 www/
 platforms
 plugins
+
+package-lock.json

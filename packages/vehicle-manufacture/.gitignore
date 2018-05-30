@@ -17,3 +17,5 @@ install-unstable.sh
 composer-data-*
 fabric-dev-servers.zip
 fabric-dev-servers
+
+package-lock.json
