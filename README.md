@@ -1,4 +1,4 @@
-# Vehicle Lifecycle IoT Extension
+# Vehicle Manufacture IoT Extension
 
 This repository contains an application that adds IoT features and new views to the Hypeledger Composer vehicle lifeycle sample application.
 
@@ -18,7 +18,7 @@ To install the necessary node modules for this demonstration you should run the 
 npm install
 ```
 
-You can then build the demonstration by in the packages/vehicle-lifecycle folder running the commands:
+You can then build the demonstration by in the packages/vehicle-manufacture folder running the commands:
 ```
 ./build.sh
 cat installers/hlfv1/install.sh | bash
@@ -37,7 +37,7 @@ Once you have the application installed you can link it to the rest of the demo 
 
 If you are only going to run the demo once then you can simply in the "IoT Flow" tab drag in an "ibmiot" input and connect this to the compute event node. Set the authentication to quickstart, input type to device event and then enter the ID of your IoT device. Deploy your new Node-RED flow and refresh each of the tabs of the demo. 
 
-If you wish to use the same IoT device with the demo more than once you can permantly add your device by in Node-RED using the menu to select export > clipboard then select the all flows tab and clicking export to clipboard. Paste this into the packages/vehicle-lifecycle/installers/hlfv1/flows.json file replacing all the existing content of the file.
+If you wish to use the same IoT device with the demo more than once you can permantly add your device by in Node-RED using the menu to select export > clipboard then select the all flows tab and clicking export to clipboard. Paste this into the packages/vehicle-manufacture/installers/hlfv1/flows.json file replacing all the existing content of the file.
 
 ## Running the demo without an IoT device
 
