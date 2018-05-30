@@ -6,6 +6,9 @@ To run this demonstration you should have installed:
 - NodeJS v8.x.x
 - Npm v5.x.x 
 - Docker
+- Docker-Compose
+- Cordova
+- Bower
 - IoT sensortag (optional)
 
 Currently this demo's installer is written to run only on MacOS
