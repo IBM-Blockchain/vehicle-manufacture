@@ -31,7 +31,7 @@ This should open each of the demonstration pages in your default browser.
 ## Running the car builder application on your phone
 The car builder application can be run on a smart phone by following the instructions available on the [ionic website](https://ionicframework.com/docs/intro/deploying/)
 
-Once you have the application installed you can link it to the rest of the demo by on the car builder application home screen clicking the cog icon in the top right and then entering the IP address of you computer running the rest of the demo followed by :1880 (e.g. 0.0.0.0:1880). Then press the update button.
+Once you have the application installed you can link it to the rest of the demo by on the car builder application home screen clicking the cog icon in the top right of the login screen and updating the settings. This usually involves changing localhost to your PC's IP. Note that the REST server and mobile device need to be on the same network in most cases.
 
 ## Adding your IoT device to the Node-RED flow
 
