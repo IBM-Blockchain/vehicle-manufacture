@@ -53,10 +53,10 @@ export class PolicyComponent implements OnInit {
           websocket.send(JSON.stringify({vin: this.policy['vehicle'].vin}));
         } else if (data.acceleration && data.outside_temperature && data.object_temperature && data.light_level) {
           this.liveData = {
-            acc: data.acceleration,
-            airTemp: data.outside_temperature,
-            engineTemp: data.object_temperature,
-            light: data.light_level
+            acc: parseFloat(data.acceleration).toFixed(2),
+            airTemp: parseFloat(data.outside_temperature).toFixed(2),
+            engineTemp: parseFloat(data.object_temperature).toFixed(2),
+            light: parseFloat(data.light_level).toFixed(2)
           };
         } else if (data.$class === 'org.acme.vehicle_network.AddUsageEventEvent') {
           this.policy['vehicle'].usageRecord.map((el) => {
