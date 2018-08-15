@@ -30,7 +30,7 @@ rm -rf $DEMO_FABRIC_VERSION/fabric-dev-servers/
 rm -f fabric-dev-servers.zip
 
 # Get the fabric tools
-curl -O https://raw.githubusercontent.com/hyperledger/composer-tools/master/packages/fabric-dev-servers/fabric-dev-servers.zip
+curl -O https://raw.githubusercontent.com/hyperledger/composer-tools/e50d44efc0967fc54bbcd6bf251ff6ebcc062b5f/packages/fabric-dev-servers/fabric-dev-servers.zip
 
 # Build all of the installers.
 unzip -q fabric-dev-servers.zip -d $DEMO_FABRIC_VERSION/fabric-dev-servers/
