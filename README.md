@@ -1,6 +1,6 @@
 # Vehicle Manufacture IoT Extension
 
-This repository contains an application that adds IoT features and new views to the Hyperledger Composer vehicle life cycle sample application.
+This repository contains an application that adds IoT features and new views to the Hyperledger Composer vehicle manufacture sample application.
 
 To run this demonstration you should have installed:
 - NodeJS v8.x.x
