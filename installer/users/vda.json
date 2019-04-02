@@ -1,0 +1,17 @@
+[
+    {
+        "name": "system",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "regulator",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "vda",
+                "ecert": true
+            }
+        ]
+    }
+]

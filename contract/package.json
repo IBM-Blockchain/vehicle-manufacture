@@ -1,0 +1,25 @@
+{
+  "name": "vehicle-manufacture-contract",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "start": "fabric-chaincode-node start",
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "ibm-blockchain",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/node": "11.12.2",
+    "tslint": "5.14.0",
+    "typescript": "3.4.1"
+  },
+  "dependencies": {
+    "fabric-contract-api": "^1.4.0",
+    "fabric-shim": "^1.4.0",
+    "get-params": "^0.1.2"
+  }
+}

@@ -47,4 +47,7 @@ fabric-tools/**
 .DS_Store
 
 # Ignore install folders
-/packages/vehicle-lifecycle/composer-data-latest
+installer/network/crypto-material/*.block
+installer/network/crypto-material/*.tx
+installer/network/crypto-material/crypto-config
+installer/network/crypto-material/core.yaml

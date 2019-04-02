@@ -1,0 +1,30 @@
+{
+  "name": "letters-of-credit-cli",
+  "version": "0.0.1",
+  "description": "a chaincode defining business logic for letters of credit",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "start": "fabric-chaincode-node start",
+    "build": "tsc"
+  },
+  "bin": {
+    "loc-cli": "./dist/index.js"
+  },
+  "author": "awjh",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@types/fs-extra": "^5.0.5",
+    "@types/yargs": "^12.0.9",
+    "fabric-network": "../../npm_packs/fabric-network-2.0.0-snapshot.tgz",
+    "fabric-client": "../../npm_packs/fabric-client-2.0.0-snapshot.tgz",
+    "fs-extra": "^7.0.1",
+    "yargs": "^13.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^11.9.4",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3333"
+  }
+}

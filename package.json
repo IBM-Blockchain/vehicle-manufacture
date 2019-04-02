@@ -1,22 +1,11 @@
 {
-  "version": "0.0.3",
+  "version": "0.0.1",
+  "name": "vehicle-manufacture-iot-extension",
   "private": true,
   "author": "IBM Blockchain",
   "license": "Apache-2.0",
-  "scripts": {
-    "start": "node info",
-    "preinstall": "npm install -g cordova && npm install -g bower",
-    "test": "lerna run test"
-  },
-  "dependencies": {
-    "chalk": "^1.1.3",
-    "prettyjson": "^1.2.1"
-  },
-  "devDependencies": {
-    "lerna": "^2.0.0-rc.4"
-  },
   "repository": {
     "type": "git",
-    "url": "git@github.com:hyperledger/composer-sample-applications"
+    "url": "https://github.com/IBM-Blockchain/vehicle-manufacture-iot-extension.git"
   }
 }

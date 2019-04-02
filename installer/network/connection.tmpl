@@ -1,0 +1,93 @@
+{
+    "name": "vehicle-manufacture-network",
+    "x-type": "hlfv1",
+    "description": "The Vehicle Manufacture network",
+    "version": "1.0",
+    "client": {
+        "organization": "{{LOC_ORG_ID}}",
+        "connection": {
+            "timeout": {
+                "peer": {
+                    "endorser": "300",
+                    "eventHub": "300",
+                    "eventReg": "300"
+                },
+                "orderer": "300"
+            }
+        }
+    },
+    "channels": {
+        "locnet": {
+            "orderers": [
+                "orderer.example.com"
+            ],
+            "peers": {
+                "peer0.arium.com": {},
+                "peer0.vda.com": {},
+                "peer0.prince-insurance.com": {}
+            }
+        }
+    },
+    "organizations": {
+        "Arium": {
+            "mspid": "AriumMSP",
+            "peers": [
+                "peer0.arium.com"
+            ],
+            "certificateAuthorities": [
+                "ca0.example.com"
+            ]
+        },
+        "VDA": {
+            "mspid": "VDAMSP",
+            "peers": [
+                "peer0.vda.com"
+            ],
+            "certificateAuthorities": [
+                "ca1.example.com"
+            ]
+        },
+        "PrinceInsurance": {
+            "mspid": "PrinceInsuranceMSP",
+            "peers": [
+                "peer0.prince-insurance.com"
+            ],
+            "certificateAuthorities": [
+                "ca2.example.com"
+            ]
+        }
+    },
+    "orderers": {
+        "orderer.example.com": {
+            "url": "grpc://localhost:7050"
+        }
+    },
+    "peers": {
+        "peer0.arium.com": {
+            "url": "grpc://localhost:7051",
+            "eventUrl": "grpc://localhost:7053"
+        },
+        "peer0.vda.com": {
+            "url": "grpc://localhost:8051",
+            "eventUrl": "grpc://localhost:8053"
+        },
+        "peer0.prince-insurance.com": {
+            "url": "grpc://localhost:9051",
+            "eventUrl": "grpc://localhost:9053"
+        }
+    },
+    "certificateAuthorities": {
+        "ca0.example.com": {
+            "url": "http://localhost:7054",
+            "caName": "ca-arium"
+        },
+        "ca1.example.com": {
+            "url": "http://localhost:8054",
+            "caName": "ca-vda"
+        },
+        "ca2.example.com": {
+            "url": "http://localhost:9054",
+            "caName": "ca-princeinsurance"
+        }
+    }
+}

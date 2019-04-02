@@ -1,0 +1,17 @@
+[
+    {
+        "name": "system",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "insurer",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "prince insurance",
+                "ecert": true
+            }
+        ]
+    }
+]
