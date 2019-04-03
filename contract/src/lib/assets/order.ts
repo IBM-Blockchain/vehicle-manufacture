@@ -3,10 +3,10 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Object, Property } from 'fabric-contract-api';
-import { IOptions } from '../interfaces/options';
-import { IVehicleDetails } from '../interfaces/vehicleDetails';
 import { Person } from '../participants/person';
 import { Asset } from './asset';
+import { IOptions } from './options';
+import { IVehicleDetails } from './vehicleDetails';
 
 export enum OrderStatus {
     PLACED = 0,

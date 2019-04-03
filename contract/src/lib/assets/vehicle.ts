@@ -3,10 +3,10 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Object, Property } from 'fabric-contract-api';
-import { IUsageEvent } from '../interfaces/usageEvents';
-import { IVehicleDetails } from '../interfaces/vehicleDetails';
 import { Person } from '../participants/person';
 import { Asset } from './asset';
+import { IUsageEvent } from './usageEvents';
+import { IVehicleDetails } from './vehicleDetails';
 
 enum VehicleStatus {
     ACTIVE = 0,
