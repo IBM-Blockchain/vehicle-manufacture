@@ -2,7 +2,7 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Contract } from 'fabric-contract-api';
+import { Contract, Transaction } from 'fabric-contract-api';
 import { NetworkName } from '../../constants';
 import { VehicleManufactureNetContext } from '../utils/context';
 
@@ -15,6 +15,7 @@ export class ParticipantsContract extends Contract {
         return new VehicleManufactureNetContext();
     }
 
+    @Transaction()
     public async registerParticipant(ctx: VehicleManufactureNetContext) {
         const ci = ctx.getClientIdentity();
 

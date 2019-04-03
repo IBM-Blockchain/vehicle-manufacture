@@ -2,30 +2,15 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Context } from 'fabric-contract-api';
 import { NetworkName } from '../../constants';
+import { IState } from '../ledger-api/state';
 import { StateList } from '../ledger-api/statelist';
+import { VehicleManufactureNetContext } from '../utils/context';
 import { Asset } from './asset';
 
-export class AssetList extends StateList {
-    constructor(ctx: Context, listName: string, validTypes: any[]) {
-        super(ctx, NetworkName + '.assetslist.' + listName);
+export class AssetList<T extends Asset> extends StateList<T> {
+    constructor(ctx: VehicleManufactureNetContext, listName: string, validTypes: Array<IState<T>>) {
+        super(ctx, NetworkName + '.lists.assets.' + listName);
         this.use(...validTypes);
-    }
-
-    public async add(asset: Asset) {
-        return this.addState(asset);
-    }
-
-    public async get(assetId: string): Promise<Asset> {
-        return this.getState(assetId);
-    }
-
-    public async getAllOfType(type: string) {
-        return this.getAllStates(type);
-    }
-
-    public async update(asset: Asset) {
-        return this.updateState(asset);
     }
 }

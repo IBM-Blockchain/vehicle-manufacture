@@ -6,7 +6,8 @@ SPDX-License-Identifier: Apache-2.0
 
 import * as getParams from 'get-params';
 
-export interface IState {
+export interface IState<T> {
+    new (...args: any[]): T;
     getClass(): string;
 }
 
@@ -16,7 +17,7 @@ export class State {
         return Buffer.from(JSON.stringify(object));
     }
 
-    public static deserialize(data: Buffer, supportedClasses: Map<string, any>): object {
+    public static deserialize(data: Buffer, supportedClasses: Map<string, IState<State>>): State {
         const json = JSON.parse(data.toString());
         const objClass = supportedClasses.get(json.class);
         if (!objClass) {
@@ -26,9 +27,9 @@ export class State {
         return this.callConstructor(objClass, json);
     }
 
-    public static deserializeClass(data: string, objClass: any): object {
+    public static deserializeClass<T extends State>(data: string, objClass: IState<T>): T {
         const json = JSON.parse(data);
-        return this.callConstructor(objClass, json);
+        return this.callConstructor<T>(objClass, json);
     }
 
     public static makeKey(keyParts: string[]): string {
@@ -39,7 +40,7 @@ export class State {
         return key.split(':');
     }
 
-    private static callConstructor(objClass: any, json: object): object {
+    private static callConstructor<T extends State>(objClass: IState<T>, json: object): T {
         if (!(objClass.prototype instanceof State)) {
             throw new Error(`Cannot use ${objClass.prototype.name} as type State`);
         }

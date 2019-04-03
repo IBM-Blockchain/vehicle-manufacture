@@ -1,1 +1,0 @@
-{"version":3,"file":"company.js","sourceRoot":"","sources":["../../../src/lib/participants/company.ts"],"names":[],"mappings":";AAAA;;EAEE;;AAEF,+CAA4C;AAE5C,MAAa,OAAQ,SAAQ,yBAAW;IAGpC,YAAY,EAAU,EAAE,IAAY,EAAE,WAAmB;QACrD,KAAK,CAAC,EAAE,EAAE,WAAW,CAAC,CAAC;QACvB,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;IACrB,CAAC;IAEM,OAAO;QACV,OAAO,IAAI,CAAC,IAAI,CAAC;IACrB,CAAC;CACJ;AAXD,0BAWC"}

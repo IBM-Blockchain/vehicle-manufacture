@@ -1,6 +1,7 @@
 /*
 SPDX-License-Identifier: Apache-2.0
 */
+import { Property } from 'fabric-contract-api';
 
 enum EventType {
     ACTIVATED = 1,
@@ -8,16 +9,34 @@ enum EventType {
     OVERHEATED,
     OIL_FREEZING,
     ENGINE_FAILURE,
-  }
+}
 
-export interface IUsageEvent {
-    eventID: string;
-    eventType: EventType;
-    acceleration: number;
-    air_temperature: number;
-    engine_temperature: number;
-    light_level: number;
-    pitch: number;
-    roll: number;
-    timestamp: Date;
+@Object()
+export class IUsageEvent {
+    @Property()
+    public eventID: string;
+
+    @Property()
+    public eventType: EventType;
+
+    @Property()
+    public acceleration: number;
+
+    @Property()
+    public airTemperature: number;
+
+    @Property()
+    public engineTemperature: number;
+
+    @Property()
+    public lightLevel: number;
+
+    @Property()
+    public pitch: number;
+
+    @Property()
+    public roll: number;
+
+    @Property()
+    public timestamp: Date;
 }

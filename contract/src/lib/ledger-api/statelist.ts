@@ -12,11 +12,11 @@ export interface IHistoricState {
     txId: string;
 }
 
-export class StateList {
+export class StateList<T extends State> {
 
     private ctx: Context;
     private name: string;
-    private supportedClasses: Map<string, IState>;
+    private supportedClasses: Map<string, IState<T>>;
 
     constructor(ctx: Context, listName: string) {
         this.ctx = ctx;
@@ -28,7 +28,7 @@ export class StateList {
         return this.ctx;
     }
 
-    public async addState(state: State) {
+    public async add(state: T) {
         const key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
         const data = state.serialize();
 
@@ -41,7 +41,7 @@ export class StateList {
         await this.ctx.stub.putState(key, data);
     }
 
-    public async getState(key: string): Promise<any> {
+    public async get(key: string): Promise<T> {
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const data = await this.ctx.stub.getState(ledgerKey);
 
@@ -49,11 +49,11 @@ export class StateList {
             throw new Error('Cannot get state. No state exists for key');
         }
 
-        const state = State.deserialize(data, this.supportedClasses);
+        const state = State.deserialize(data, this.supportedClasses) as T;
         return state;
     }
 
-    public async getStateHistory(key: string): Promise<IHistoricState[]> {
+    public async getHistory(key: string): Promise<IHistoricState[]> {
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const keyHistory = await this.ctx.stub.getHistoryForKey(ledgerKey);
 
@@ -79,10 +79,10 @@ export class StateList {
         return history;
     }
 
-    public async getAllStates(): Promise<Map<string, any>> {
+    public async getAll(): Promise<any[]> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
 
-        const states = new Map();
+        const states: any[] = [];
 
         let value = (await data.next()).value;
 
@@ -90,7 +90,7 @@ export class StateList {
 
             const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses);
 
-            states.set(splitCompositeKey(value.getKey()).attributes[0], state);
+            states.push(state);
 
             const next = await data.next();
             value = next.value;
@@ -99,7 +99,7 @@ export class StateList {
         return states;
     }
 
-    public async getNumberStates(): Promise<number> {
+    public async count(): Promise<number> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
 
         let counter = 0;
@@ -119,7 +119,7 @@ export class StateList {
         return counter;
     }
 
-    public async updateState(state: any) {
+    public async update(state: any) {
         if (!(state instanceof State)) {
             throw new Error(`Cannot use ${state.constructor.name} as type State`);
         }
@@ -136,7 +136,7 @@ export class StateList {
         await this.ctx.stub.putState(key, data);
     }
 
-    public use(...stateClasses: any[]) {
+    public use(...stateClasses: Array<IState<T>>) {
         for (const stateClass of stateClasses) {
             if (!((stateClass as any).prototype instanceof State)) {
                 throw new Error(`Cannot use ${(stateClass as any).prototype.constructor.name} as type State`);
@@ -146,21 +146,4 @@ export class StateList {
         }
     }
 
-}
-
-const MIN_UNICODE_RUNE_VALUE = '\u0000';
-const COMPOSITEKEY_NS = '\x00';
-
-function splitCompositeKey(compositeKey) {
-    const result = {objectType: null, attributes: []};
-    if (compositeKey && compositeKey.length > 1 && compositeKey.charAt(0) === COMPOSITEKEY_NS) {
-        const splitKey = compositeKey.substring(1).split(MIN_UNICODE_RUNE_VALUE);
-        result.objectType = splitKey[0];
-        splitKey.pop();
-        if (splitKey.length > 1) {
-            splitKey.shift();
-            result.attributes = splitKey;
-        }
-    }
-    return result;
 }

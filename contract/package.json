@@ -18,8 +18,8 @@
     "typescript": "3.4.1"
   },
   "dependencies": {
-    "fabric-contract-api": "^1.4.0",
-    "fabric-shim": "^1.4.0",
+    "fabric-contract-api": "unstable-1.4",
+    "fabric-shim": "unstable-1.4",
     "get-params": "^0.1.2"
   }
 }
