@@ -3,8 +3,8 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Context } from 'fabric-contract-api';
-import { OrderList } from '../assets/orderlist';
-import { VehicleList } from '../assets/vehiclelist';
+import { OrderList } from '../lists/orderlist';
+import { VehicleList } from '../lists/vehiclelist';
 import { Insurer } from '../participants/insurer';
 import { Manufacturer } from '../participants/manufacturer';
 import { ParticipantList } from '../participants/participantlist';

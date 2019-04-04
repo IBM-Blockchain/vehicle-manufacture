@@ -5,9 +5,9 @@ SPDX-License-Identifier: Apache-2.0
 import { Contract, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
+import { IOptions } from '../assets/options';
 import { Order, OrderStatus } from '../assets/order';
-import { IOptions } from '../interfaces/options';
-import { IVehicleDetails } from '../interfaces/vehicleDetails';
+import { IVehicleDetails } from '../assets/vehicleDetails';
 import { Person } from '../participants/person';
 import { VehicleManufactureNetContext } from '../utils/context';
 const logger = newLogger('VEHICLE');

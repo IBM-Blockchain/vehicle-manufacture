@@ -133,7 +133,7 @@ services:
     command: /bin/bash
     volumes:
       - /var/run/:/host/var/run/
-      - ../../../contract:/opt/gopath/src/github.com/awjh-ibm/vehicle-manufacture-contract
+      - ../../../contract:/etc/hyperledger/contract
       - ../crypto-material/:/etc/hyperledger/configtx/
       - ../crypto-material:/etc/hyperledger/config
 
