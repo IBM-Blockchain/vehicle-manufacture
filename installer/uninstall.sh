@@ -21,7 +21,7 @@ DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 ################
 # REMOVE NODE LEFTOVERS FROM CHAINCODE
 ################
-docker exec arium_cli bash -c 'cd /opt/gopath/src/github.com/awjh-ibm/vehicle-manufacture-contract; rm -rf dist; rm -rf node_modules; rm -f package-lock.json'
+docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf node_modules; rm -f package-lock.json'
 
 ################
 # REMOVE DOCKER CONTAINERS

@@ -39,6 +39,7 @@ echo "################"
 echo "# CHANNEL INIT"
 echo "################"
 docker exec arium_cli peer channel create -o orderer.example.com:7050 -c vehiclemanufacture -f /etc/hyperledger/configtx/channel.tx --outputBlock /etc/hyperledger/configtx/vehiclemanufacture.block
+sleep 5
 docker exec arium_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
 docker exec vda_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
 docker exec princeinsurance_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
@@ -47,10 +48,10 @@ echo "################"
 echo "# CHAINCODE INSTALL"
 echo "################"
 docker exec arium_cli bash -c "apk add nodejs nodejs-npm python make g++"
-docker exec arium_cli bash -c 'cd /opt/gopath/src/github.com/awjh-ibm/vehicle-manufacture-contract; npm install; npm run build'
-docker exec arium_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /opt/gopath/src/github.com/awjh-ibm/vehicle-manufacture-contract
-docker exec vda_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /opt/gopath/src/github.com/awjh-ibm/vehicle-manufacture-contract
-docker exec princeinsurance_cli  peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /opt/gopath/src/github.com/awjh-ibm/vehicle-manufacture-contract
+docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; npm install; npm run build'
+docker exec arium_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
+docker exec vda_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
+docker exec princeinsurance_cli  peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
 
 echo "################"
 echo "# CHAINCODE INSTANTIATE"
@@ -134,24 +135,26 @@ node $BASEDIR/cli_tools/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $ARIUM_C
 node $BASEDIR/cli_tools/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $VDA_CONNECTION -u $VDA_USERS -a Admin@vda.com -o VDA
 node $BASEDIR/cli_tools/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $PRINCE_CONNECTION -u $PRINCE_USERS -a Admin@prince-insurance.com -o PrinceInsurance
 
-# echo "################"
-# echo "# STARTUP REST SERVERS"
-# echo "################"
+echo "################"
+echo "# STARTUP REST SERVERS"
+echo "################"
 
-# REST_DIR=$BASEDIR/../apps/rest_server
+REST_DIR=$BASEDIR/../apps/rest_server
 
-# cd $REST_DIR
-# npm install
-# npm run build
-# cd $BASEDIR
+cd $REST_DIR
+npm install
+npm run build
+cd $BASEDIR
 
-# BOD_REST_PORT=3000
-# BOD_NAME='bank of dinero'
-# EB_REST_PORT=3001
-# EB_NAME='eastwood banking'
+ARIUM_REST_PORT=3000
+ARIUM_NAME='arium'
+EB_REST_PORT=3001
+EB_NAME='vda'
+EB_REST_PORT=3002
+EB_NAME='prince-insurance'
 
-# # echo "node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/BankOfDinero --connection-profile $ARIUM_CONNCETION --port $BOD_REST_PORT > $BASEDIR/tmp/bod_server.log 2>&1 &"
-# node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/BankOfDinero --connection-profile $ARIUM_CONNCETION --port $BOD_REST_PORT --bank-name "$BOD_NAME" > $BASEDIR/tmp/bod_server.log 2>&1 &
+# echo "node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/BankOfDinero --connection-profile $ARIUM_CONNCETION --port $BOD_REST_PORT > $BASEDIR/tmp/bod_server.log 2>&1 &"
+# node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNCETION --port $ARIUM_REST_PORT > $BASEDIR/tmp/bod_server.log 2>&1 &
 
 # # echo "node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/EastwoodBanking --connection-profile $VDA_CONNECTION --port $EB_REST_PORT > $BASEDIR/tmp/eb_server.log 2>&1 &"
 # node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/EastwoodBanking --connection-profile $VDA_CONNECTION --port $EB_REST_PORT --bank-name "$EB_NAME" > $BASEDIR/tmp/eb_server.log 2>&1 &
