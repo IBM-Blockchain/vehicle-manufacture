@@ -23,8 +23,6 @@ export class VehicleContract extends Contract {
 
     @Transaction()
     public async placeOrder(ctx: VehicleManufactureNetContext, vehicleDetails: IVehicleDetails, options: IOptions) {
-        logger.error('HELLO WORLD', vehicleDetails, options);
-
         const person = await ctx.getClientIdentity().loadParticipant();
 
         if (!(person instanceof Person)) {

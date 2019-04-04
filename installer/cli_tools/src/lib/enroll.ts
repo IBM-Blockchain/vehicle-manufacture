@@ -65,7 +65,7 @@ export class Enroll {
         }
 
         const attrs = user.attrs;
-        attrs.push({name: 'locnet.username', value: user.name + '@' + org, ecert: true})
+        attrs.push({name: 'vehicle_manufacture.username', value: user.name + '@' + org, ecert: true})
 
         // Register the user, enroll the user, and import the new identity into the wallet.
         const secret = await ca.register({ affiliation: '', enrollmentID: user.name, role: 'client', attrs: attrs }, admin);

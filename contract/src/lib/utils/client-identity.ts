@@ -26,25 +26,31 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
     public async loadParticipant(): Promise<Participant> {
         const id = this.getAttributeValue(ID_FIELD);
 
-        switch (this.getAttributeValue(ROLE_FIELD)) {
-            case 'manufacturer':
-            case 'insurer':
-            case 'regulator':
-            case 'person':
-                return this.ctx.getParticipantList().get(id);
-            default:
-                throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
+        try {
+            switch (this.getAttributeValue(ROLE_FIELD)) {
+                case 'manufacturer':
+                case 'insurer':
+                case 'regulator':
+                    return await this.ctx.getParticipantList().get(id.split('@')[1]);
+                case 'person':
+                return await this.ctx.getParticipantList().get(id);
+                default:
+                    throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
+            }
+        } catch (err) {
+            throw new Error('Unable to load participant for client ' + id);
         }
     }
 
     public newParticipantInstance(): Participant {
         const id = this.getAttributeValue(ID_FIELD);
+        const org = id.split('@')[1];
         const company = this.getAttributeValue(COMPANY_FIELD);
 
         switch (this.getAttributeValue(ROLE_FIELD)) {
-            case 'manufacturer': return new Manufacturer(this.getMSPID(), company);
-            case 'insurer': return new Insurer(this.getMSPID(), company);
-            case 'regulator': return new Regulator(this.getMSPID(), company);
+            case 'manufacturer': return new Manufacturer(org, company);
+            case 'insurer': return new Insurer(org, company);
+            case 'regulator': return new Regulator(org, company);
             case 'person': return new Person(id);
             default:
                 throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
