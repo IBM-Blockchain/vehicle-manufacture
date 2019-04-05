@@ -61,12 +61,15 @@ rm -rf $BASEDIR/vehiclemanufacture_fabric
 ################
 # CLEANUP REST SERVERS
 ################
-BOD_REST_PORT=3000
-EB_REST_PORT=3001
+ARIUM_REST_PORT=3000
+VDA_REST_PORT=3001
+PRINCE_REST_PORT=3002
 
 rm -rf $BASEDIR/../apps/rest_server/node_modules
 rm -f $BASEDIR/../apps/rest_server/package-lock.json
 rm -rf $BASEDIR/../apps/rest_server/dist
 
-lsof -i :$BOD_REST_PORT | awk '{if(NR>1)print $2}' | xargs kill
-lsof -i :$EB_REST_PORT | awk '{if(NR>1)print $2}' | xargs kill
+for PORT in $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
+do
+    lsof -i :$PORT | awk '{if(NR>1)print $2}' | xargs kill
+done

@@ -13,5 +13,15 @@
                 "ecert": true
             }
         ]
+    },
+    {
+        "name": "paul",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "person",
+                "ecert": true
+            }
+        ]
     }
 ]

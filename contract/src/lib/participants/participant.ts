@@ -2,26 +2,44 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Object, Property } from 'fabric-contract-api';
+import { Object as ContractObject, Property } from 'fabric-contract-api';
+import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
 import { State } from '../ledger-api/state';
 
-@Object()
+const logger = newLogger('PARTICIPANT');
+
+@ContractObject()
 export class Participant extends State {
-    public static generateClass(assetType: string): string {
-        return NetworkName + '.participants.'  + assetType;
+    public static generateClass(participantType: string): string {
+        return NetworkName + '.participants.'  + participantType;
     }
 
-    @Property()
-    private id: string;
+    @Property('id', 'string')
+    private _id: string;
 
     constructor(id: string, participantType: string) {
         super(Participant.generateClass(participantType), [id]);
 
-        this.id = id;
+        logger.info('THE ID ' + id);
+
+        this._id = id;
     }
 
-    public getId(): string {
-        return this.id;
+    get id(): string {
+        return this._id;
+    }
+
+    public serialize(): Buffer {
+        const toSerialize = JSON.parse(State.serialize(this).toString());
+
+        Object.keys(this).forEach((key) => {
+            if (key.startsWith('_')) {
+                Object.defineProperty(toSerialize, key.slice(1), Object.getOwnPropertyDescriptor(toSerialize, key));
+                delete toSerialize[key];
+            }
+        });
+
+        return Buffer.from(State.serialize(toSerialize));
     }
 }

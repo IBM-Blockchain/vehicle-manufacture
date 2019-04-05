@@ -4,7 +4,10 @@ SPDX-License-Identifier: Apache-2.0
 
 'use strict';
 import { Context } from 'fabric-contract-api';
+import { newLogger } from 'fabric-shim';
 import { IState, State } from './state';
+
+const logger = newLogger('STATELIST');
 
 export interface IHistoricState {
     value: any;
@@ -42,6 +45,8 @@ export class StateList<T extends State> {
     }
 
     public async get(key: string): Promise<T> {
+        logger.info('STATE LIST GET KEY' + key);
+
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const data = await this.ctx.stub.getState(ledgerKey);
 
@@ -49,7 +54,12 @@ export class StateList<T extends State> {
             throw new Error('Cannot get state. No state exists for key');
         }
 
+        logger.info('STATE LIST GOT DATA FOR KEY ' + data.toString());
+
         const state = State.deserialize(data, this.supportedClasses) as T;
+
+        logger.info('STATE LIST DESERIALIZED ' + JSON.stringify(state));
+
         return state;
     }
 
@@ -79,7 +89,7 @@ export class StateList<T extends State> {
         return history;
     }
 
-    public async getAll(): Promise<any[]> {
+    public async getAll(): Promise<T[]> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
 
         const states: any[] = [];

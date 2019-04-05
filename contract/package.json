@@ -3,11 +3,19 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
+  "watch": {
+    "start:docker": "src/**/*.ts"
+  },
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "start": "fabric-chaincode-node start",
+    "start:docker": "npm run build; npm run start:arium; npm run start:vda; npm run start:prince",
+    "start:arium": "docker exec -d arium_cli bash -c 'cd /etc/hyperledger/contract; pkill -9 node; npm start -- --peer.address peer0.arium.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> arium.log 2>&1'",
+    "start:vda": "docker exec -d vda_cli bash -c 'cd /etc/hyperledger/contract; pkill -9 node; npm start -- --peer.address peer0.vda.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> vda.log 2>&1'",
+    "start:prince": "docker exec -d princeinsurance_cli bash -c 'cd /etc/hyperledger/contract; pkill -9 node; npm start -- --peer.address peer0.prince-insurance.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> prince.log 2>&1'",
     "build": "tsc",
     "build:watch": "tsc -w",
+    "watch:start": "npm-watch start:docker",
     "prepublishOnly": "npm run build"
   },
   "author": "ibm-blockchain",
@@ -20,6 +28,8 @@
   "dependencies": {
     "fabric-contract-api": "unstable-1.4",
     "fabric-shim": "unstable-1.4",
-    "get-params": "^0.1.2"
+    "get-params": "^0.1.2",
+    "npm-watch": "^0.6.0",
+    "reflect-metadata": "^0.1.13"
   }
 }

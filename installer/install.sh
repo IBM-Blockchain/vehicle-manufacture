@@ -49,6 +49,9 @@ echo "# CHAINCODE INSTALL"
 echo "################"
 docker exec arium_cli bash -c "apk add nodejs nodejs-npm python make g++"
 docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; npm install; npm run build'
+
+read -p "PLEASE SETUP THE CHAINCODE CONTAINER MANUALLY THEN PRESS ENTER"
+
 docker exec arium_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
 docker exec vda_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
 docker exec princeinsurance_cli  peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
@@ -147,51 +150,52 @@ npm run build
 cd $BASEDIR
 
 ARIUM_REST_PORT=3000
-ARIUM_NAME='arium'
-EB_REST_PORT=3001
-EB_NAME='vda'
-EB_REST_PORT=3002
-EB_NAME='prince-insurance'
+VDA_REST_PORT=3001
+PRINCE_REST_PORT=3002
 
-# echo "node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/BankOfDinero --connection-profile $ARIUM_CONNCETION --port $BOD_REST_PORT > $BASEDIR/tmp/bod_server.log 2>&1 &"
-# node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNCETION --port $ARIUM_REST_PORT > $BASEDIR/tmp/bod_server.log 2>&1 &
+node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNECTION --port $ARIUM_REST_PORT > $BASEDIR/tmp/arium_server.log 2>&1 &
 
-# # echo "node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/EastwoodBanking --connection-profile $VDA_CONNECTION --port $EB_REST_PORT > $BASEDIR/tmp/eb_server.log 2>&1 &"
-# node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/EastwoodBanking --connection-profile $VDA_CONNECTION --port $EB_REST_PORT --bank-name "$EB_NAME" > $BASEDIR/tmp/eb_server.log 2>&1 &
+node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/VDA --connection-profile $VDA_CONNECTION --port $VDA_REST_PORT > $BASEDIR/tmp/vda_server.log 2>&1 &
 
-# printf 'WAITING FOR BANK OF DINERO REST SERVER'
-# until $(curl --output /dev/null --silent --head --fail http://localhost:$BOD_REST_PORT); do
-#     printf '.'
-#     sleep 2
-# done
+node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/PrinceInsurance --connection-profile $PRINCE_CONNECTION --port $PRINCE_REST_PORT > $BASEDIR/tmp/prince_server.log 2>&1 &
 
-# echo ""
-# printf 'WAITING FOR EASTWOOD BANKING REST SERVER'
-# until $(curl --output /dev/null --silent --head --fail http://localhost:$EB_REST_PORT); do
-#     printf '.'
-#     sleep 2
-# done
+for PORT in $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
+do
+    printf "WAITING FOR REST SERVER ON PORT $PORT"
+    until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT); do
+        printf '.'
+        sleep 2
+    done
+    printf '\n'
+done
 
-# echo ""
-# echo "################"
-# echo "# REGISTER EVERYONE IN CHAINCODE"
-# echo "################"
-# PARTICIPANTS_CONTRACT="org.locnet.participants"
+echo "################"
+echo "# REGISTER EVERYONE IN CHAINCODE"
+echo "################"
+PARTICIPANTS_CONTRACT="org.acme.vehicle_network.participants"
 
-# curl -X POST -H "Content-Type: application/json" -d '{"bankName": "Bank of Dinero"}' -u system:systempw http://localhost:$BOD_REST_PORT/$PARTICIPANTS_CONTRACT/registerBank
+VDA_REGISTER="$VDA_REST_PORT|regulator"
+PRINCE_REGISTER="$PRINCE_REST_PORT|insurer"
 
-# for row in $(jq -r ".[] | .name" $BOD_USERS); do
-#     if [ $row != "system" ]; then
-#         echo "REGISTERING $row"
-#         curl -X POST -H "Content-Type: application/json" -d '{}' -u $row:${row}pw http://localhost:$BOD_REST_PORT/$PARTICIPANTS_CONTRACT/registerParticipant
-#     fi
-# done
+# REGISTER USERS FOR INSURER AND REGULATOR
+for REGISTRATION in $VDA_REGISTER $PRINCE_REGISTER
+do
+    PORT="$(cut -d'|' -f1 <<<"$REGISTRATION")"
+    TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"
 
-# curl -X POST -H "Content-Type: application/json" -d '{"bankName": "Eastwood Banking"}' -u system:systempw http://localhost:$EB_REST_PORT/$PARTICIPANTS_CONTRACT/registerBank
+    echo "REGISTERING $TYPE"
+    curl -X POST -H "Content-Type: application/json" -d '{}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/$TYPE/register
+done
 
-# for row in $(jq -r ".[] | .name" $EB_USERS); do
-#     if [ $row != "system" ]; then
-#         echo "REGISTERING $row"
-#         curl -X POST -H "Content-Type: application/json" -d '{}' -u $row:${row}pw http://localhost:$EB_REST_PORT/$PARTICIPANTS_CONTRACT/registerParticipant
-#     fi
-# done
+# REGISTER ARIUM AS SPECIAL CASE AS NEED MORE DETAIL
+echo "REGISTERING ARIUM"
+curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/manufacturer/register
+
+for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"person\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON 
+    echo "REGISTERING $row"
+    curl -X POST -H "Content-Type: application/json" -d '{}' -u $row:${row}pw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
+done
+
+echo "################"
+echo "# DONE"
+echo "################"

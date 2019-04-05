@@ -4,7 +4,10 @@ SPDX-License-Identifier: Apache-2.0
 
 'use strict';
 
+import { newLogger } from 'fabric-shim';
 import * as getParams from 'get-params';
+
+const logger = newLogger('STATE');
 
 export interface IState<T> {
     new (...args: any[]): T;
@@ -33,6 +36,7 @@ export class State {
     }
 
     public static makeKey(keyParts: string[]): string {
+        logger.info(`KEY PARTS ${JSON.stringify(keyParts)}`);
         return keyParts.join(':');
     }
 
@@ -45,11 +49,21 @@ export class State {
             throw new Error(`Cannot use ${objClass.prototype.name} as type State`);
         }
 
-        const paramNames = getParams(objClass.prototype.constructor);
+        const paramNames = Reflect.getMetadata('contract:function', objClass.prototype, 'constructor') ||
+            getParams(objClass.prototype.constructor);
 
         const args = [];
+        const missingFields = [];
 
         if (!paramNames.every((name) => {
+            logger.info('USING NAME ' + name);
+            let ignoreMissing = false;
+
+            if (name.endsWith('?')) {
+                name = name.slice(-1);
+                ignoreMissing = true;
+            }
+
             if (json.hasOwnProperty(name)) {
                 let arg = json[name];
 
@@ -63,9 +77,13 @@ export class State {
                 return true;
             }
 
-            return false;
+            if (!ignoreMissing) {
+                missingFields.push(name);
+            }
+
+            return ignoreMissing;
         })) {
-            throw new Error('Could not deserialize JSON. Missing required fields.');
+            throw new Error('Could not deserialize JSON. Missing required fields.' + JSON.stringify(missingFields));
         }
 
         const object = new (objClass)(...args);
@@ -79,6 +97,8 @@ export class State {
     constructor(stateClass: string, keyParts: string[]) {
         this.class = stateClass;
         this.key = State.makeKey(keyParts);
+
+        logger.info('THE KEY ' + this.key);
     }
 
     public getClass(): string {

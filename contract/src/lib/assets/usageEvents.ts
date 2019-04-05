@@ -1,9 +1,9 @@
 /*
 SPDX-License-Identifier: Apache-2.0
 */
-import { Property } from 'fabric-contract-api';
+import { Object, Property } from 'fabric-contract-api';
 
-enum EventType {
+export enum EventType {
     ACTIVATED = 1,
     CRASHED,
     OVERHEATED,
@@ -38,5 +38,5 @@ export class IUsageEvent {
     public roll: number;
 
     @Property()
-    public timestamp: Date;
+    public timestamp: string;
 }
