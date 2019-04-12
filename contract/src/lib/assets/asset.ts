@@ -31,17 +31,12 @@ export class Asset extends State {
     public serialize(): Buffer {
         const toSerialize = JSON.parse(State.serialize(this).toString());
 
-        logger.info('POST FIRST SERIALIZE ' + JSON.stringify(toSerialize));
-
         Object.keys(toSerialize).forEach((key) => {
-            logger.info('WHERE MY KEYS? ' + key);
             if (key.startsWith('_')) {
                 Object.defineProperty(toSerialize, key.slice(1), Object.getOwnPropertyDescriptor(toSerialize, key));
                 delete toSerialize[key];
             }
         });
-
-        logger.info('POST KEY RESET ' + JSON.stringify(toSerialize));
 
         return Buffer.from(State.serialize(toSerialize));
     }

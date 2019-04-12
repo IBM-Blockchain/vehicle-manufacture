@@ -16,18 +16,23 @@ export class Participant extends State {
     }
 
     @Property('id', 'string')
-    private _id: string;
+    public id: string;
 
-    constructor(id: string, participantType: string) {
+    @Property('orgName', 'string')
+    public orgName: string;
+
+    @Property('orgType', 'string')
+    public orgType: string;
+
+    @Property('role', 'string')
+    public role: string;
+
+    constructor(id: string, orgName: string, orgType: string, role: string, participantType: string) {
         super(Participant.generateClass(participantType), [id]);
-
-        logger.info('THE ID ' + id);
-
-        this._id = id;
-    }
-
-    get id(): string {
-        return this._id;
+        this.id = id;
+        this.orgName = orgName;
+        this.orgType = orgType;
+        this.role = role;
     }
 
     public serialize(): Buffer {

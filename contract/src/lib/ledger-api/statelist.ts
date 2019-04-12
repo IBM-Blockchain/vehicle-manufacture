@@ -45,20 +45,13 @@ export class StateList<T extends State> {
     }
 
     public async get(key: string): Promise<T> {
-        logger.info('STATE LIST GET KEY' + key);
-
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const data = await this.ctx.stub.getState(ledgerKey);
 
         if (data.length === 0) {
-            throw new Error('Cannot get state. No state exists for key');
+            throw new Error(`Cannot get state. No state exists for key ${key} ${this.name}`);
         }
-
-        logger.info('STATE LIST GOT DATA FOR KEY ' + data.toString());
-
         const state = State.deserialize(data, this.supportedClasses) as T;
-
-        logger.info('STATE LIST DESERIALIZED ' + JSON.stringify(state));
 
         return state;
     }
@@ -140,10 +133,23 @@ export class StateList<T extends State> {
         const buff = await this.ctx.stub.getState(key);
 
         if (buff.length === 0) {
-            throw new Error('Cannot update state. No state exists for key');
+            throw new Error(`Cannot update state. No state exists for key ${key}`);
         }
 
         await this.ctx.stub.putState(key, data);
+    }
+
+    public async exists(key: string) {
+        try {
+            await this.get(key);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    public getName(): string {
+        return this.name;
     }
 
     public use(...stateClasses: Array<IState<T>>) {
@@ -151,7 +157,6 @@ export class StateList<T extends State> {
             if (!((stateClass as any).prototype instanceof State)) {
                 throw new Error(`Cannot use ${(stateClass as any).prototype.constructor.name} as type State`);
             }
-
             this.supportedClasses.set(stateClass.getClass(), stateClass);
         }
     }

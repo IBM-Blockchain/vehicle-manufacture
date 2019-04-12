@@ -25,9 +25,14 @@ export class VehicleContractRouter implements IRouter {
         });
 
         // auto do the rest as I'm lazy
-        metadata.contracts[VehicleContractRouter.contractName].transactions.filter((transaction) => {
-            return transaction.tag.includes('submitTx'); // get all submit transactions as handled others above
-        }).forEach((transaction) => {
+        // metadata.contracts[VehicleContractRouter.contractName].transactions.filter((transaction) => {
+        //     console.log(transaction.tag)
+        //     return transaction.tag.includes('submitTx'); // get all submit transactions as handled others above
+        // }).forEach((transaction) => {
+        //     this.router.post('/' + transaction.name, transactionToCall(this.fabricProxy, transaction, VehicleContractRouter.contractName));
+        // });
+        // auto generate all because im even more lazy
+        metadata.contracts[VehicleContractRouter.contractName].transactions.forEach((transaction) => {
             this.router.post('/' + transaction.name, transactionToCall(this.fabricProxy, transaction, VehicleContractRouter.contractName));
         });
     }

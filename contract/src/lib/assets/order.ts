@@ -5,9 +5,8 @@ SPDX-License-Identifier: Apache-2.0
 import { Object, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import 'reflect-metadata';
-import { Manufacturer } from '../participants/manufacturer';
+import { Organization } from '../organizations/organization';
 import { Participant } from '../participants/participant';
-import { Person } from '../participants/person';
 import { NotRequired } from '../utils/annotations';
 import { Asset } from './asset';
 import { IOptions } from './options';
@@ -32,6 +31,10 @@ export class Order extends Asset {
         return Asset.generateClass(assetType);
     }
 
+    public static getSubClasses() {
+        return [];
+    }
+
     @Property('vehicleDetails', 'IVehicleDetails')
     private _vehicleDetails: IVehicleDetails;
 
@@ -53,8 +56,6 @@ export class Order extends Asset {
         @NotRequired vin?: string,
     ) {
         super(id, assetType);
-
-        logger.info('ORDERER ID ' + ordererId);
 
         this._vehicleDetails = vehicleDetails;
         this._orderStatus = orderStatus;
@@ -94,13 +95,12 @@ export class Order extends Asset {
         return this._ordererId;
     }
 
-    public isOrderer(orderer: Participant) {
-        return orderer.getClass() === Person.getClass() &&
-            orderer.id === this.ordererId;
-    }
-
-    public isManufacturer(manufacturer: Manufacturer) {
-        return manufacturer.getClass() === Manufacturer.getClass() &&
-            manufacturer.id === this.vehicleDetails.makeId;
+    public canBeChangedBy(entity: Organization|Participant) {
+        if (entity instanceof Organization) {
+            const org = entity.getName();
+            return org === this.vehicleDetails.makeId;
+        } else if (entity instanceof Participant) {
+            return entity.id === this.ordererId;
+        }
     }
 }

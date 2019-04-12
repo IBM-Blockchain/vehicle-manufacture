@@ -3,17 +3,16 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { ClientIdentity, newLogger } from 'fabric-shim';
-import { Insurer } from '../participants/insurer';
-import { Manufacturer } from '../participants/manufacturer';
+import { Organization } from '../organizations/organization';
 import { Participant } from '../participants/participant';
 import { Person } from '../participants/person';
-import { Regulator } from '../participants/regulator';
 import { VehicleManufactureNetContext } from './context';
 const logger = newLogger('CLIENTIDENTITY');
 
 const ROLE_FIELD = 'vehicle_manufacture.role';
 const ID_FIELD = 'vehicle_manufacture.username';
 const COMPANY_FIELD = 'vehicle_manufacture.company';
+const ORG_TYPE_FIELD = 'vehicle_manufacture.org_type';
 
 export class VehicleManufactureNetClientIdentity extends ClientIdentity {
     private ctx: VehicleManufactureNetContext;
@@ -26,47 +25,49 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
 
     public async loadParticipant(): Promise<Participant> {
         const id = this.getAttributeValue(ID_FIELD);
-        logger.info(`LOADED PARTICIPANT ID ${id}`);
         try {
             switch (this.getAttributeValue(ROLE_FIELD)) {
-                case 'manufacturer':
-                case 'insurer':
-                case 'regulator':
-                    return await this.ctx.getParticipantList().get(id.split('@')[1]);
                 case 'person':
                     return await this.ctx.getParticipantList().get(id);
                 default:
                     throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
             }
         } catch (err) {
-            throw new Error('Unable to load participant for client ' + id);
+            throw new Error(`Unable to load participant for client ${id} ERROR: ${err.message}`);
         }
     }
 
-    public newParticipantInstance(...additionalInfo: any[]): Participant {
+    public async loadOrganization() {
+        const participant = await this.loadParticipant();
+        const org = participant.orgName;
+        return this.ctx.getOrganizationList().get(org);
+    }
+
+    public async newParticipantInstance(): Promise<Participant> {
         const id = this.getAttributeValue(ID_FIELD);
-        const org = id.split('@')[1];
-        logger.info(`CI id ${id}`);
-        const company = this.getAttributeValue(COMPANY_FIELD);
+        const orgId = id.split('@')[1];
+        const orgType = this.getAttributeValue(ORG_TYPE_FIELD);
+        try {
+            await this.ctx.getOrganizationList().get(orgId);
+        } catch (err) {
+            logger.error(`Organization ${orgId} does not exist`);
+        }
+        const role = this.getAttributeValue(ROLE_FIELD);
 
         switch (this.getAttributeValue(ROLE_FIELD)) {
-            case 'manufacturer': return this.newManufacturer(id, org, ...additionalInfo);
-            case 'insurer': return new Insurer(org, company);
-            case 'regulator': return new Regulator(org, company);
-            case 'person': return new Person(id);
+            case 'person': return new Person(id, orgId, orgType, role);
             default:
                 throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
         }
     }
 
-    private newManufacturer(
-        id: string, name: string,
-        originCode?: string, manufacturerCode?: string,
-    ) {
-        if (!originCode || !manufacturerCode) { // handle fact I want o spread in above function
-            throw new Error('Missing parameter');
+    public newOrganizationInstance(orgName, additionalInfo: any): Organization {
+        const orgType = this.getAttributeValue(ORG_TYPE_FIELD);
+        switch (orgType) {
+            case 'manufacturer':
+                const organization = new Organization(orgName, orgName, orgType, ...additionalInfo);
+                return organization;
         }
-
-        return new Manufacturer(id, name, originCode, manufacturerCode);
+        return new Organization(orgName, orgName, orgType);
     }
 }

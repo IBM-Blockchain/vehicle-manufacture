@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 
 import { Object } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
+import { NetworkName } from '../../constants';
 import { Participant } from './participant';
 
 const participantType = 'Person';
@@ -16,9 +17,11 @@ export class Person extends Participant {
         return Participant.generateClass(participantType);
     }
 
-    constructor(id: string) {
-        super(id, participantType);
+    public static getSubClasses() {
+        return [];
+    }
 
-        logger.info('THE ID ' + id);
+    constructor(id: string, orgName: string, orgType: string, role: string) {
+        super(id, orgName, orgType, role, participantType);
     }
 }

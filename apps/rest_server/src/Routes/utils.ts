@@ -7,11 +7,12 @@ export const handleRouterCall = async (req: Request, res: Response, fabricProxy:
         const user = getAuth(req);
 
         let resp = await fabricProxy[type](user, functionName, ...args);
-        
+
         if (isJSON) {
             res.setHeader('Content-Type', 'application/json');
             resp = JSON.parse(resp.toString());
         }
+
 
         res.send(resp);
     } catch (err) {

@@ -4,12 +4,17 @@
         "attrs": [
             {
                 "name": "vehicle_manufacture.role",
-                "value": "regulator",
+                "value": "person",
                 "ecert": true
             },
             {
                 "name": "vehicle_manufacture.company",
-                "value": "vda",
+                "value": "VDA",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "regulator",
                 "ecert": true
             }
         ]
