@@ -79,7 +79,7 @@ export class VehicleContract extends Contract {
             const vehicle = new Vehicle(vin, order.vehicleDetails, VehicleStatus.OFF_THE_ROAD, []);
             await ctx.getVehicleList().add(vehicle);
         } else if (status === OrderStatus.OWNER_ASSIGNED) {
-            const vehicle = await ctx.getVehicleList().get(order.vin);
+            const vehicle = await ctx.getVehicleList().get(vin);
             vehicle.ownerId = order.ordererId;
             await ctx.getVehicleList().update(vehicle);
         }
@@ -90,15 +90,16 @@ export class VehicleContract extends Contract {
 
     @Transaction(false)
     @Returns('Vehicle[]')
-    public async getCars(ctx: VehicleManufactureNetContext): Promise<Vehicle[]> {
+    public async getCars(ctx: VehicleManufactureNetContext): Promise<object[]> {
         const participant = await ctx.getClientIdentity().loadParticipant();
 
         const vehicles = await ctx.getVehicleList().getAll();
 
         return vehicles.filter((vehicle) => {
-            // TODO: How do we let cars belong to organizations
-            return vehicle.belongsTo(participant);
-        });
+            return vehicle.belongsTo(participant) ||
+            (vehicle.madeByOrg(participant) && participant.isManufacturer()) ||
+            participant.isRegulator();
+        }).map((v: Vehicle) => JSON.parse(v.serialize().toString('utf8')));
     }
 
     @Transaction(false)
@@ -109,13 +110,18 @@ export class VehicleContract extends Contract {
 
     @Transaction()
     public async setupDemo(ctx: VehicleManufactureNetContext): Promise<void> {
+        const participant = await ctx.getClientIdentity().loadParticipant();
+        if (!participant.canRegister) {
+            throw new Error('Participant cannot register new users');
+        }
         const vehicleData: any[] = JSON.parse(fs.readFileSync('./../data/vehicles.json').toString());
         const people = ['Paul', 'Andy', 'Hannah', 'Sam', 'Caroline'];
 
-        await Promise.all(people.map((name: string) => {
-            const person = new Person(name, 'Arium', 'manufacturer', 'person');
-            return ctx.getParticipantList().add(person);
-        }));
+        // await Promise.all(people.map(async (name: string) => {
+        //     const loggedInOrganization = await ctx.getClientIdentity().loadOrganization();
+    //     const person = new Person(name, 'customer', 'manufacturer', 'A');
+        //     return ctx.getPersonList().add(person);
+        // }));
 
         await Promise.all(vehicleData.map((data: any) => {
             const vehiclePromises = [];
@@ -151,6 +157,7 @@ export class VehicleContract extends Contract {
 
         const year = new Date(ctx.stub.getTxTimestamp().getSeconds() * 1000).getFullYear();
         const yearChar = yearChars[(year - 1980) % yearChars.length];
+        logger.info(JSON.stringify(yearChar));
         return vin.charAt(0) === manufacturer.originCode &&
             vin.charAt(1) === manufacturer.manufacturerCode &&
             vin.charAt(9) === yearChar;

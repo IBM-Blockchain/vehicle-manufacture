@@ -21,7 +21,7 @@ export class VehicleContractRouter implements IRouter {
         const metadata = JSON.parse(metadataBuff.toString()) as ChaincodeMetadata;
 
         this.router.post('/orders', (req, res) => {
-            handleRouterCall(req, res, this.fabricProxy, VehicleContractRouter.contractName + ':' + 'getOrders', [], 'evaluateTransaction', false);
+            handleRouterCall(req, res, this.fabricProxy, VehicleContractRouter.contractName + ':' + 'getOrders', [], 'evaluateTransaction', true);
         });
 
         // auto do the rest as I'm lazy

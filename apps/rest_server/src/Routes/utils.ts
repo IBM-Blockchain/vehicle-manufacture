@@ -67,11 +67,11 @@ export const transactionToCall = (fabricProxy: FabricProxy, transaction: Transac
             }
         }
 
-        let isJSON = false;
+        let isJSON = true;
 
-        if (transaction.returns && transaction.returns.$ref) {
-            isJSON = true; // contract uses JSON serializer so if returns a ref we know it is JSON
-        }
+        // if (transaction.returns && transaction.returns.$ref) {
+        //     isJSON = true; // contract uses JSON serializer so if returns a ref we know it is JSON
+        // }
 
         handleRouterCall(req, res, fabricProxy, contractName + ':' + transaction.name, args, 'submitTransaction', isJSON)
     }

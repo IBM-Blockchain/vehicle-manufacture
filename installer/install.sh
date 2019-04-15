@@ -144,6 +144,7 @@ echo "################"
 
 REST_DIR=$BASEDIR/../apps/rest_server
 CONTRACT_DIR=$BASEDIR/../contract
+FABRIC_DIR=$BASEDIR/vehiclemanufacture_fabric
 cd $CONTRACT_DIR
 
 cd $REST_DIR
@@ -181,14 +182,6 @@ VDA_REGISTER="$VDA_REST_PORT|regulator"
 PRINCE_REGISTER="$PRINCE_REST_PORT|insurer"
 ARIUM_REGISTER="$ARIUM_REST_PORT|manufacturer"
 
-# for REGISTRATION in "Arium|${ARIUM_REST_PORT}" "VDA|${VDA_REST_PORT}" "PrinceInsurance|${PRINCE_REST_PORT}"
-# do
-#     NAME="$(cut -d'|' -f1 <<<"$REGISTRATION")"
-#     TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"
-#     curl -X POST -H "Content-Type: application/json" -d '{"orgName": "'"$NAME"'", "orgType": "'"$TYPE"'"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/organization/register
-# done
-
-# REGISTER USERS FOR INSURER AND REGULATOR
 for REGISTRATION in $VDA_REGISTER $PRINCE_REGISTER $ARIUM_REGISTER
 do
     PORT="$(cut -d'|' -f1 <<<"$REGISTRATION")"
@@ -196,20 +189,16 @@ do
 
     echo "REGISTERING $TYPE"
     if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
-        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/participant/register
+        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
     else
-        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/participant/register
+        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
     fi
 done
 
-# REGISTER ARIUM AS SPECIAL CASE AS NEED MORE DETAIL
-# echo "REGISTERING ARIUM"
-# curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
-
-# for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"person\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON
-#     echo "REGISTERING $row"
-#     curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u $row:${row}pw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
-# done
+for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"customer\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON
+    echo "REGISTERING $row"
+    curl -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "role": "'"$customer"'"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
+done
 
 echo "################"
 echo "# DONE"

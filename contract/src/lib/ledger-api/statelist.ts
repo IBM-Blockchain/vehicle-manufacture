@@ -38,7 +38,7 @@ export class StateList<T extends State> {
         const buff = await this.ctx.stub.getState(key);
 
         if (buff.length > 0) {
-            throw new Error('Cannot create new state. State already exists for key');
+            throw new Error('Cannot create new state. State already exists for key ' + key);
         }
 
         await this.ctx.stub.putState(key, data);

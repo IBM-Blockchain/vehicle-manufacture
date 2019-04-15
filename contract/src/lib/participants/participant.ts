@@ -15,24 +15,42 @@ export class Participant extends State {
         return NetworkName + '.participants.'  + participantType;
     }
 
-    @Property('id', 'string')
+    @Property()
     public id: string;
 
-    @Property('orgName', 'string')
+    @Property()
     public orgName: string;
 
-    @Property('orgType', 'string')
+    @Property()
     public orgType: string;
 
-    @Property('role', 'string')
+    @Property()
     public role: string;
 
-    constructor(id: string, orgName: string, orgType: string, role: string, participantType: string) {
+    @Property()
+    public canRegister: boolean = false;
+
+    constructor(
+        id: string, role: string, orgType: string, orgName: string, canRegister: boolean, participantType: string,
+    ) {
         super(Participant.generateClass(participantType), [id]);
         this.id = id;
-        this.orgName = orgName;
-        this.orgType = orgType;
         this.role = role;
+        this.orgType = orgType;
+        this.orgName = orgName;
+        this.canRegister = canRegister;
+    }
+
+    public isManufacturer() {
+        return this.orgType === 'manufacturer';
+    }
+
+    public isRegulator() {
+        return this.orgType === 'regulator';
+    }
+
+    public isInsurer() {
+        return this.orgType === 'insurer';
     }
 
     public serialize(): Buffer {

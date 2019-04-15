@@ -16,13 +16,16 @@ export class VehicleManufactureNetContext extends Context {
     private ci: VehicleManufactureNetClientIdentity;
     private organizationList: OrganizationList;
     private participantList: ParticipantList;
+    private employeeList: ParticipantList;
+    private personList: ParticipantList;
     private vehicleList: VehicleList;
     private orderList: OrderList;
 
     constructor() {
         super();
         this.organizationList = new OrganizationList(this, 'organizations', [Organization]);
-        this.participantList = new ParticipantList(this, 'main', [Person]);
+        this.personList = new ParticipantList(this, 'person', [Person]);
+        this.employeeList = new ParticipantList(this, 'employee', [Person]);
         this.vehicleList = new VehicleList(this);
         this.orderList = new OrderList(this);
     }
@@ -39,8 +42,12 @@ export class VehicleManufactureNetContext extends Context {
         return this.organizationList;
     }
 
-    public getParticipantList(): ParticipantList {
-        return this.participantList;
+    public getEmployeeList(): ParticipantList {
+        return this.employeeList;
+    }
+
+    public getPersonList(): ParticipantList {
+        return this.personList;
     }
 
     public getVehicleList(): VehicleList {

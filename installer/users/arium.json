@@ -4,7 +4,7 @@
         "attrs": [
             {
                 "name": "vehicle_manufacture.role",
-                "value": "person",
+                "value": "employee",
                 "ecert": true
             },
             {
@@ -15,6 +15,11 @@
             {
                 "name": "vehicle_manufacture.org_type",
                 "value": "manufacturer",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.can_register",
+                "value": "y",
                 "ecert": true
             }
         ]
@@ -24,17 +29,7 @@
         "attrs": [
             {
                 "name": "vehicle_manufacture.role",
-                "value": "person",
-                "ecert": true
-            },
-            {
-                "name": "vehicle_manufacture.company",
-                "value": "Arium",
-                "ecert": true
-            },
-            {
-                "name": "vehicle_manufacture.org_type",
-                "value": "manufacturer",
+                "value": "customer",
                 "ecert": true
             }
         ]

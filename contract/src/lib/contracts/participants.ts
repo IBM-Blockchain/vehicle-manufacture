@@ -2,12 +2,16 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
+import * as x509 from '@ampretia/x509';
 import { Contract, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
-import { Participant } from '../participants/participant';
-import { NotRequired } from '../utils/annotations';
 import { VehicleManufactureNetContext } from '../utils/context';
+import * as asn1js from 'asn1js';
+import * as pkijs from 'pkijs';
+import { Person } from '../participants/person';
+const Certificate = pkijs.Certificate;
+
 
 const logger = newLogger('PARTICIPANTS_CONTRACT');
 
@@ -21,30 +25,48 @@ export class ParticipantsContract extends Contract {
     }
 
     @Transaction()
-    public async getAll(ctx: VehicleManufactureNetContext) {
-        const organization = await ctx.getClientIdentity().loadOrganization();
-        const participants = await ctx.getParticipantList().getAll();
-        return participants.filter((participant: Participant) => {
-            return participant.orgName === organization.name;
-        });
-    }
-
-    @Transaction()
     public async getOrganizations(ctx: VehicleManufactureNetContext) {
         return await ctx.getOrganizationList().getAll();
-        // return ctx.getOrganizationList().get('arium')
     }
 
     @Transaction()
-    public async registerParticipant(
+    public async getCustomers(ctx: VehicleManufactureNetContext) {
+        return await ctx.getPersonList().getAll();
+    }
+
+    @Transaction()
+    public async registerSuper(
         ctx: VehicleManufactureNetContext, originCode: string, manufacturerCode: string,
     ) {
         const orgName = ctx.getClientIdentity().getAttributeValue('vehicle_manufacture.company');
+        // const orgType = ctx.getClientIdentity().getAttributeValue('vehicle_manufacture.org_type');
 
         await this.registerOrganization(ctx, orgName, originCode, manufacturerCode);
         const participant = await ctx.getClientIdentity().newParticipantInstance();
+        switch (participant.orgType) {
+            case 'regulator':
+            case 'insurer':
+            case 'manufacturer':
+                await ctx.getEmployeeList().add(participant);
+                break;
+            default:
+                throw new Error(`Participant type does not exist: ${participant.orgType}`);
+        }
 
-        await ctx.getParticipantList().add(participant);
+    }
+
+    @Transaction()
+    public async registerPerson(ctx: VehicleManufactureNetContext, name: string, role: string) {
+        const participant = await ctx.getClientIdentity().loadParticipant();
+        const organization = await ctx.getClientIdentity().loadOrganization();
+        if (!participant.canRegister) {
+            throw new Error('This user cannot register new participants');
+        }
+
+        const customer = new Person(
+            `${name}@${organization.name}`, role, organization.orgType, organization.name, false,
+        );
+        await ctx.getPersonList().add(customer);
     }
 
     private async registerOrganization(

@@ -13,6 +13,7 @@ const ROLE_FIELD = 'vehicle_manufacture.role';
 const ID_FIELD = 'vehicle_manufacture.username';
 const COMPANY_FIELD = 'vehicle_manufacture.company';
 const ORG_TYPE_FIELD = 'vehicle_manufacture.org_type';
+const CAN_REGISTER_FIELD = 'vehicle_manufacture.can_register';
 
 export class VehicleManufactureNetClientIdentity extends ClientIdentity {
     private ctx: VehicleManufactureNetContext;
@@ -28,7 +29,9 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         try {
             switch (this.getAttributeValue(ROLE_FIELD)) {
                 case 'person':
-                    return await this.ctx.getParticipantList().get(id);
+                    return await this.ctx.getPersonList().get(id);
+                case 'employee':
+                    return await this.ctx.getEmployeeList().get(id);
                 default:
                     throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
             }
@@ -53,9 +56,15 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
             logger.error(`Organization ${orgId} does not exist`);
         }
         const role = this.getAttributeValue(ROLE_FIELD);
+        const canRegister = this.getAttributeValue(CAN_REGISTER_FIELD) === 'y';
 
-        switch (this.getAttributeValue(ROLE_FIELD)) {
-            case 'person': return new Person(id, orgId, orgType, role);
+        switch (role) {
+            case 'employee':
+                const employee = new Person(id, role, orgType, orgId, canRegister);
+                return employee;
+            case 'customer':
+                const customer = new Person(id, role, orgType, orgId, false);
+                return customer;
             default:
                 throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
         }

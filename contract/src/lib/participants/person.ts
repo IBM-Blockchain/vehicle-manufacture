@@ -21,7 +21,9 @@ export class Person extends Participant {
         return [];
     }
 
-    constructor(id: string, orgName: string, orgType: string, role: string) {
-        super(id, orgName, orgType, role, participantType);
+    constructor(
+        id: string, role: string, orgType: string, orgName: string, canRegister: boolean,
+    ) {
+        super(id, role, orgType, orgName, canRegister, participantType);
     }
 }

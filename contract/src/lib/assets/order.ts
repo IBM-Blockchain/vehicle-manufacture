@@ -35,19 +35,15 @@ export class Order extends Asset {
         return [];
     }
 
-    @Property('vehicleDetails', 'IVehicleDetails')
     private _vehicleDetails: IVehicleDetails;
 
-    @Property('orderStatus', 'number')
     private _orderStatus: OrderStatus;
 
-    @Property('vin', 'string')
     private _vin: string;
 
     @Property()
     private options: IOptions;
 
-    @Property('ordererId', 'string')
     private _ordererId: string;
 
     constructor(
@@ -67,6 +63,7 @@ export class Order extends Asset {
         }
     }
 
+    @Property('orderStatus', 'number')
     get orderStatus(): OrderStatus {
         return this._orderStatus;
     }
@@ -83,14 +80,17 @@ export class Order extends Asset {
         this._orderStatus = orderStatus;
     }
 
+    @Property('vehicleDetails', 'IVehicleDetails')
     get vehicleDetails(): IVehicleDetails {
         return this._vehicleDetails;
     }
 
+    @Property('vin', 'string')
     get vin(): string {
         return this._vin;
     }
 
+    @Property('ordererId', 'string')
     get ordererId(): string {
         return this._ordererId;
     }

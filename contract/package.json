@@ -18,7 +18,7 @@
     "dev:watch:arium": "nodemon --exec 'npm start -- --peer.address peer0.arium.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> arium.log 2>&1'",
     "dev:watch:vda": "nodemon --exec 'npm start -- --peer.address peer0.vda.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> vda.log 2>&1'",
     "dev:watch:prince": "nodemon --exec 'npm start -- --peer.address peer0.prince-insurance.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> prince.log 2>&1'",
-    "watch:start": "npm-watch start:docker",
+    "watch:start": "npm run start:docker",
     "prepublishOnly": "npm run build"
   },
   "author": "ibm-blockchain",
@@ -30,11 +30,13 @@
     "typescript": "3.4.1"
   },
   "dependencies": {
+    "@ampretia/x509": "^0.4.0",
+    "asn1js": "^2.0.22",
     "concurrently": "^4.1.0",
     "fabric-contract-api": "unstable-1.4",
     "fabric-shim": "unstable-1.4",
     "get-params": "^0.1.2",
-    "npm-watch": "^0.6.0",
+    "pkijs": "^2.1.76",
     "reflect-metadata": "^0.1.13"
   }
 }
