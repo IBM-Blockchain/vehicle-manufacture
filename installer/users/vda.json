@@ -4,14 +4,34 @@
         "attrs": [
             {
                 "name": "vehicle_manufacture.role",
-                "value": "regulator",
+                "value": "employee",
                 "ecert": true
             },
             {
                 "name": "vehicle_manufacture.company",
-                "value": "vda",
+                "value": "VDA",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "regulator",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.can_register",
+                "value": "y",
                 "ecert": true
             }
         ]
+    },
+    {
+        "name": "telematics_1",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "telematic",
+                "ecert": true
+            }
+        ] 
     }
 ]

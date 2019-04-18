@@ -26,7 +26,6 @@ export class State {
         if (!objClass) {
             throw new Error(`Unknown class of ${json.class}`);
         }
-
         return this.callConstructor(objClass, json);
     }
 
@@ -36,7 +35,6 @@ export class State {
     }
 
     public static makeKey(keyParts: string[]): string {
-        logger.info(`KEY PARTS ${JSON.stringify(keyParts)}`);
         return keyParts.join(':');
     }
 
@@ -56,14 +54,12 @@ export class State {
         const missingFields = [];
 
         if (!paramNames.every((name) => {
-            logger.info('USING NAME ' + name);
             let ignoreMissing = false;
 
             if (name.endsWith('?')) {
-                name = name.slice(-1);
+                name = name.slice(0, -1);
                 ignoreMissing = true;
             }
-
             if (json.hasOwnProperty(name)) {
                 let arg = json[name];
 
@@ -85,24 +81,26 @@ export class State {
         })) {
             throw new Error('Could not deserialize JSON. Missing required fields.' + JSON.stringify(missingFields));
         }
-
         const object = new (objClass)(...args);
 
         return object;
     }
 
     private class: string;
+    private subClass?: string;
     private key: string;
 
     constructor(stateClass: string, keyParts: string[]) {
         this.class = stateClass;
         this.key = State.makeKey(keyParts);
-
-        logger.info('THE KEY ' + this.key);
     }
 
     public getClass(): string {
         return this.class;
+    }
+
+    public getSubClass(): string {
+        return this.subClass;
     }
 
     public getKey(): string {

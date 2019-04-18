@@ -5,10 +5,9 @@ SPDX-License-Identifier: Apache-2.0
 import { Object, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import 'reflect-metadata';
-import { Manufacturer } from '../participants/manufacturer';
 import { Participant } from '../participants/participant';
-import { Person } from '../participants/person';
 import { NotRequired } from '../utils/annotations';
+import { Organization } from './../organizations/organization';
 import { Asset } from './asset';
 import { IOptions } from './options';
 import './vehicleDetails';
@@ -24,37 +23,32 @@ export enum OrderStatus {
     DELIVERED,
 }
 
-const assetType = 'Order';
-
 @Object()
 export class Order extends Asset {
     public static getClass() {
-        return Asset.generateClass(assetType);
+        return Asset.generateClass(Order.name);
     }
 
-    @Property('vehicleDetails', 'IVehicleDetails')
     private _vehicleDetails: IVehicleDetails;
 
-    @Property('orderStatus', 'number')
     private _orderStatus: OrderStatus;
-
-    @Property('vin', 'string')
-    private _vin: string;
 
     @Property()
     private options: IOptions;
 
-    @Property('ordererId', 'string')
     private _ordererId: string;
+
+    private _vin: string;
 
     constructor(
         id: string,
-        vehicleDetails: IVehicleDetails, orderStatus: OrderStatus, options: IOptions, ordererId: string,
+        vehicleDetails: IVehicleDetails,
+        orderStatus: OrderStatus,
+        options: IOptions,
+        ordererId: string,
         @NotRequired vin?: string,
     ) {
-        super(id, assetType);
-
-        logger.info('ORDERER ID ' + ordererId);
+        super(id, Order.name);
 
         this._vehicleDetails = vehicleDetails;
         this._orderStatus = orderStatus;
@@ -66,13 +60,14 @@ export class Order extends Asset {
         }
     }
 
+    @Property()
     get orderStatus(): OrderStatus {
         return this._orderStatus;
     }
 
     set orderStatus(orderStatus: OrderStatus) {
-        if (orderStatus < this._orderStatus) {
-            throw new Error('Status of order cannot go backwards');
+        if (orderStatus <= this._orderStatus) {
+            throw new Error('Status of order cannot go backwards or remain the same');
         }
 
         if (orderStatus - this._orderStatus !== 1) {
@@ -82,25 +77,31 @@ export class Order extends Asset {
         this._orderStatus = orderStatus;
     }
 
+    @Property()
     get vehicleDetails(): IVehicleDetails {
         return this._vehicleDetails;
     }
 
-    get vin(): string {
-        return this._vin;
-    }
-
+    @Property()
     get ordererId(): string {
         return this._ordererId;
     }
 
-    public isOrderer(orderer: Participant) {
-        return orderer.getClass() === Person.getClass() &&
-            orderer.id === this.ordererId;
+    @Property()
+    get vin(): string {
+        return this._vin;
     }
 
-    public isManufacturer(manufacturer: Manufacturer) {
-        return manufacturer.getClass() === Manufacturer.getClass() &&
-            manufacturer.id === this.vehicleDetails.makeId;
+    set vin(vin: string) {
+        this._vin = vin;
+    }
+
+    public canBeChangedBy(participant: Participant, organization: Organization) {
+        if (participant.orgId !== organization.id) {
+            throw new Error('Participant is not in organization');
+        }
+        return participant.id === this.ordererId ||
+               (participant.role === 'employee' && this.vehicleDetails.makeId === organization.id)
+               || participant.role === 'employee' && organization.orgType === 'regulator';
     }
 }

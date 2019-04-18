@@ -4,12 +4,22 @@
         "attrs": [
             {
                 "name": "vehicle_manufacture.role",
-                "value": "insurer",
+                "value": "employee",
                 "ecert": true
             },
             {
                 "name": "vehicle_manufacture.company",
-                "value": "prince insurance",
+                "value": "PrinceInsurance",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "insurer",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.can_register",
+                "value": "y",
                 "ecert": true
             }
         ]

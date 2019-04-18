@@ -3,12 +3,15 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Object, Property } from 'fabric-contract-api';
-import { Manufacturer } from '../participants/manufacturer';
+import { newLogger } from 'fabric-shim';
+import { Manufacturer } from '../organizations/manufacturer';
 import { Person } from '../participants/person';
+import { NotRequired } from '../utils/annotations';
 import { Asset } from './asset';
 import './usageEvents';
 import { IUsageEvent } from './usageEvents';
 import { IVehicleDetails } from './vehicleDetails';
+const logger = newLogger('VEHICLE');
 
 export enum VehicleStatus {
     ACTIVE = 0,
@@ -16,56 +19,93 @@ export enum VehicleStatus {
     SCRAPPED,
 }
 
-const assetType = 'Vehicle';
-
 @Object()
 export class Vehicle extends Asset {
     public static getClass() {
-        return Asset.generateClass(assetType);
+        return Asset.generateClass(Vehicle.name);
+    }
+
+    public static validateVin(vin: string, manufacturer: Manufacturer, validationYear: number): boolean {
+        const yearChars = [
+            'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Y',
+            1, 2, 3, 4, 5, 6, 7, 8, 9,
+        ];
+
+        const yearChar = yearChars[(validationYear - 1980) % yearChars.length];
+        return vin.length === 17 &&
+            vin.charAt(0) === manufacturer.originCode &&
+            vin.charAt(1) === manufacturer.manufacturerCode &&
+            vin.charAt(9) === yearChar;
     }
 
     @Property()
     private vehicleDetails: IVehicleDetails;
 
-    @Property()
-    private vehicleStatus: VehicleStatus;
+    private _vehicleStatus: VehicleStatus;
 
-    @Property('usageRecord', 'IUsageEvent[]')
-    private usageRecord: IUsageEvent[];
+    private _usageRecord: IUsageEvent[];
 
-    @Property()
     private _ownerId: string;
 
+    private _telematicId: string;
+
     constructor(
-        vin: string, vehicleDetails: IVehicleDetails, vehicleStatus: VehicleStatus, usageRecord: IUsageEvent[],
-        ownerId?: string,
+        id: string,
+        telematicId: string,
+        vehicleDetails: IVehicleDetails,
+        vehicleStatus: VehicleStatus,
+        usageRecord: IUsageEvent[],
+        @NotRequired ownerId?: string,
     ) {
-        super(vin, assetType);
+        super(id, Vehicle.name);
 
         this.vehicleDetails = vehicleDetails;
-        this.vehicleStatus = vehicleStatus;
-        this.usageRecord = usageRecord;
+        this._vehicleStatus = vehicleStatus;
+        this._usageRecord = usageRecord;
+        this._telematicId = telematicId;
 
         if (ownerId) {
             this._ownerId = ownerId;
         }
     }
 
+    @Property()
     get ownerId(): string {
-        return this.ownerId;
+        return this._ownerId;
     }
 
     set ownerId(ownerId: string) {
         this._ownerId = ownerId;
     }
 
-    public isOwner(owner: Person) {
-        return owner.getClass() === Person.getClass() &&
-            owner.id === this.ownerId;
+    @Property()
+    get vehicleStatus(): VehicleStatus {
+        return this._vehicleStatus;
     }
 
-    public isManufacturer(manufacturer: Manufacturer) {
-        return manufacturer.getClass() === Manufacturer.getClass() &&
-            manufacturer.id === this.vehicleDetails.makeId;
+    set vehicleStatus(status: VehicleStatus) {
+        this._vehicleStatus = status;
+    }
+
+    @Property('usageRecord', 'IUsageEvent[]')
+    get usageRecord(): IUsageEvent[] {
+        return this._usageRecord;
+    }
+
+    set usageRecord(usageEvents: IUsageEvent[]) {
+        this._usageRecord = usageEvents;
+    }
+
+    @Property()
+    get telematicId(): string {
+        return this._telematicId;
+    }
+
+    public belongsTo(person: Person) {
+        return person.id === this.ownerId;
+    }
+
+    public madeByOrg(person: Person) {
+        return person.orgId === this.vehicleDetails.makeId;
     }
 }

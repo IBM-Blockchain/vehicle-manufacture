@@ -1,0 +1,90 @@
+{
+    "Arium": {
+          "Nova": [
+              {
+                  "vin": "ea290d9f5a6833a65",
+                  "colour": "Royal Purple",
+                  "vehicleStatus": "ACTIVE"
+              }
+          ],
+          "Nebula": [
+              {
+                  "vin": "39fd242c2bbe80f11",
+                  "colour": "Statement Blue",
+                  "vehicleStatus": "ACTIVE"
+              }
+          ]
+      },
+      "Morde": {
+          "Putt": [
+              {
+                  "vin": "835125e50bca37ca1",
+                  "colour": "Black",
+                  "vehicleStatus": "ACTIVE",
+                  "suspiciousMessage": "Mileage anomaly"
+              },
+              {
+                  "vin": "0812e6d8d486e0464",
+                  "colour": "Red",
+                  "vehicleStatus": "ACTIVE"
+              },
+              {
+                  "vin": "c4aa418f26d4a0403",
+                  "colour": "Silver",
+                  "vehicleStatus": "ACTIVE"
+              }
+          ],
+          "Pluto": [
+              {
+                  "vin": "7382fbfc083f696e5",
+                  "colour": "White",
+                  "vehicleStatus": "ACTIVE"
+              },
+              {
+                  "vin": "01a9cd3f8f5db5ef7",
+                  "colour": "Green",
+                  "vehicleStatus": "ACTIVE",
+                  "suspiciousMessage": "Insurance write-off but still active"
+              },
+              {
+                  "vin": "97f305df4c2881e71",
+                  "colour": "Grey",
+                  "vehicleStatus": "ACTIVE"
+              }
+          ]
+      },
+      "Ridge": {
+          "Cannon": [
+              {
+                  "vin": "af462063fb901d0e6",
+                  "colour": "Red",
+                  "vehicleStatus": "ACTIVE"
+              },
+              {
+                  "vin": "3ff3395ecfd38f787",
+                  "colour": "White",
+                  "vehicleStatus": "ACTIVE",
+                  "suspiciousMessage": "Suspicious ownership sequence"
+              },
+              {
+                  "vin": "de701fcf2a78d8086",
+                  "colour": "Silver",
+                  "vehicleStatus": "ACTIVE",
+                  "suspiciousMessage": "Untaxed vehicle"
+              }
+          ],
+          "Rancher": [
+              {
+                  "vin": "2fcdd7b5131e81fd0",
+                  "colour": "Blue",
+                  "vehicleStatus": "ACTIVE"
+              },
+              {
+                  "vin": "79540e5384c970321",
+                  "colour": "White",
+                  "vehicleStatus": "ACTIVE",
+                  "suspiciousMessage": "Uninsured vehicle"
+              }
+          ]
+      }
+  }

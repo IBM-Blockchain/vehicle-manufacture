@@ -38,27 +38,20 @@ export class StateList<T extends State> {
         const buff = await this.ctx.stub.getState(key);
 
         if (buff.length > 0) {
-            throw new Error('Cannot create new state. State already exists for key');
+            throw new Error('Cannot create new state. State already exists for key ' + key);
         }
 
         await this.ctx.stub.putState(key, data);
     }
 
     public async get(key: string): Promise<T> {
-        logger.info('STATE LIST GET KEY' + key);
-
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const data = await this.ctx.stub.getState(ledgerKey);
 
         if (data.length === 0) {
-            throw new Error('Cannot get state. No state exists for key');
+            throw new Error(`Cannot get state. No state exists for key ${key} ${this.name}`);
         }
-
-        logger.info('STATE LIST GOT DATA FOR KEY ' + data.toString());
-
         const state = State.deserialize(data, this.supportedClasses) as T;
-
-        logger.info('STATE LIST DESERIALIZED ' + JSON.stringify(state));
 
         return state;
     }
@@ -92,13 +85,13 @@ export class StateList<T extends State> {
     public async getAll(): Promise<T[]> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
 
-        const states: any[] = [];
+        const states: T[] = [];
 
         let value = (await data.next()).value;
 
         while (value) {
 
-            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses);
+            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses) as T;
 
             states.push(state);
 
@@ -140,18 +133,54 @@ export class StateList<T extends State> {
         const buff = await this.ctx.stub.getState(key);
 
         if (buff.length === 0) {
-            throw new Error('Cannot update state. No state exists for key');
+            throw new Error(`Cannot update state. No state exists for key ${key}`);
         }
 
         await this.ctx.stub.putState(key, data);
     }
 
+    public async exists(key: string) {
+        try {
+            await this.get(key);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
+
+    public async query(query: any) {
+        const {stub} = this.ctx;
+        if (!query.selector) {
+            query.selector = {};
+        }
+        query.selector._id = {
+            $regex: `.*${this.name}.*`,
+        };
+
+        const iterator = await stub.getQueryResult(JSON.stringify(query));
+        let value = (await iterator.next()).value;
+
+        const states: T[] = [];
+
+        while (value) {
+            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses) as T;
+            logger.info(JSON.stringify(state));
+            states.push(state);
+            const next = await iterator.next();
+            value = next.value;
+        }
+        return states;
+    }
+
+    public getName(): string {
+        return this.name;
+    }
+
     public use(...stateClasses: Array<IState<T>>) {
         for (const stateClass of stateClasses) {
             if (!((stateClass as any).prototype instanceof State)) {
-                throw new Error(`Cannot use ${(stateClass as any).prototype.constructor.name} as type State`);
+                throw new Error(`Cannot use ${(stateClass as any).name} as type State`);
             }
-
             this.supportedClasses.set(stateClass.getClass(), stateClass);
         }
     }

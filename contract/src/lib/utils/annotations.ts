@@ -13,12 +13,8 @@ export function NotRequired(target: any, propertyKey: string, descriptor: number
     const existingParams = Reflect.getMetadata('contract:function', target, propertyKey) ||
         getParams(target[propertyKey]);
 
-    logger.info('EXISTING PARAMS' + JSON.stringify(existingParams) + 'DESCRIPTOR ' + descriptor);
-
     existingParams[descriptor] = (existingParams[descriptor] as string).endsWith('?') ?
         existingParams[descriptor] : existingParams[descriptor] + '?';
 
     Reflect.defineMetadata('contract:function', existingParams, target, propertyKey);
-
-    logger.info('@NotRequired - ' + JSON.stringify(existingParams));
 }

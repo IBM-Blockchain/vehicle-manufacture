@@ -14,7 +14,7 @@ export enum EventType {
 @Object()
 export class IUsageEvent {
     @Property()
-    public eventID: string;
+    public eventID?: string;
 
     @Property()
     public eventType: EventType;
@@ -38,5 +38,5 @@ export class IUsageEvent {
     public roll: number;
 
     @Property()
-    public timestamp: string;
+    public timestamp?: number;
 }

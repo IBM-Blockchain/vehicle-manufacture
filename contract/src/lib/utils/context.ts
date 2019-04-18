@@ -3,28 +3,35 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Context } from 'fabric-contract-api';
-import { OrderList } from '../lists/orderlist';
+import { Order } from '../assets/order';
+import { Policy } from '../assets/policy';
+import { Vehicle } from '../assets/vehicle';
+import { AssetList } from '../lists/assetlist';
+import { OrganizationList } from '../lists/organizationlist';
 import { ParticipantList } from '../lists/participantlist';
-import { VehicleList } from '../lists/vehiclelist';
-import { Insurer } from '../participants/insurer';
-import { Manufacturer } from '../participants/manufacturer';
+import { Insurer } from '../organizations/insurer';
+import { Manufacturer } from '../organizations/manufacturer';
+import { Regulator } from '../organizations/regulator';
 import { Person } from '../participants/person';
-import { Regulator } from '../participants/regulator';
+import { TelematicsDevice } from '../participants/telematics';
 import { VehicleManufactureNetClientIdentity } from './client-identity';
 
 export class VehicleManufactureNetContext extends Context {
 
     private ci: VehicleManufactureNetClientIdentity;
+    private organizationList: OrganizationList;
     private participantList: ParticipantList;
-    private vehicleList: VehicleList;
-    private orderList: OrderList;
+    private vehicleList: AssetList<Vehicle>;
+    private orderList: AssetList<Order>;
+    private policyList: AssetList<Policy>;
 
     constructor() {
         super();
-
-        this.participantList = new ParticipantList(this, 'main', [Manufacturer, Regulator, Insurer, Person]);
-        this.vehicleList = new VehicleList(this);
-        this.orderList = new OrderList(this);
+        this.organizationList = new OrganizationList(this, 'organizations', [Manufacturer, Insurer, Regulator]);
+        this.participantList = new ParticipantList(this, 'participant', [Person, TelematicsDevice]);
+        this.vehicleList = new AssetList(this, 'vehicles', [Vehicle]);
+        this.orderList = new AssetList(this, 'orders', [Order]);
+        this.policyList = new AssetList(this, 'policies', [Policy]);
     }
 
     public setClientIdentity() { // horrible hack breaks default clientIdentity as overwrites the function
@@ -35,15 +42,23 @@ export class VehicleManufactureNetContext extends Context {
         return this.ci;
     }
 
+    public getOrganizationList(): OrganizationList {
+        return this.organizationList;
+    }
+
     public getParticipantList(): ParticipantList {
         return this.participantList;
     }
 
-    public getVehicleList(): VehicleList {
+    public getVehicleList(): AssetList<Vehicle> {
         return this.vehicleList;
     }
 
-    public getOrderList(): OrderList {
+    public getOrderList(): AssetList<Order> {
         return this.orderList;
+    }
+
+    public getPolicyList(): AssetList<Policy> {
+        return this.policyList;
     }
 }

@@ -6,19 +6,17 @@ import { Object } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { Participant } from './participant';
 
-const participantType = 'Person';
-
 const logger = newLogger('PERSON');
 
 @Object()
 export class Person extends Participant {
     public static getClass() {
-        return Participant.generateClass(participantType);
+        return Participant.generateClass(Person.name);
     }
 
-    constructor(id: string) {
-        super(id, participantType);
-
-        logger.info('THE ID ' + id);
+    constructor(
+        id: string, role: string, orgId: string, canRegister: boolean,
+    ) {
+        super(id, role, orgId, canRegister, Person.name);
     }
 }

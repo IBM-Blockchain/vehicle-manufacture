@@ -143,26 +143,30 @@ echo "# STARTUP REST SERVERS"
 echo "################"
 
 REST_DIR=$BASEDIR/../apps/rest_server
+CONTRACT_DIR=$BASEDIR/../contract
+FABRIC_DIR=$BASEDIR/vehiclemanufacture_fabric
+cd $CONTRACT_DIR
 
 cd $REST_DIR
 npm install
 npm run build
-cd $BASEDIR
 
 ARIUM_REST_PORT=3000
 VDA_REST_PORT=3001
 PRINCE_REST_PORT=3002
 
-node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNECTION --port $ARIUM_REST_PORT > $BASEDIR/tmp/arium_server.log 2>&1 &
+./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNECTION --port $ARIUM_REST_PORT > $BASEDIR/tmp/arium_server.log 2>&1 &
 
-node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/VDA --connection-profile $VDA_CONNECTION --port $VDA_REST_PORT > $BASEDIR/tmp/vda_server.log 2>&1 &
+./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/VDA --connection-profile $VDA_CONNECTION --port $VDA_REST_PORT > $BASEDIR/tmp/vda_server.log 2>&1 &
 
-node $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/PrinceInsurance --connection-profile $PRINCE_CONNECTION --port $PRINCE_REST_PORT > $BASEDIR/tmp/prince_server.log 2>&1 &
+./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/PrinceInsurance --connection-profile $PRINCE_CONNECTION --port $PRINCE_REST_PORT > $BASEDIR/tmp/prince_server.log 2>&1 &
 
+cd $BASEDIR
 for PORT in $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
 do
     printf "WAITING FOR REST SERVER ON PORT $PORT"
-    until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT); do
+    until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT);
+    do
         printf '.'
         sleep 2
     done
@@ -176,24 +180,24 @@ PARTICIPANTS_CONTRACT="org.acme.vehicle_network.participants"
 
 VDA_REGISTER="$VDA_REST_PORT|regulator"
 PRINCE_REGISTER="$PRINCE_REST_PORT|insurer"
+ARIUM_REGISTER="$ARIUM_REST_PORT|manufacturer"
 
-# REGISTER USERS FOR INSURER AND REGULATOR
-for REGISTRATION in $VDA_REGISTER $PRINCE_REGISTER
+for REGISTRATION in $VDA_REGISTER $PRINCE_REGISTER $ARIUM_REGISTER
 do
     PORT="$(cut -d'|' -f1 <<<"$REGISTRATION")"
     TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"
 
     echo "REGISTERING $TYPE"
-    curl -X POST -H "Content-Type: application/json" -d '{}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/$TYPE/register
+    if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
+        curl -s -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
+    else
+        curl -s -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
+    fi
 done
 
-# REGISTER ARIUM AS SPECIAL CASE AS NEED MORE DETAIL
-echo "REGISTERING ARIUM"
-curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/manufacturer/register
-
-for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"person\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON 
+for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"customer\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON
     echo "REGISTERING $row"
-    curl -X POST -H "Content-Type: application/json" -d '{}' -u $row:${row}pw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
+    curl -s -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "role": "'"$customer"'"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
 done
 
 echo "################"

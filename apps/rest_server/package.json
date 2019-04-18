@@ -22,12 +22,13 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
-    "swagger-ui-express": "^4.0.2",
-    "fabric-network": "../../npm_packs/fabric-network-2.0.0-snapshot.tgz",
     "fabric-client": "../../npm_packs/fabric-client-2.0.0-snapshot.tgz",
+    "fabric-network": "../../npm_packs/fabric-network-2.0.0-snapshot.tgz",
+    "swagger-ui-express": "^4.0.2",
     "yargs": "^13.2.2"
   },
   "devDependencies": {
-    "@types/express-ws": "^3.0.0"
+    "@types/express-ws": "^3.0.0",
+    "nodemon": "^1.18.10"
   }
 }

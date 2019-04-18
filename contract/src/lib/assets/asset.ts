@@ -2,14 +2,13 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Object as ContractObject, Property } from 'fabric-contract-api';
+import { Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
 import { State } from '../ledger-api/state';
 
 const logger = newLogger('ASSET');
 
-@ContractObject()
 export class Asset extends State {
     public static generateClass(assetType: string): string {
         return NetworkName + '.assets.'  + assetType;
@@ -31,17 +30,12 @@ export class Asset extends State {
     public serialize(): Buffer {
         const toSerialize = JSON.parse(State.serialize(this).toString());
 
-        logger.info('POST FIRST SERIALIZE ' + JSON.stringify(toSerialize));
-
         Object.keys(toSerialize).forEach((key) => {
-            logger.info('WHERE MY KEYS? ' + key);
             if (key.startsWith('_')) {
                 Object.defineProperty(toSerialize, key.slice(1), Object.getOwnPropertyDescriptor(toSerialize, key));
                 delete toSerialize[key];
             }
         });
-
-        logger.info('POST KEY RESET ' + JSON.stringify(toSerialize));
 
         return Buffer.from(State.serialize(toSerialize));
     }
