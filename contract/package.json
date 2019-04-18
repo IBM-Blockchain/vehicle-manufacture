@@ -3,21 +3,18 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
-  "watch": {
-    "start:docker": "src/**/*.ts"
-  },
   "scripts": {
     "lint": "tslint -c tslint.json 'src/**/*.ts'",
     "start": "fabric-chaincode-node start",
-    "start:docker": "npm run start:arium; npm run start:vda; npm run start:prince",
-    "start:arium": "docker exec -d arium_cli bash -c 'cd /etc/hyperledger/contract; npm rebuild; pkill -9 node; ./node_modules/concurrently/bin/concurrently.js \"npm run build:watch\" \"npm run dev:watch:arium\"'",
-    "start:vda": "docker exec -d vda_cli bash -c 'cd /etc/hyperledger/contract; npm rebuild; pkill -9 node; ./node_modules/concurrently/bin/concurrently.js \"npm run build:watch\" \"npm run dev:watch:vda\"'",
-    "start:prince": "docker exec -d princeinsurance_cli bash -c 'cd /etc/hyperledger/contract; npm rebuild; pkill -9 node; ./node_modules/concurrently/bin/concurrently.js \"npm run build:watch\" \"npm run dev:watch:prince\"'",
+    "start:docker": "npm run start:arium; npm run start:vda; npm run start:princeinsurance",
+    "start:arium": "./start.sh arium",
+    "start:vda": "./start.sh vda",
+    "start:princeinsurance": "./start.sh princeinsurance",
     "build": "tsc",
     "build:watch": "tsc -w",
-    "dev:watch:arium": "nodemon --exec 'npm start -- --peer.address peer0.arium.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> arium.log 2>&1'",
-    "dev:watch:vda": "nodemon --exec 'npm start -- --peer.address peer0.vda.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> vda.log 2>&1'",
-    "dev:watch:prince": "nodemon --exec 'npm start -- --peer.address peer0.prince-insurance.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> prince.log 2>&1'",
+    "dev:watch:arium": "mkdir tmp; nodemon --watch dist --verbose --exec 'npm start -- --peer.address peer0.arium.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> tmp/arium.log 2>&1'",
+    "dev:watch:vda": "mkdir tmp; nodemon  --watch dist --verbose --exec 'npm start -- --peer.address peer0.vda.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> tmp/vda.log 2>&1'",
+    "dev:watch:princeinsurance": "mkdir tmp; nodemon --watch dist --verbose --exec 'npm start -- --peer.address peer0.prince-insurance.com:7052 --chaincode-id-name vehicle-manufacture-chaincode:0 >> tmp/prince.log 2>&1'",
     "watch:start": "npm run start:docker",
     "prepublishOnly": "npm run build"
   },
@@ -25,6 +22,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/node": "11.12.2",
+    "@types/uuid": "^3.4.4",
     "nodemon": "^1.18.10",
     "tslint": "5.14.0",
     "typescript": "3.4.1"
@@ -37,6 +35,7 @@
     "fabric-shim": "unstable-1.4",
     "get-params": "^0.1.2",
     "pkijs": "^2.1.76",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "uuid": "^3.3.2"
   }
 }

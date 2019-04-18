@@ -5,17 +5,10 @@ SPDX-License-Identifier: Apache-2.0
 import { Property } from 'fabric-contract-api';
 import { NetworkName } from '../../constants';
 import { State } from '../ledger-api/state';
-import { NotRequired } from '../utils/annotations';
-
-const assetType = 'Organization';
 
 export class Organization extends State {
-    public static generateClass(): string {
-        return NetworkName + '.organization';
-    }
-
-    public static getClass() {
-        return Organization.generateClass();
+    public static generateClass(orgType: string): string {
+        return NetworkName + '.organizations.' + orgType;
     }
 
     @Property('id', 'string')
@@ -37,15 +30,11 @@ export class Organization extends State {
         id: string,
         name: string,
         orgType: string,
-        @NotRequired originCode?: string,
-        @NotRequired manufacturerCode?: string,
      ) {
-        super(Organization.generateClass(), [id]);
+        super(Organization.generateClass(orgType), [id]);
         this.id = id;
         this.name = name;
         this.orgType = orgType;
-        this.originCode = originCode;
-        this.manufacturerCode = manufacturerCode;
     }
 
     public getName() {

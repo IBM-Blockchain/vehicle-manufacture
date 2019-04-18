@@ -189,15 +189,15 @@ do
 
     echo "REGISTERING $TYPE"
     if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
-        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
+        curl -s -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
     else
-        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
+        curl -s -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
     fi
 done
 
 for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"customer\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON
     echo "REGISTERING $row"
-    curl -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "role": "'"$customer"'"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
+    curl -s -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "role": "'"$customer"'"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
 done
 
 echo "################"

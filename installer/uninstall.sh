@@ -21,7 +21,8 @@ DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 ################
 # REMOVE NODE LEFTOVERS FROM CHAINCODE
 ################
-docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf node_modules; rm -f package-lock.json'
+# TODO - REMEMEBER TO ADD BACK IN rm -rf node_modules; AND rm -f package-lock.jsonTO BELOW COMMAND
+docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp'
 
 ################
 # REMOVE DOCKER CONTAINERS

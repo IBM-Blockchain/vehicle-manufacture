@@ -33,5 +33,15 @@
                 "ecert": true
             }
         ]
+    },
+    {
+        "name": "fred",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "customer",
+                "ecert": true
+            }
+        ]
     }
 ]

@@ -3,7 +3,10 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { ClientIdentity, newLogger } from 'fabric-shim';
+import { Insurer } from '../organizations/insurer';
+import { Manufacturer } from '../organizations/manufacturer';
 import { Organization } from '../organizations/organization';
+import { Regulator } from '../organizations/regulator';
 import { Participant } from '../participants/participant';
 import { Person } from '../participants/person';
 import { VehicleManufactureNetContext } from './context';
@@ -11,7 +14,6 @@ const logger = newLogger('CLIENTIDENTITY');
 
 const ROLE_FIELD = 'vehicle_manufacture.role';
 const ID_FIELD = 'vehicle_manufacture.username';
-const COMPANY_FIELD = 'vehicle_manufacture.company';
 const ORG_TYPE_FIELD = 'vehicle_manufacture.org_type';
 const CAN_REGISTER_FIELD = 'vehicle_manufacture.can_register';
 
@@ -24,26 +26,25 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         this.ctx = ctx;
     }
 
-    public async loadParticipant(): Promise<Participant> {
+    public async loadParticipant(): Promise<{participant: Participant, organization: Organization}> {
         const id = this.getAttributeValue(ID_FIELD);
+        const role = this.getAttributeValue(ROLE_FIELD);
         try {
-            switch (this.getAttributeValue(ROLE_FIELD)) {
-                case 'person':
-                    return await this.ctx.getPersonList().get(id);
+            switch (role) {
+                case 'customer':
                 case 'employee':
-                    return await this.ctx.getEmployeeList().get(id);
+                case 'telematic':
+                    const participant = await this.ctx.getParticipantList().get(id);
+                    return {
+                        organization: await this.ctx.getOrganizationList().get(participant.orgId),
+                        participant,
+                    };
                 default:
-                    throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
+                    throw new Error(`Unknown participant type ${role}`);
             }
         } catch (err) {
             throw new Error(`Unable to load participant for client ${id} ERROR: ${err.message}`);
         }
-    }
-
-    public async loadOrganization() {
-        const participant = await this.loadParticipant();
-        const org = participant.orgName;
-        return this.ctx.getOrganizationList().get(org);
     }
 
     public async newParticipantInstance(): Promise<Participant> {
@@ -53,30 +54,34 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         try {
             await this.ctx.getOrganizationList().get(orgId);
         } catch (err) {
-            logger.error(`Organization ${orgId} does not exist`);
+            logger.warn(`Organization ${orgId} does not exist`);
         }
         const role = this.getAttributeValue(ROLE_FIELD);
         const canRegister = this.getAttributeValue(CAN_REGISTER_FIELD) === 'y';
 
         switch (role) {
             case 'employee':
-                const employee = new Person(id, role, orgType, orgId, canRegister);
+                const employee = new Person(id, role, orgId, canRegister);
                 return employee;
             case 'customer':
-                const customer = new Person(id, role, orgType, orgId, false);
+                const customer = new Person(id, role, orgId, false);
                 return customer;
             default:
                 throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
         }
     }
 
-    public newOrganizationInstance(orgName, additionalInfo: any): Organization {
+    public newOrganizationInstance(orgName: string, additionalInfo: any): Organization {
         const orgType = this.getAttributeValue(ORG_TYPE_FIELD);
         switch (orgType) {
             case 'manufacturer':
-                const organization = new Organization(orgName, orgName, orgType, ...additionalInfo);
-                return organization;
+                return new Manufacturer(orgName, orgName, additionalInfo[0], additionalInfo[1]);
+            case 'insurer':
+                return new Insurer(orgName, orgName);
+            case 'regulator':
+                return new Regulator(orgName, orgName);
+            default:
+                throw new Error('Invalid organization type: ' + orgType);
         }
-        return new Organization(orgName, orgName, orgType);
     }
 }

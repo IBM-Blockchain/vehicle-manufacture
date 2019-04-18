@@ -23,5 +23,15 @@
                 "ecert": true
             }
         ]
+    },
+    {
+        "name": "telematics_1",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "telematic",
+                "ecert": true
+            }
+        ] 
     }
 ]

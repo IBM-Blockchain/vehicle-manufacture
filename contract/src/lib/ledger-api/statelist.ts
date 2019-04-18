@@ -85,13 +85,13 @@ export class StateList<T extends State> {
     public async getAll(): Promise<T[]> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
 
-        const states: any[] = [];
+        const states: T[] = [];
 
         let value = (await data.next()).value;
 
         while (value) {
 
-            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses);
+            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses) as T;
 
             states.push(state);
 
@@ -148,6 +148,30 @@ export class StateList<T extends State> {
         }
     }
 
+    public async query(query: any) {
+        const {stub} = this.ctx;
+        if (!query.selector) {
+            query.selector = {};
+        }
+        query.selector._id = {
+            $regex: `.*${this.name}.*`,
+        };
+
+        const iterator = await stub.getQueryResult(JSON.stringify(query));
+        let value = (await iterator.next()).value;
+
+        const states: T[] = [];
+
+        while (value) {
+            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses) as T;
+            logger.info(JSON.stringify(state));
+            states.push(state);
+            const next = await iterator.next();
+            value = next.value;
+        }
+        return states;
+    }
+
     public getName(): string {
         return this.name;
     }
@@ -155,7 +179,7 @@ export class StateList<T extends State> {
     public use(...stateClasses: Array<IState<T>>) {
         for (const stateClass of stateClasses) {
             if (!((stateClass as any).prototype instanceof State)) {
-                throw new Error(`Cannot use ${(stateClass as any).prototype.constructor.name} as type State`);
+                throw new Error(`Cannot use ${(stateClass as any).name} as type State`);
             }
             this.supportedClasses.set(stateClass.getClass(), stateClass);
         }

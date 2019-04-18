@@ -12,6 +12,7 @@ import * as fs from 'fs';
 import { FabricConfig } from './interfaces/config';
 import { User } from './interfaces/users';
 import Utils from './utils';
+import { ChaincodeMetadata } from './interfaces/metadata_interfaces';
 
 export default class FabricProxy {
 
@@ -40,6 +41,11 @@ export default class FabricProxy {
         const identity = await this.wallet.export(username) as any;
 
         return Utils.certToUser(identity.certificate)
+    }
+
+    public async getMetadata(user: string = 'system'): Promise<ChaincodeMetadata> {
+        const metadataBuff = await this.evaluateTransaction(user, 'org.hyperledger.fabric:GetMetadata');
+        return JSON.parse(metadataBuff.toString()) as ChaincodeMetadata;
     }
 
     public async evaluateTransaction(user: string, functionName: string, ...args: Array<string>): Promise<Buffer> {
