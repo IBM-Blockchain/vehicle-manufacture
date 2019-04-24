@@ -47,10 +47,17 @@ docker exec cli bash -c 'cd /etc/hyperledger/config; rm -rf crypto-config; rm -f
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 ################
+# CLEANUP WALLET API
+################
+rm -rf $BASEDIR/../node_modules
+rm -f $BASEDIR/../wallet-api/package-lock.json
+rm -rf $BASEDIR/../wallet-api/dist
+
+################
 # CLEANUP CLI_TOOLS
 ################
-# rm -rf $BASEDIR/cli_tools/node_modules
-# rm -f $BASEDIR/cli_tools/package-lock.json
+rm -rf $BASEDIR/cli_tools/node_modules
+rm -f $BASEDIR/cli_tools/package-lock.json
 rm -rf $BASEDIR/cli_tools/dist
 
 ################
@@ -66,8 +73,10 @@ ARIUM_REST_PORT=3000
 VDA_REST_PORT=3001
 PRINCE_REST_PORT=3002
 
-# rm -rf $BASEDIR/../apps/rest_server/node_modules
-# rm -f $BASEDIR/../apps/rest_server/package-lock.json
+ps | grep 'nodemon' | awk '{print $1}' | xargs kill -9
+
+rm -rf $BASEDIR/../apps/rest_server/node_modules
+rm -f $BASEDIR/../apps/rest_server/package-lock.json
 rm -rf $BASEDIR/../apps/rest_server/dist
 
 for PORT in $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT

@@ -1,27 +1,24 @@
 import FabricProxy from '../fabricproxy';
-import { Router as ExpressRouter } from 'express';
-import { LocnetRouter } from './vehiclemanufacture';
-import { Router as IRouter } from '../interfaces/router';
+import { BaseRouter } from './router';
+import { SystemContractRouter } from './vehiclemanufacture/contracts/system';
+import { ParticipantContractRouter } from './vehiclemanufacture/contracts/participants';
+import { VehicleContractRouter } from './vehiclemanufacture/contracts/vehicle';
+import { IdentityRouter } from './identity/identity';
 
-export class Router implements IRouter {
-    private router: ExpressRouter;
-    private fabricProxy: FabricProxy;
-
+export class Router extends BaseRouter {
     constructor (fabricProxy: FabricProxy) {
-        this.router = ExpressRouter();
-        this.fabricProxy = fabricProxy;
+        super(fabricProxy);
+
+        this.subRouters = [SystemContractRouter, ParticipantContractRouter, VehicleContractRouter, IdentityRouter];
     }
 
     public async prepareRoutes() {
+        for (const SubRouter of this.subRouters) {
+            const subRouter = new SubRouter(this.fabricProxy);
 
-        const locnetRouter = new LocnetRouter(this.fabricProxy);
+            await subRouter.prepareRoutes();
 
-        await locnetRouter.prepareRoutes();
-
-        this.router.use(locnetRouter.getRouter());
-    }
-
-    public getRouter() {
-        return this.router;
+            this.router.use('/' + SubRouter.basePath, subRouter.getRouter());
+        }
     }
 }

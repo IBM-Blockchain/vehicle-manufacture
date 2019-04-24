@@ -2,6 +2,7 @@
 SPDX-License-Identifier: Apache-2.0
 */
 import { Object, Property } from 'fabric-contract-api';
+import { Asset } from './asset';
 
 export enum EventType {
     ACTIVATED = 1,
@@ -12,31 +13,60 @@ export enum EventType {
 }
 
 @Object()
-export class IUsageEvent {
-    @Property()
-    public eventID?: string;
+export class UsageEvent extends Asset {
+    public static getClass() {
+        return Asset.generateClass(UsageEvent.name);
+    }
 
     @Property()
-    public eventType: EventType;
+    private eventType: EventType;
 
     @Property()
-    public acceleration: number;
+    private acceleration: number;
 
     @Property()
-    public airTemperature: number;
+    private airTemperature: number;
 
     @Property()
-    public engineTemperature: number;
+    private engineTemperature: number;
 
     @Property()
-    public lightLevel: number;
+    private lightLevel: number;
 
     @Property()
-    public pitch: number;
+    private pitch: number;
 
     @Property()
-    public roll: number;
+    private roll: number;
 
     @Property()
-    public timestamp?: number;
+    private timestamp: number;
+
+    @Property()
+    private vin: string;
+
+    constructor(
+        id: string,
+        eventType: EventType,
+        acceleration: number,
+        airTemperature: number,
+        engineTemperature: number,
+        lightLevel: number,
+        pitch: number,
+        roll: number,
+        timestamp: number,
+        vin: string,
+    ) {
+        super(id, UsageEvent.name);
+
+        this.eventType = eventType;
+        this.acceleration = acceleration;
+        this.airTemperature = airTemperature;
+        this.engineTemperature = engineTemperature;
+        this.lightLevel = lightLevel;
+        this.pitch = pitch;
+        this.roll = roll;
+        this.timestamp = timestamp;
+        this.vin = vin;
+    }
 }

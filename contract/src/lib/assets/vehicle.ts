@@ -9,7 +9,7 @@ import { Person } from '../participants/person';
 import { NotRequired } from '../utils/annotations';
 import { Asset } from './asset';
 import './usageEvents';
-import { IUsageEvent } from './usageEvents';
+import { UsageEvent } from './usageEvents';
 import { IVehicleDetails } from './vehicleDetails';
 const logger = newLogger('VEHICLE');
 
@@ -43,8 +43,6 @@ export class Vehicle extends Asset {
 
     private _vehicleStatus: VehicleStatus;
 
-    private _usageRecord: IUsageEvent[];
-
     private _ownerId: string;
 
     private _telematicId: string;
@@ -54,14 +52,12 @@ export class Vehicle extends Asset {
         telematicId: string,
         vehicleDetails: IVehicleDetails,
         vehicleStatus: VehicleStatus,
-        usageRecord: IUsageEvent[],
         @NotRequired ownerId?: string,
     ) {
         super(id, Vehicle.name);
 
         this.vehicleDetails = vehicleDetails;
         this._vehicleStatus = vehicleStatus;
-        this._usageRecord = usageRecord;
         this._telematicId = telematicId;
 
         if (ownerId) {
@@ -85,15 +81,6 @@ export class Vehicle extends Asset {
 
     set vehicleStatus(status: VehicleStatus) {
         this._vehicleStatus = status;
-    }
-
-    @Property('usageRecord', 'IUsageEvent[]')
-    get usageRecord(): IUsageEvent[] {
-        return this._usageRecord;
-    }
-
-    set usageRecord(usageEvents: IUsageEvent[]) {
-        this._usageRecord = usageEvents;
     }
 
     @Property()

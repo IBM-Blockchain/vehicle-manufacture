@@ -9,6 +9,7 @@ import { Organization } from '../organizations/organization';
 import { Regulator } from '../organizations/regulator';
 import { Participant } from '../participants/participant';
 import { Person } from '../participants/person';
+import { TelematicsDevice } from '../participants/telematics';
 import { VehicleManufactureNetContext } from './context';
 const logger = newLogger('CLIENTIDENTITY');
 
@@ -31,7 +32,7 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         const role = this.getAttributeValue(ROLE_FIELD);
         try {
             switch (role) {
-                case 'customer':
+                case 'private_entity':
                 case 'employee':
                 case 'telematic':
                     const participant = await this.ctx.getParticipantList().get(id);
@@ -45,6 +46,14 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         } catch (err) {
             throw new Error(`Unable to load participant for client ${id} ERROR: ${err.message}`);
         }
+    }
+
+    public async updateParticipant(): Promise<Participant> {
+        const newParticipant = await this.newParticipantInstance();
+        await this.ctx.getParticipantList().update(newParticipant);
+        const participant = await this.ctx.getParticipantList().get(newParticipant.id);
+
+        return participant;
     }
 
     public async newParticipantInstance(): Promise<Participant> {
@@ -63,9 +72,12 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
             case 'employee':
                 const employee = new Person(id, role, orgId, canRegister);
                 return employee;
-            case 'customer':
-                const customer = new Person(id, role, orgId, false);
-                return customer;
+            case 'private_entity':
+                const private_entity = new Person(id, role, orgId, false);
+                return private_entity;
+            case 'telematic':
+                const telematic = new TelematicsDevice(id, orgId);
+                return telematic;
             default:
                 throw new Error('Unknown participant type ' + this.getAttributeValue(ROLE_FIELD));
         }

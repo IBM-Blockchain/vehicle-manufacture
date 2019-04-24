@@ -8,13 +8,15 @@
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as express from 'express';
-import * as expressWs from 'express-ws';
 import FabricProxy from './fabricproxy';
 import { ServerConfig } from './interfaces/config';
 import { Swagger } from './interfaces/swagger';
-import { Router } from './Routes';
+import { Router } from './routes';
+import Utils from './utils';
 
-
+export interface Request extends express.Request {
+    user?: string;
+}
 
 export default class RestServer {
 
@@ -42,7 +44,15 @@ export default class RestServer {
         this.app.use(cors());
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
-        expressWs(this.app);
+
+        const auth = (req: Request, res, next) => {
+            if (!req.url.includes('events')) {
+                // hack - cannot add auth via EventSource could mess around with cookies for handling auth instead
+                req.user = Utils.getAuth(req);
+            }
+
+            next();
+        }
 
         const router = new Router(fabricProxy);
         await router.prepareRoutes();
@@ -51,7 +61,7 @@ export default class RestServer {
             res.send('Server up');
         });
 
-        this.app.use(router.getRouter());
+        this.app.use('/', auth, router.getRouter());
 
         this.app.listen(this.config.port, () => {
             console.log(`Server listening on port ${this.config.port}!`);

@@ -1,26 +1,18 @@
-import { Router } from 'express';
 import FabricProxy from '../../../fabricproxy';
-import { handleRouterCall } from '../../utils';
-import { Router as IRouter } from '../../../interfaces/router';
+import { ContractRouter } from './contractRouter';
 
-export class SystemContractRouter implements IRouter {
-    public static contractName: string = 'org.hyperledger.fabric';
+const contractName = 'org.hyperledger.fabric';
 
-    private router: Router;
-    private fabricProxy: FabricProxy;
+export class SystemContractRouter extends ContractRouter {
+    public static basePath: string = contractName;
 
     constructor(fabricProxy: FabricProxy) {
-        this.router = Router();
-        this.fabricProxy = fabricProxy;
+        super(fabricProxy);
+
+        this.contractName = contractName;
     }
 
     public async prepareRoutes() {
-        this.router.get('/metadata', (req, res) => {
-            handleRouterCall(req, res, this.fabricProxy, SystemContractRouter.contractName + ':GetMetadata', [], 'evaluateTransaction', true);
-        });
-    }
-
-    public getRouter() {
-        return this.router;
+        this.router.get('/metadata', await this.transactionToCall('GetMetadata', true));
     }
 }

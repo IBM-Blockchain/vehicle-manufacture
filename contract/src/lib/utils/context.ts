@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { Context } from 'fabric-contract-api';
 import { Order } from '../assets/order';
 import { Policy } from '../assets/policy';
+import { UsageEvent } from '../assets/usageEvents';
 import { Vehicle } from '../assets/vehicle';
 import { AssetList } from '../lists/assetlist';
 import { OrganizationList } from '../lists/organizationlist';
@@ -24,6 +25,7 @@ export class VehicleManufactureNetContext extends Context {
     private vehicleList: AssetList<Vehicle>;
     private orderList: AssetList<Order>;
     private policyList: AssetList<Policy>;
+    private usageList: AssetList<UsageEvent>;
 
     constructor() {
         super();
@@ -32,6 +34,7 @@ export class VehicleManufactureNetContext extends Context {
         this.vehicleList = new AssetList(this, 'vehicles', [Vehicle]);
         this.orderList = new AssetList(this, 'orders', [Order]);
         this.policyList = new AssetList(this, 'policies', [Policy]);
+        this.usageList = new AssetList(this, 'usageEvents', [UsageEvent]);
     }
 
     public setClientIdentity() { // horrible hack breaks default clientIdentity as overwrites the function
@@ -60,5 +63,9 @@ export class VehicleManufactureNetContext extends Context {
 
     public getPolicyList(): AssetList<Policy> {
         return this.policyList;
+    }
+
+    public getUsageList(): AssetList<UsageEvent> {
+        return this.usageList;
     }
 }

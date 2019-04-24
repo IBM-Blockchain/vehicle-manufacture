@@ -1,4 +1,4 @@
-import { Enroll, LocUser } from '../enroll';
+import { Enroll, VMUser } from 'vehicle-manufacture-contract-wallet-api';
 import { Argv } from 'yargs';
 import * as fs from 'fs-extra';
 
@@ -40,7 +40,7 @@ export const builder = (yargs: Argv) => {
 };
 
 export const handler = (argv: any) => {
-    const users: Array<LocUser> = fs.readJSONSync(argv['users']);
+    const users: Array<VMUser> = fs.readJSONSync(argv['users']);
 
     return argv.thePromise = Enroll.enrollUsers(argv['wallet'], argv['connection-profile'], users, argv['admin'], argv['organisation']);
 }

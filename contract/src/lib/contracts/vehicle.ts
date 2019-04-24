@@ -2,16 +2,17 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Contract, Returns, Transaction } from 'fabric-contract-api';
+import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
 import { IOptions } from '../assets/options';
 import { Order, OrderStatus } from '../assets/order';
 import { Policy, PolicyType } from '../assets/policy';
-import { IUsageEvent } from '../assets/usageEvents';
+import { EventType, UsageEvent } from '../assets/usageEvents';
 import { Vehicle, VehicleStatus } from '../assets/vehicle';
 import { IVehicleDetails } from '../assets/vehicleDetails';
 import { Insurer } from '../organizations/insurer';
+import { Manufacturer } from '../organizations/manufacturer';
 import { Person } from '../participants/person';
 import { TelematicsDevice } from '../participants/telematics';
 import { VehicleManufactureNetContext } from '../utils/context';
@@ -26,6 +27,11 @@ export class VehicleContract extends Contract {
 
     public createContext() {
         return new VehicleManufactureNetContext();
+    }
+
+    @Transaction()
+    public async beforeTransaction(ctx: VehicleManufactureNetContext) {
+        await ctx.getClientIdentity().updateParticipant();
     }
 
     @Transaction()
@@ -130,7 +136,7 @@ export class VehicleContract extends Contract {
         order.vin = vin;
         await ctx.getOrderList().update(order);
 
-        const vehicle = new Vehicle(vin, telematicId, order.vehicleDetails, VehicleStatus.OFF_THE_ROAD, []);
+        const vehicle = new Vehicle(vin, telematicId, order.vehicleDetails, VehicleStatus.OFF_THE_ROAD);
         await ctx.getVehicleList().add(vehicle);
 
         ctx.stub.setEvent('UPDATE_ORDER', order.serialize());
@@ -190,26 +196,29 @@ export class VehicleContract extends Contract {
     public async getVehicles(ctx: VehicleManufactureNetContext): Promise<Vehicle[]> {
         const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
 
-        const vehicles = await ctx.getVehicleList().getAll();
+        let query = {};
+        if (participant.isPrivateEntity()) {
+            query = { selector: { ownerId: participant.id } };
+        } else if (organization instanceof Manufacturer && participant.isEmployee()) {
+            query = { selector: { vehicleDetails: { makeId: organization.id } } };
+        }
 
-        return vehicles.filter((vehicle) => {
-            return vehicle.belongsTo(participant) ||
-            (vehicle.madeByOrg(participant) && participant.role === 'employee') ||
-            (organization.orgType === 'regulator' && participant.role === 'employee');
-        });
+        const vehicles = await ctx.getVehicleList().query(query);
+
+        return vehicles;
     }
 
     @Transaction(false)
     @Returns('Vehicle')
-    public async getVehicle(ctx: VehicleManufactureNetContext, vehicleId: string): Promise<Vehicle> {
-        const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
+    public async getVehicle(ctx: VehicleManufactureNetContext, vin: string): Promise<Vehicle> {
+        const {participant} = await ctx.getClientIdentity().loadParticipant();
 
-        const vehicle = await ctx.getVehicleList().get(vehicleId);
-        if (!(vehicle.belongsTo(participant) ||
-        (vehicle.madeByOrg(participant) && participant.role === 'employee') ||
-        (organization.orgType === 'regulator' && participant.role === 'employee'))) {
+        const vehicle = await ctx.getVehicleList().get(vin);
+        if (!vehicle.belongsTo(participant) && !participant.isEmployee()) {
+            // all employees can get vehicles as without private data they could just look through couchDB
             throw new Error('Only the manufacturer or the owner of the vehicle can view it');
         }
+
         return vehicle;
     }
 
@@ -220,13 +229,14 @@ export class VehicleContract extends Contract {
     }
 
     @Transaction()
+    @Param('endDate', 'number', 'end date as timestamp in seconds')
     @Returns('Policy')
     public async createPolicy(
-        ctx: VehicleManufactureNetContext, vin: string, holderId: string, policyType: PolicyType,
+        ctx: VehicleManufactureNetContext, vin: string, holderId: string, policyType: PolicyType, endDate: number,
     ): Promise<Policy> {
         const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
 
-        if (!(organization instanceof Insurer) || participant.role !== 'employee') {
+        if (!(organization instanceof Insurer) || !participant.isEmployee()) {
             throw new Error('Only employee\'s of insurers may create new policies');
         }
 
@@ -241,8 +251,9 @@ export class VehicleContract extends Contract {
         const numPolicies = await ctx.getPolicyList().count();
 
         const id = generateId(ctx.stub.getTxID(), 'POLICY_' + numPolicies);
+        const startDate = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt();
 
-        const policy = new Policy(id, vin, organization.id, holderId, policyType);
+        const policy = new Policy(id, vin, organization.id, holderId, policyType, startDate, endDate);
 
         await ctx.getPolicyList().add(policy);
 
@@ -252,8 +263,16 @@ export class VehicleContract extends Contract {
     }
 
     @Transaction()
-    @Returns('Vehicle')
-    public async addUsageEvent(ctx: VehicleManufactureNetContext, usageEvent: IUsageEvent): Promise<Vehicle> {
+    @Returns('UsageEvent')
+    public async addUsageEvent(
+        ctx: VehicleManufactureNetContext,
+        eventType: EventType,
+        acceleration: number,
+        airTemperature: number,
+        engineTemperature: number,
+        lightLevel: number,
+        pitch: number,
+        roll: number): Promise<UsageEvent> {
         const {participant} = await ctx.getClientIdentity().loadParticipant();
 
         if (!(participant instanceof TelematicsDevice)) {
@@ -266,16 +285,39 @@ export class VehicleContract extends Contract {
             throw new Error('Multiple vehicles are assigned to the same telematic device');
         }
 
-        usageEvent.eventID = generateId(ctx.stub.getTxID(), usageEvent.eventType.toString());
-        usageEvent.timestamp = ctx.stub.getTxTimestamp().getSeconds();
+        const id = generateId(ctx.stub.getTxID(), eventType.toString());
+        const timestamp = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt();
 
-        const vehicle = vehicles[0];
-        vehicle.usageRecord.push(usageEvent);
+        const usageEvent = new UsageEvent(
+            id,
+            eventType, acceleration, airTemperature, engineTemperature, lightLevel, pitch, roll,
+            timestamp, vehicles[0].id,
+        );
 
-        await ctx.getVehicleList().update(vehicle);
+        await ctx.getUsageList().add(usageEvent);
 
-        ctx.stub.setEvent('ADD_USAGE_EVENT', vehicle.serialize());
+        return usageEvent;
+    }
 
-        return vehicle;
+    @Transaction(false)
+    @Returns('UsageEvent[]')
+    public async getUsageEvents(ctx: VehicleManufactureNetContext, vin: string): Promise<UsageEvent[]> {
+        await this.getVehicle(ctx, vin); // throws error if they lack read permission
+
+        const usageEvents = await ctx.getUsageList().query({selector: {vin}});
+
+        return usageEvents;
+    }
+
+    @Transaction(false)
+    @Returns('UsageEvent[]')
+    public async getPolicyEvents(ctx: VehicleManufactureNetContext, policyId: string): Promise<UsageEvent[]> {
+        const policy = await ctx.getPolicyList().get(policyId);
+        await this.getVehicle(ctx, policy.vin);
+
+        const usageEvents = await ctx.getUsageList().query({
+            selector: {vin: policy.vin, timestamp: {$gte: policy.startDate, $lt: policy.endDate }},
+        });
+        return usageEvents;
     }
 }

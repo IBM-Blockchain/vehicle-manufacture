@@ -62,6 +62,14 @@ echo "################"
 docker exec arium_cli peer chaincode instantiate -o orderer.example.com:7050 -l node -C vehiclemanufacture -n vehicle-manufacture-chaincode -v 0 -c '{"Args":[]}' -P 'AND ("AriumMSP.member", "VDAMSP.member", "PrinceInsuranceMSP.member")'
 
 echo "################"
+echo "# BUILD WALLET API"
+echo "################"
+cd $BASEDIR/../wallet-api
+npm install
+npm run build
+cd $BASEDIR
+
+echo "################"
 echo "# BUILD CLI_TOOLS"
 echo "################"
 cd $BASEDIR/cli_tools
@@ -126,17 +134,19 @@ echo "################"
 echo "# ENROLLING VEHICLE MANUFACTURE USERS"
 echo "################"
 
+CLI_DIR=$BASEDIR/cli_tools
+
 ARIUM_USERS=$BASEDIR/users/arium.json
 VDA_USERS=$BASEDIR/users/vda.json
 PRINCE_USERS=$BASEDIR/users/prince-insurance.json
 
-node $BASEDIR/cli_tools/dist/index.js import -w $LOCAL_FABRIC/wallet -m AriumMSP -n Admin@arium.com -c $ARIUM_ADMIN_CERT -k $ARIUM_ADMIN_KEY
-node $BASEDIR/cli_tools/dist/index.js import -w $LOCAL_FABRIC/wallet -m VDAMSP -n Admin@vda.com -c $VDA_ADMIN_CERT -k $VDA_ADMIN_KEY
-node $BASEDIR/cli_tools/dist/index.js import -w $LOCAL_FABRIC/wallet -m PrinceInsuranceMSP -n Admin@prince-insurance.com -c $PRINCE_ADMIN_CERT -k $PRINCE_ADMIN_KEY
+node $CLI_DIR/dist/index.js import -w $LOCAL_FABRIC/wallet -m AriumMSP -n admin -c $ARIUM_ADMIN_CERT -k $ARIUM_ADMIN_KEY -o Arium
+node $CLI_DIR/dist/index.js import -w $LOCAL_FABRIC/wallet -m VDAMSP -n admin -c $VDA_ADMIN_CERT -k $VDA_ADMIN_KEY -o VDA
+node $CLI_DIR/dist/index.js import -w $LOCAL_FABRIC/wallet -m PrinceInsuranceMSP -n admin -c $PRINCE_ADMIN_CERT -k $PRINCE_ADMIN_KEY -o PrinceInsurance
 
-node $BASEDIR/cli_tools/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $ARIUM_CONNECTION -u $ARIUM_USERS -a Admin@arium.com -o Arium
-node $BASEDIR/cli_tools/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $VDA_CONNECTION -u $VDA_USERS -a Admin@vda.com -o VDA
-node $BASEDIR/cli_tools/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $PRINCE_CONNECTION -u $PRINCE_USERS -a Admin@prince-insurance.com -o PrinceInsurance
+node $CLI_DIR/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $ARIUM_CONNECTION -u $ARIUM_USERS -a admin -o Arium
+node $CLI_DIR/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $VDA_CONNECTION -u $VDA_USERS -a admin -o VDA
+node $CLI_DIR/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $PRINCE_CONNECTION -u $PRINCE_USERS -a admin -o PrinceInsurance
 
 echo "################"
 echo "# STARTUP REST SERVERS"
@@ -189,15 +199,15 @@ do
 
     echo "REGISTERING $TYPE"
     if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
-        curl -s -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
+        curl -s -o /dev/null -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
     else
-        curl -s -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
+        curl -s -o /dev/null -X POST -H "Content-Type: application/json" -d '{"originCode": "", "manufacturerCode": ""}' -u system:systempw http://localhost:$PORT/$PARTICIPANTS_CONTRACT/super/register
     fi
 done
 
-for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"customer\")|not))) | .[] .name" $ARIUM_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON
+for row in $(jq -r ". - map(select(.attrs[] | select(.value | contains (\"private_entity\")|not))) | .[] .name" $VDA_USERS); do # GET ALL OF TYPE PEOPLE FROM JSON
     echo "REGISTERING $row"
-    curl -s -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "role": "'"$customer"'"}' -u system:systempw http://localhost:$ARIUM_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
+    curl -s -o /dev/null -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "role": "'"$customer"'"}' -u system:systempw http://localhost:$VDA_REST_PORT/$PARTICIPANTS_CONTRACT/person/register
 done
 
 echo "################"

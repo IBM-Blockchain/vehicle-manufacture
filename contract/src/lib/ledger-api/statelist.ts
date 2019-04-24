@@ -83,28 +83,11 @@ export class StateList<T extends State> {
     }
 
     public async getAll(): Promise<T[]> {
-        const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
-
-        const states: T[] = [];
-
-        let value = (await data.next()).value;
-
-        while (value) {
-
-            const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses) as T;
-
-            states.push(state);
-
-            const next = await data.next();
-            value = next.value;
-        }
-
-        return states;
+        return this.query({});
     }
 
     public async count(): Promise<number> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
-
         let counter = 0;
 
         while (true) {

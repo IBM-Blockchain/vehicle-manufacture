@@ -14,7 +14,13 @@ export class Policy extends Asset {
     }
 
     @Property()
-    private vehicleId: string;
+    public readonly vin: string;
+
+    @Property()
+    public readonly startDate: number;
+
+    @Property()
+    public readonly endDate: number;
 
     @Property()
     private insurerId: string;
@@ -27,13 +33,16 @@ export class Policy extends Asset {
 
     constructor(
         id: string,
-        vehicleId: string, insurerId: string, holderId: string, policyType: PolicyType,
+        vin: string, insurerId: string, holderId: string, policyType: PolicyType,
+        startDate: number, endDate: number,
     ) {
         super(id, Policy.name);
 
-        this.vehicleId = vehicleId;
+        this.vin = vin;
         this.insurerId = insurerId;
         this.holderId = holderId;
         this.policyType = policyType;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }

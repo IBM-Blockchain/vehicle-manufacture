@@ -48,4 +48,16 @@ export class Participant extends State {
 
         return Buffer.from(State.serialize(toSerialize));
     }
+
+    public isEmployee() {
+        return this.role === 'employee';
+    }
+
+    public isTelematicDevice() {
+        return this.role === 'telematic';
+    }
+
+    public isPrivateEntity() {
+        return this.role === 'private_entity';
+    }
 }

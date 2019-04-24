@@ -17,9 +17,6 @@ export class Organization extends State {
     @Property('name', 'string')
     public name: string;
 
-    @Property('orgType', 'string')
-    public orgType: string;
-
     @Property('originCode', 'string')
     public originCode: string;
 
@@ -34,7 +31,6 @@ export class Organization extends State {
         super(Organization.generateClass(orgType), [id]);
         this.id = id;
         this.name = name;
-        this.orgType = orgType;
     }
 
     public getName() {

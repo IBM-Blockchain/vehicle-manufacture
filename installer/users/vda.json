@@ -3,6 +3,14 @@
         "name": "system",
         "attrs": [
             {
+                "name": "hf.Registrar.Roles",
+                "value": "client"
+            },
+            {
+                "name": "hf.Registrar.Attributes",
+                "value": "vehicle_manufacture.*"
+            },
+            {
                 "name": "vehicle_manufacture.role",
                 "value": "employee",
                 "ecert": true
@@ -33,5 +41,25 @@
                 "ecert": true
             }
         ] 
+    },
+    {
+        "name": "paul",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "private_entity",
+                "ecert": true
+            }
+        ]
+    },
+    {
+        "name": "fred",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role",
+                "value": "private_entity",
+                "ecert": true
+            }
+        ]
     }
 ]

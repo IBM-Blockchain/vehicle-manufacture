@@ -8,6 +8,7 @@ import 'reflect-metadata';
 import { Participant } from '../participants/participant';
 import { NotRequired } from '../utils/annotations';
 import { Organization } from './../organizations/organization';
+import { Regulator } from './../organizations/regulator';
 import { Asset } from './asset';
 import { IOptions } from './options';
 import './vehicleDetails';
@@ -101,7 +102,7 @@ export class Order extends Asset {
             throw new Error('Participant is not in organization');
         }
         return participant.id === this.ordererId ||
-               (participant.role === 'employee' && this.vehicleDetails.makeId === organization.id)
-               || participant.role === 'employee' && organization.orgType === 'regulator';
+               (participant.isEmployee() && this.vehicleDetails.makeId === organization.id)
+               || participant.isEmployee() && organization instanceof Regulator;
     }
 }

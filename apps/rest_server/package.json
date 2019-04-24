@@ -22,13 +22,16 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
-    "fabric-client": "../../npm_packs/fabric-client-2.0.0-snapshot.tgz",
-    "fabric-network": "../../npm_packs/fabric-network-2.0.0-snapshot.tgz",
+    "fabric-client": "unstable-1.4",
+    "fabric-network": "unstable-1.4",
     "swagger-ui-express": "^4.0.2",
+    "uuid": "^3.3.2",
+    "vehicle-manufacture-contract-wallet-api": "../../wallet-api",
     "yargs": "^13.2.2"
   },
   "devDependencies": {
     "@types/express-ws": "^3.0.0",
+    "@types/uuid": "^3.4.4",
     "nodemon": "^1.18.10"
   }
 }

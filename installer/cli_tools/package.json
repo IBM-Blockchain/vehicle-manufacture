@@ -1,5 +1,5 @@
 {
-  "name": "letters-of-credit-cli",
+  "name": "vehicle-manufacture-contract-cli-tools",
   "version": "0.0.1",
   "description": "a chaincode defining business logic for letters of credit",
   "main": "dist/index.js",
@@ -16,9 +16,8 @@
   "dependencies": {
     "@types/fs-extra": "^5.0.5",
     "@types/yargs": "^12.0.9",
-    "fabric-network": "../../npm_packs/fabric-network-2.0.0-snapshot.tgz",
-    "fabric-client": "../../npm_packs/fabric-client-2.0.0-snapshot.tgz",
     "fs-extra": "^7.0.1",
+    "vehicle-manufacture-contract-wallet-api": "../../wallet-api",
     "yargs": "^13.2.1"
   },
   "devDependencies": {

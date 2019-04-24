@@ -27,11 +27,6 @@ export class ParticipantsContract extends Contract {
     }
 
     @Transaction()
-    public async getCustomers(ctx: VehicleManufactureNetContext) {
-        return await ctx.getParticipantList().getAll();
-    }
-
-    @Transaction()
     @Returns('Person')
     public async registerSuper(
         ctx: VehicleManufactureNetContext, originCode?: string, manufacturerCode?: string,
@@ -67,12 +62,12 @@ export class ParticipantsContract extends Contract {
             throw new Error('This user cannot register new participants');
         }
 
-        const customer = new Person(
+        const person = new Person(
             `${name}@${organization.name}`, role, organization.id, false,
         );
-        await ctx.getParticipantList().add(customer);
+        await ctx.getParticipantList().add(person);
 
-        return customer;
+        return person;
     }
 
     @Transaction()

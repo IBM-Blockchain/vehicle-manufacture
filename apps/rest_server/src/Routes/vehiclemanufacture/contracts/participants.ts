@@ -1,34 +1,25 @@
-import { Router } from 'express';
 import FabricProxy from '../../../fabricproxy';
-import { transactionToCall, handleRouterCall, upperFirstChar } from '../../utils';
-import { Router as IRouter } from '../../../interfaces/router';
-import { ChaincodeMetadata } from '../../../interfaces/metadata_interfaces';
-import { SystemContractRouter } from './system';
+import {  upperFirstChar } from '../../utils';
+import { ContractRouter } from './contractRouter';
+import { Request } from '../../router';
+import { Response } from 'express';
 
-export class ParticipantContractRouter implements IRouter {
-    public static contractName = 'org.acme.vehicle_network.participants';
+const contractName = 'org.acme.vehicle_network.participants';
 
-    private router: Router;
-    private fabricProxy: FabricProxy;
+export class ParticipantContractRouter extends ContractRouter {
+    public static basePath = contractName;
 
     constructor(fabricProxy: FabricProxy) {
-        this.router = Router();
-        this.fabricProxy = fabricProxy;
+        super(fabricProxy);
+
+        this.contractName = contractName;
     }
 
     public async prepareRoutes() {
         this.router.post('/devices/telematic/register', await this.transactionToCall('registerTelematicsDevice'));
 
-        this.router.post('/:participantType/register', async (req, res) => {
+        this.router.post('/:participantType/register', async (req: Request, res: Response) => {
             return (await this.transactionToCall('register' + upperFirstChar(req.params.participantType)))(req, res);
         });
-    }
-
-    public getRouter(): Router {
-        return this.router;
-    }
-
-    private async transactionToCall(transactionName: string) {
-        return await transactionToCall(this.fabricProxy, transactionName, ParticipantContractRouter.contractName)
     }
 }

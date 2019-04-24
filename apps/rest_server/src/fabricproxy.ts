@@ -16,10 +16,10 @@ import { ChaincodeMetadata } from './interfaces/metadata_interfaces';
 
 export default class FabricProxy {
 
-    private wallet: FileSystemWallet;
+    public readonly wallet: FileSystemWallet;
     private config: FabricConfig;
 
-    private ccp: any;
+    public readonly ccp: any;
 
     constructor(config: FabricConfig) {
 
