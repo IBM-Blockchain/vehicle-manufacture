@@ -52,6 +52,8 @@ node_modules
 vehiclemanufacture_fabric
 tmp
 
+.vscode
+
 installer/network/crypto-material/*.block
 installer/network/crypto-material/*.tx
 installer/network/crypto-material/crypto-config
