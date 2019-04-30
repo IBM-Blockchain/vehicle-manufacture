@@ -18,6 +18,12 @@ const results = yargs
             alias: 'p',
             required: false,
             default: 3000
+        },
+        'org': {
+            type: 'string',
+            alias: 'o',
+            required: true,
+            default: 3000
         }
     })
     .help()
@@ -31,7 +37,8 @@ const results = yargs
 const server = new RestServer({
     walletPath: results['wallet'],
     connectionProfilePath: results['connection-profile'],
-    port: results.port
+    port: results.port,
+    org: results.org
 });
 
 try {

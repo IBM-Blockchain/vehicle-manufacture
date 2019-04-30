@@ -47,17 +47,22 @@ export class Vehicle extends Asset {
 
     private _telematicId: string;
 
+    @Property()
+    private manufactured: number;
+
     constructor(
         id: string,
         telematicId: string,
         vehicleDetails: IVehicleDetails,
         vehicleStatus: VehicleStatus,
+        manufactured: number,
         @NotRequired ownerId?: string,
     ) {
         super(id, Vehicle.name);
 
         this.vehicleDetails = vehicleDetails;
         this._vehicleStatus = vehicleStatus;
+        this.manufactured = manufactured;
         this._telematicId = telematicId;
 
         if (ownerId) {

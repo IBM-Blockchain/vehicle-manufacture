@@ -1,0 +1,126 @@
+#stream-holder
+{
+    margin-left: 50px;
+    width: 210px;
+    padding: 25px 50px 0px 50px;
+}
+#stream-header
+{
+    opacity:0.5;
+    font-family:OpenSans-Semibold;
+    font-weight: 600;
+    font-size:16px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.side-line
+{
+    height: 100%;
+    position: fixed;
+    width: 2px;
+    background-color: #DCD4F7;
+    margin-left: 50px;
+}
+#stream-sub
+{
+    margin-top: 10px;
+    font-family:OpenSans;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+#stream-sub > span
+{
+    font-family:OpenSans-Semibold;
+    border-bottom: 2px solid #5a3ec8;
+    margin-left: 5px;
+    padding-bottom: 3px;
+}
+#alert-block-holder
+{
+    margin-top: 25px;
+}
+@keyframes purple-to-white
+{  
+    0% { background-color: #DCD4F7; }
+    100% { background-color: transparent; }
+}
+.alert-block
+{
+    padding: 25px 0 25px 0;
+    border-top: 2px solid #DCD4F7;
+    background-color: transparent;
+}
+.alert-block.added-element:first-child
+{
+    animation-name: purple-to-white;  
+    animation-iteration-count: 1;  
+    animation-duration: 2s; 
+}
+.alert-block:last-child
+{
+    border-bottom: 2px solid #DCD4F7;
+}
+.alert-header
+{
+    font-family:OpenSans;
+    font-size:16px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    margin-bottom: 10px;
+}
+.alert-header > img
+{
+    margin-right: 15px;
+}
+.alert-time
+{
+    font-family:OpenSans;
+    font-size:14px;
+    color:#454856;
+}
+.small-title
+{
+    font-family:OpenSans-Bold;
+    font-size:14px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.event-details
+{
+    margin-top: 10px;
+    font-family:OpenSans;
+    font-size:12px;
+    font-style: italic;
+    color:#454856;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.tiny-header
+{
+    opacity:0.5;
+    font-family:OpenSans-Semibold;
+    font-weight: 600;
+    font-size:12px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+}
+.button
+{
+    margin-top: 25px;
+    border: 1px solid #DCD4F7;
+    font-family:OpenSans-Semibold;
+    font-size:12px;
+    color:#454856;
+    letter-spacing:0;
+    text-align:left;
+    padding: 5px;
+    display: inline-block;
+    background-color: transparent;
+}

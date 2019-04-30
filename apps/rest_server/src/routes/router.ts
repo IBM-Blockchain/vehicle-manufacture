@@ -41,8 +41,11 @@ export class BaseRouter {
     }
 
     protected publishEvent(event: IEvent) {
+        console.log('I WAS CALLED');
         if (this.connections.hasOwnProperty(event.event_name)) {
+            console.log('I HAVE OWN PROPERTY');
             for (const key in this.connections[event.event_name]) {
+                console.log('I HAVE KEY', event.event_name, event);
                 this.connections[event.event_name][key].res.write(`data: ${event.payload.toString()}\n\n`);
             };
         }
@@ -64,6 +67,7 @@ export class BaseRouter {
         }
     
         connections[eventName][uuid] = {req, res};
+        this.connections = connections;
     
         req.on('close', () => {
             delete connections[eventName][uuid];

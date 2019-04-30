@@ -23,10 +23,10 @@ export class Policy extends Asset {
     public readonly endDate: number;
 
     @Property()
-    private insurerId: string;
+    public readonly insurerId: string;
 
     @Property()
-    private holderId: string;
+    public readonly holderId: string;
 
     @Property()
     private policyType: PolicyType;

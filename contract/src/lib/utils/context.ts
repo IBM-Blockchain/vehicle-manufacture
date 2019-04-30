@@ -7,6 +7,7 @@ import { Order } from '../assets/order';
 import { Policy } from '../assets/policy';
 import { UsageEvent } from '../assets/usageEvents';
 import { Vehicle } from '../assets/vehicle';
+import { State } from '../ledger-api/state';
 import { AssetList } from '../lists/assetlist';
 import { OrganizationList } from '../lists/organizationlist';
 import { ParticipantList } from '../lists/participantlist';
@@ -35,6 +36,13 @@ export class VehicleManufactureNetContext extends Context {
         this.orderList = new AssetList(this, 'orders', [Order]);
         this.policyList = new AssetList(this, 'policies', [Policy]);
         this.usageList = new AssetList(this, 'usageEvents', [UsageEvent]);
+    }
+
+    public setEvent(eventName: string, payload: State) {
+        const buffer = payload.serialize();
+        const json = JSON.parse(buffer.toString('utf8'));
+        json.timestamp = (this.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000;
+        this.stub.setEvent(eventName, Buffer.from(JSON.stringify(json)));
     }
 
     public setClientIdentity() { // horrible hack breaks default clientIdentity as overwrites the function

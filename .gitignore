@@ -46,13 +46,14 @@ fabric-tools/**
 # Ignore DS_Store
 .DS_Store
 
+# Ignore vscode artificats
+.vscode
+
 # Ignore install folders
 node_modules
 **/dist
 vehiclemanufacture_fabric
 tmp
-
-.vscode
 
 installer/network/crypto-material/*.block
 installer/network/crypto-material/*.tx

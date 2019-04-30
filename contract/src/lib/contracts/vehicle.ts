@@ -6,7 +6,7 @@ import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
 import { IOptions } from '../assets/options';
-import { Order, OrderStatus } from '../assets/order';
+import { HistoricOrder, Order, OrderStatus } from '../assets/order';
 import { Policy, PolicyType } from '../assets/policy';
 import { EventType, UsageEvent } from '../assets/usageEvents';
 import { Vehicle, VehicleStatus } from '../assets/vehicle';
@@ -49,11 +49,14 @@ export class VehicleContract extends Contract {
 
         const id = generateId(ctx.stub.getTxID(), 'ORDER_' + numOrders);
 
-        const order = new Order(id, vehicleDetails, OrderStatus.PLACED, options, participant.id);
+        const order = new Order(
+            id, vehicleDetails, OrderStatus.PLACED, options, participant.id,
+            (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000,
+        );
 
         await ctx.getOrderList().add(order);
 
-        ctx.stub.setEvent('PLACE_ORDER', order.serialize());
+        ctx.setEvent('PLACE_ORDER', order);
 
         return order;
     }
@@ -68,6 +71,18 @@ export class VehicleContract extends Contract {
         return orders.filter((order) => {
             return order.canBeChangedBy(participant, organization);
         });
+    }
+
+    @Transaction(false)
+    @Returns('HistoricOrder[]')
+    public async getOrderHistory(
+        ctx: VehicleManufactureNetContext, orderId: string,
+    ): Promise<HistoricOrder[]> {
+        await this.getOrder(ctx, orderId); // will error if no order, or user cannot access
+
+        const history = await ctx.getOrderList().getHistory(orderId);
+
+        return history;
     }
 
     @Transaction(false)
@@ -96,7 +111,7 @@ export class VehicleContract extends Contract {
         order.orderStatus = OrderStatus.SCHEDULED_FOR_MANUFACTURE;
         await ctx.getOrderList().update(order);
 
-        ctx.stub.setEvent('UPDATE_ORDER', order.serialize());
+        ctx.setEvent('UPDATE_ORDER', order);
         return order;
     }
 
@@ -136,10 +151,17 @@ export class VehicleContract extends Contract {
         order.vin = vin;
         await ctx.getOrderList().update(order);
 
-        const vehicle = new Vehicle(vin, telematicId, order.vehicleDetails, VehicleStatus.OFF_THE_ROAD);
+        const vehicle = new Vehicle(
+            vin,
+            telematicId,
+            order.vehicleDetails,
+            VehicleStatus.OFF_THE_ROAD,
+            (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000,
+        );
+
         await ctx.getVehicleList().add(vehicle);
 
-        ctx.stub.setEvent('UPDATE_ORDER', order.serialize());
+        ctx.setEvent('UPDATE_ORDER', order);
 
         return order;
     }
@@ -162,7 +184,7 @@ export class VehicleContract extends Contract {
         vehicle.ownerId = order.ordererId;
         await ctx.getVehicleList().update(vehicle);
 
-        ctx.stub.setEvent('UPDATE_ORDER', order.serialize());
+        ctx.setEvent('UPDATE_ORDER', order);
 
         return order;
     }
@@ -186,7 +208,7 @@ export class VehicleContract extends Contract {
         vehicle.vehicleStatus = VehicleStatus.ACTIVE;
         await ctx.getVehicleList().update(vehicle);
 
-        ctx.stub.setEvent('UPDATE_ORDER', order.serialize());
+        ctx.setEvent('UPDATE_ORDER', order);
 
         return order;
     }
@@ -201,6 +223,8 @@ export class VehicleContract extends Contract {
             query = { selector: { ownerId: participant.id } };
         } else if (organization instanceof Manufacturer && participant.isEmployee()) {
             query = { selector: { vehicleDetails: { makeId: organization.id } } };
+        } else if (organization instanceof Insurer) {
+            query = { selector: { id: { $in: (await this.getPolicies(ctx)).map((policy) => policy.vin ) } } };
         }
 
         const vehicles = await ctx.getVehicleList().query(query);
@@ -251,13 +275,49 @@ export class VehicleContract extends Contract {
         const numPolicies = await ctx.getPolicyList().count();
 
         const id = generateId(ctx.stub.getTxID(), 'POLICY_' + numPolicies);
-        const startDate = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt();
+        const startDate = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000;
 
         const policy = new Policy(id, vin, organization.id, holderId, policyType, startDate, endDate);
 
         await ctx.getPolicyList().add(policy);
 
-        ctx.stub.setEvent('CREATE_POLICY', policy.serialize());
+        ctx.setEvent('CREATE_POLICY', policy);
+
+        return policy;
+    }
+
+    @Transaction(false)
+    @Returns('Policy[]')
+    public async getPolicies(ctx: VehicleManufactureNetContext) {
+        const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
+
+        let query = {};
+        if (participant.isPrivateEntity()) {
+            query = { selector: { holderId: participant.id } };
+        } else if (organization instanceof Insurer && participant.isEmployee()) {
+            query = { selector: { insurerId: organization.id } };
+        }
+
+        const policies = await ctx.getPolicyList().query(query);
+
+        return policies;
+    }
+
+    @Transaction(false)
+    @Returns('Policy')
+    public async getPolicy(ctx: VehicleManufactureNetContext, policyId: string): Promise<Policy> {
+        logger.info('GETTING A POLICY' + policyId);
+
+        const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
+
+        const policy = await ctx.getPolicyList().get(policyId);
+
+        if (!(
+            policy.holderId === participant.id ||
+            (policy.insurerId === organization.id && organization instanceof Insurer && participant.isEmployee()))
+        ) {
+            throw new Error('Only the holder or the insurer can view a policy');
+        }
 
         return policy;
     }
@@ -286,7 +346,7 @@ export class VehicleContract extends Contract {
         }
 
         const id = generateId(ctx.stub.getTxID(), eventType.toString());
-        const timestamp = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt();
+        const timestamp = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000;
 
         const usageEvent = new UsageEvent(
             id,
@@ -296,12 +356,33 @@ export class VehicleContract extends Contract {
 
         await ctx.getUsageList().add(usageEvent);
 
+        ctx.setEvent('ADD_USAGE_EVENT', usageEvent);
+
         return usageEvent;
+    }
+
+    @Transaction()
+    public async removeUsageEvent(ctx: VehicleManufactureNetContext, eventId: string) {
+        console.log('EVENT ID', eventId);
+        ctx.getUsageList().delete(eventId); // WORK OUT WHY FAIL
     }
 
     @Transaction(false)
     @Returns('UsageEvent[]')
-    public async getUsageEvents(ctx: VehicleManufactureNetContext, vin: string): Promise<UsageEvent[]> {
+    public async getUsageEvents(ctx: VehicleManufactureNetContext): Promise<UsageEvent[]> {
+        // switch on user then get vehicles they are involved with/policies
+        // and get usage events for those. regulator just gets all
+        const vehicles = await this.getVehicles(ctx);
+
+        const usageEvents: UsageEvent[][] = await Promise.all(vehicles.map((vehicle) => {
+            return this.getVehicleEvents(ctx, vehicle.id);
+        }));
+        return [].concat.apply([], usageEvents);
+    }
+
+    @Transaction(false)
+    @Returns('UsageEvent[]')
+    public async getVehicleEvents(ctx: VehicleManufactureNetContext, vin: string): Promise<UsageEvent[]> {
         await this.getVehicle(ctx, vin); // throws error if they lack read permission
 
         const usageEvents = await ctx.getUsageList().query({selector: {vin}});

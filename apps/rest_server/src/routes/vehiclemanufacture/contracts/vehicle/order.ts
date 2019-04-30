@@ -39,23 +39,24 @@ export class OrderRouter extends ContractRouter {
             this.initEventSourceListener(req, res, this.connections, EventNames.PLACE_ORDER);
         });
 
-        this.fabricProxy.addContractListener('system', 'placeOrder', EventNames.PLACE_ORDER, (err, event, txId, status, blockNumber) => {
+        await this.fabricProxy.addContractListener('system', 'placeOrder', EventNames.PLACE_ORDER, (err, event) => {
             this.publishEvent(event);
-        }, null);
+        }, {filtered: false});
 
         this.router.get('/events/updated', (req: Request, res: Response) => {
             this.initEventSourceListener(req, res, this.connections, EventNames.UPDATE_ORDER);
         });
 
-        this.fabricProxy.addContractListener('system', 'updateOrder', EventNames.UPDATE_ORDER, (err, event, txId, status, blockNumber) => {
+        await this.fabricProxy.addContractListener('system', 'updateOrder', EventNames.UPDATE_ORDER, (err, event) => {
             this.publishEvent(event);
-        }, null);
+        }, {filtered: false, replay: true});
 
         this.router.post('/', await this.transactionToCall('placeOrder'));
 
         this.router.get('/:orderId', await this.transactionToCall('getOrder'));
 
         this.router.put('/:orderId/status', async (req: Request, res: Response) => {
+
             if (!req.body.hasOwnProperty('status')) {
                 res.status(400);
                 res.send('Bad request. Missing parameters: status');
@@ -72,5 +73,7 @@ export class OrderRouter extends ContractRouter {
 
             return (await this.transactionToCall(statusTxMap[status]))(req, res);
         });
+
+        this.router.get('/:orderId/history', await this.transactionToCall('getOrderHistory'));
     }
 }

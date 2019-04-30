@@ -1,0 +1,13 @@
+<div class="sidebar">
+  <img src="assets/images/prince.svg" class="prince"/>
+
+  <ul>
+    <li [ngClass]="{selected: selected === 'overview'}" class="overview" [routerLink]="['/overview']" (click)="select('overview')"> <span class="logo"></span> Overview</li>
+    <li [ngClass]="{selected: selected === 'customers'}" class="policy" [routerLink]="['/policy/12ff83db-3d5d-35c1-14e1-0c656b3d280a']" (click)="select('customers')"> <span class="logo"></span> Customers</li>
+    <li class="disabled"> <img src="assets/images/smallcar.svg" class="logo"/> Vehicle Information</li>
+    <li class="disabled"> <img src="assets/images/smalleuro.svg" class="logo"/> Quotes</li>
+    <li class="disabled"> <img src="assets/images/smallbook.svg" class="logo"/> Cover Information</li>
+    <li class="disabled"> <img src="assets/images/smalltext.svg" class="logo"/> Support</li>
+    <li class="disabled"> <img src="assets/images/smallex.svg" class="logo1"/>Admin</li>
+  </ul>
+</div>

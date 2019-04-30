@@ -6,7 +6,7 @@
 */
 
 // Bring key classes into scope, most importantly Fabric SDK network class
-import { Contract, FileSystemWallet, Gateway, Network } from 'fabric-network';
+import { Contract, FileSystemWallet, Gateway, Network, FileSystemCheckpointer } from 'fabric-network';
 import * as path from 'path';
 import * as fs from 'fs';
 import { FabricConfig } from './interfaces/config';
@@ -59,7 +59,14 @@ export default class FabricProxy {
     public async addContractListener(user: string, listenerName: string, eventName: string, callback: any, options: any) {
         const gateway: Gateway = await this.setupGateway(user);
         const contract = await this.getContract(gateway);
-
+        options = Object.assign({
+            checkpointer: {
+                factory: (channelName, listenerName, options) => {
+                    return new FileSystemCheckpointer(channelName, listenerName, options);
+                },
+                options: {basePath: `checkpointers/${this.config.org}-checkpointer`}
+            }
+        }, options) // puts the checkpointers in rest server/checkpointers
         const list: any = await contract.addContractListener(listenerName, eventName, callback, options);
     
         await new Promise((resolve) => {

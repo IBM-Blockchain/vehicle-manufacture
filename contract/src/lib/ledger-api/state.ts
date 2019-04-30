@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 
 'use strict';
 
+import { Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import * as getParams from 'get-params';
 
@@ -113,5 +114,28 @@ export class State {
 
     public serialize(): Buffer {
         return State.serialize(this);
+    }
+}
+
+// tslint:disable:max-classes-per-file
+export class IHistoricState<T extends State> {
+    public value: T;
+
+    @Property()
+    public timestamp: number;
+
+    @Property()
+    public txId: string;
+
+    constructor(timestamp: number, txId: string, value: T) {
+        this.timestamp = timestamp;
+        this.txId = txId;
+        this.value = value;
+    }
+
+    public serialize(): Buffer {
+        const obj = Object.assign(this, {value: JSON.parse(this.value.serialize().toString())});
+
+        return Buffer.from(JSON.stringify(obj));
     }
 }

@@ -5,6 +5,7 @@ SPDX-License-Identifier: Apache-2.0
 import { Object, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import 'reflect-metadata';
+import { IHistoricState } from '../ledger-api/state';
 import { Participant } from '../participants/participant';
 import { NotRequired } from '../utils/annotations';
 import { Organization } from './../organizations/organization';
@@ -34,6 +35,8 @@ export class Order extends Asset {
 
     private _orderStatus: OrderStatus;
 
+    private placed;
+
     @Property()
     private options: IOptions;
 
@@ -47,6 +50,7 @@ export class Order extends Asset {
         orderStatus: OrderStatus,
         options: IOptions,
         ordererId: string,
+        placed: number,
         @NotRequired vin?: string,
     ) {
         super(id, Order.name);
@@ -55,6 +59,7 @@ export class Order extends Asset {
         this._orderStatus = orderStatus;
         this.options = options;
         this._ordererId = ordererId;
+        this.placed = placed;
 
         if (vin) {
             this._vin = vin;
@@ -105,4 +110,12 @@ export class Order extends Asset {
                (participant.isEmployee() && this.vehicleDetails.makeId === organization.id)
                || participant.isEmployee() && organization instanceof Regulator;
     }
+}
+
+// tslint:disable:max-classes-per-file
+@Object()
+export class HistoricOrder extends IHistoricState<Order> {
+
+    @Property()
+    public value: Order;
 }

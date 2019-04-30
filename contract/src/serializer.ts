@@ -12,7 +12,9 @@ export class JSONSerializer extends FabricJSONSerializer {
     }
 
     private serialize(result: any): any {
-        if (Array.isArray(result)) {
+        if (!result) {
+            return null;
+        } else if (Array.isArray(result)) {
             return result.map((el) => {
                 return this.serialize(el);
             });

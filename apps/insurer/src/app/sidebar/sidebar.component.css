@@ -1,0 +1,76 @@
+.prince{
+  padding-top: 25px;
+  padding-left: 41px;
+}
+
+.sidebar {
+  color: #473793;
+}
+
+.sidebar ul {
+  padding: 0;
+}
+
+.sidebar li {
+  height: 25px;
+  font-family: 'OpenSans-Semibold';
+  color: #473793;
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  padding-left: 35px;
+  margin-bottom: 15px;
+  border-left: 5px solid white;
+}
+
+.sidebar li.selected {
+  opacity: 1;
+  border-left: 5px solid #473793;
+}
+
+.sidebar li:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.sidebar li.disabled:hover {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sidebar li:focus {
+  outline: none;
+}
+
+.sidebar li span {
+  display: inline-block;
+  height: 15px;
+  width: 15px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.sidebar li.overview span {
+  background-image: url("/assets/images/smalloverview.svg")
+}
+
+.sidebar li.policy span {
+  background-image: url("/assets/images/smallhead.svg")
+}
+
+.sidebar li.overview.selected span {
+  background-image: url("/assets/images/smalloverview_red.svg")
+}
+
+.sidebar li.policy.selected span {
+  background-image: url("/assets/images/smallhead_red.svg")
+}
+
+.logo{
+  margin-right: 21px;
+}
+
+.logo1{
+  margin-right: 17px;
+}

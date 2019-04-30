@@ -21,7 +21,7 @@ export default class Utils {
         const auth = req.headers.authorization;
 
         if (!auth) {
-            throw new Error('Missing auth')
+            throw new Error('Missing auth: ' + JSON.stringify(req.headers))
         } else if (!auth.includes('Basic ')) {
             throw new Error('Expected Basic auth')
         }

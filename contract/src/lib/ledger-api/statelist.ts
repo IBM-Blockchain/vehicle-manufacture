@@ -5,15 +5,9 @@ SPDX-License-Identifier: Apache-2.0
 'use strict';
 import { Context } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
-import { IState, State } from './state';
+import { IHistoricState, IState, State } from './state';
 
 const logger = newLogger('STATELIST');
-
-export interface IHistoricState {
-    value: any;
-    timestamp: Date;
-    txId: string;
-}
 
 export class StateList<T extends State> {
 
@@ -56,22 +50,20 @@ export class StateList<T extends State> {
         return state;
     }
 
-    public async getHistory(key: string): Promise<IHistoricState[]> {
+    public async getHistory(key: string): Promise<Array<IHistoricState<T>>> {
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const keyHistory = await this.ctx.stub.getHistoryForKey(ledgerKey);
 
-        const history: IHistoricState[] = [];
+        const history: Array<IHistoricState<T>> = [];
 
         let value = (await keyHistory.next()).value;
 
         while (value) {
             const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses);
 
-            const historicState: IHistoricState = {
-                timestamp: new Date((value.getTimestamp() as any).seconds.low * 1000),
-                txId: value.getTxId(),
-                value: state,
-            };
+            const historicState: IHistoricState<T> = new IHistoricState(
+                (value.getTimestamp().getSeconds() as any).toInt(), value.getTxId(), state as T,
+            );
 
             history.push(historicState);
 
@@ -153,6 +145,11 @@ export class StateList<T extends State> {
             value = next.value;
         }
         return states;
+    }
+
+    public delete(key: string) {
+        const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
+        return this.ctx.stub.deleteState(ledgerKey);
     }
 
     public getName(): string {

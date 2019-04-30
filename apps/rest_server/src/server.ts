@@ -37,18 +37,48 @@ export default class RestServer {
             walletPath: this.config.walletPath,
             connectionProfilePath: this.config.connectionProfilePath,
             channelName: 'vehiclemanufacture',
-            contractName: 'vehicle-manufacture-chaincode'
+            contractName: 'vehicle-manufacture-chaincode',
+            org: this.config.org
         });
 
         this.app = express();
-        this.app.use(cors());
+        const whitelist = ['http://localhost:6001', 'http://localhost:8100', 'http://localhost:4200']        
+
+        this.app.use((req, res, next) => {
+
+            console.log('AT LEAST GOT START', req.method, req.url);
+
+            //Enabling CORS
+            const origin = req.header('Origin');
+
+            if (whitelist.includes(origin)) {
+                res.header('Access-Control-Allow-Origin', origin);
+            }
+
+            res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+            res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+            res.header('Access-Control-Allow-Credentials', 'true')
+
+            if ('OPTIONS' === req.method) {
+                res.send(200);
+                return;
+            }
+
+            next();
+        });
+
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
+        // this.app.use(cors());
 
         const auth = (req: Request, res, next) => {
             if (!req.url.includes('events')) {
                 // hack - cannot add auth via EventSource could mess around with cookies for handling auth instead
-                req.user = Utils.getAuth(req);
+                try {
+                    req.user = Utils.getAuth(req);
+                } catch (err) {
+                    return next(err);
+                }
             }
 
             next();

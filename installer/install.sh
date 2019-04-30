@@ -165,11 +165,11 @@ ARIUM_REST_PORT=3000
 VDA_REST_PORT=3001
 PRINCE_REST_PORT=3002
 
-./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNECTION --port $ARIUM_REST_PORT > $BASEDIR/tmp/arium_server.log 2>&1 &
+./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/Arium --connection-profile $ARIUM_CONNECTION --port $ARIUM_REST_PORT --org Arium > $BASEDIR/tmp/arium_server.log 2>&1 &
 
-./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/VDA --connection-profile $VDA_CONNECTION --port $VDA_REST_PORT > $BASEDIR/tmp/vda_server.log 2>&1 &
+./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/VDA --connection-profile $VDA_CONNECTION --port $VDA_REST_PORT --org VDA > $BASEDIR/tmp/vda_server.log 2>&1 &
 
-./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/PrinceInsurance --connection-profile $PRINCE_CONNECTION --port $PRINCE_REST_PORT > $BASEDIR/tmp/prince_server.log 2>&1 &
+./node_modules/nodemon/bin/nodemon.js $REST_DIR/dist/cli.js --wallet $LOCAL_FABRIC/wallet/PrinceInsurance --connection-profile $PRINCE_CONNECTION --port $PRINCE_REST_PORT --org Prince > $BASEDIR/tmp/prince_server.log 2>&1 &
 
 cd $BASEDIR
 for PORT in $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT

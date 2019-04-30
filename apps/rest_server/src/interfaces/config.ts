@@ -2,6 +2,7 @@ export interface ServerConfig {
     walletPath: string;
     connectionProfilePath: string;
     port: number;
+    org: string;
 }
 
 export interface FabricConfig {
@@ -9,4 +10,5 @@ export interface FabricConfig {
     connectionProfilePath: string;
     channelName: string;
     contractName: string;
+    org: string;
 }
