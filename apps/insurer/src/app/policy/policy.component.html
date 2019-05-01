@@ -14,7 +14,7 @@
                 United Kingdom
             </div>
             <div id="car-details" >
-                <span><b>{{ vehicle.vehicleDetails.makeId }} {{ vehicle.vehicleDetails.modelType}}</b></span><br />
+                <span><b>{{ vehicle.vehicleDetails.makeId }} {{ vehicle.vehicleDetails.modelType }}</b></span><br />
                 New Vehicle<br />
                 Owned by: <span>{{ user.forename }} {{ user.surname }}</span><br />
                 Registered on: {{ vehicle.manufactured | date:'d MMM y'}}<br />
@@ -57,7 +57,7 @@
                 <div class="notification-title" ><img src="assets/images/loudspeaker.png" width="22px" height="14px" alt="loudspeaker icon" />Alert!</div>
                 <div class="alert-time" >
                     <div class="small-title"  >
-                    {{ event.eventType.split('_').join(' ') }}
+                    {{ eventTypes[event.eventType] }}
                     </div>
                     {{ event.timestamp | date:'d MMM y' }}
                 </div>
@@ -69,7 +69,7 @@
             <div class="alert-detailed-data" >
                 <div class="data-field" >
                     <div class="small-title" >Acceleration</div>
-                    <span  >{{ event.acceleration | number:'1.0-2' }}G<img *ngIf="event.eventType === 'CRASHED'" class='alert-img' src='assets/images/Alert_small.svg' /></span>
+                    <span  >{{ event.acceleration | number:'1.0-2' }}G<img *ngIf="eventTypes[event.eventType] === 'CRASHED'" class='alert-img' src='assets/images/Alert_small.svg' /></span>
                 </div>
                 <div class="data-field" >
                 <div class="small-title" >Pitch</div>
@@ -81,20 +81,20 @@
                 </div>
                 <div class="data-field" >
                     <div class="small-title" >Air Temperature</div>
-                    <span  >{{ event.air_temperature | number:'1.0-2' }}C</span>
+                    <span  >{{ event.airTemperature | number:'1.0-2' }}C</span>
                 </div>
                 <div class="data-field"  >
                     <div class="small-title" >Engine Temperature</div>
-                    <span  >{{ event.engine_temperature | number:'1.0-2' }}C<img *ngIf="event.eventType === 'OVERHEATED' || event.eventType === 'OIL_FREEZING'" class='alert-img' src='assets/images/Alert_small.svg' /></span>
+                    <span  >{{ event.engineTemperature | number:'1.0-2' }}C<img *ngIf="eventTypes[event.eventType] === 'OVERHEATED' || eventTypes[event.eventType] === 'OIL_FREEZING'" class='alert-img' src='assets/images/Alert_small.svg' /></span>
                 </div>
                 <div class="data-field"  >
                     <div class="small-title" >Light</div>
-                    <span  >{{ event.light_level | number:'1.0-2' }}LUX</span>
+                    <span  >{{ event.lightLevel | number:'1.0-2' }}LUX</span>
                 </div>
             </div>
         </div>
     </div> <!-- ALERTS AT BOTTOM ADDED HERE DYNAMICALLY -->
 </div>
 <div *ngIf="ready">
-    <app-alert-sidebar id="alert-stream" [usageRecord]="usageEvents" ></app-alert-sidebar>
+    <app-alert-sidebar id="alert-stream" [usageRecord]="usageEvents" [eventTypes]="eventTypes" ></app-alert-sidebar>
 </div>

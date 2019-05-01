@@ -7,7 +7,7 @@ var url = require('url');
 var config = require('config');
 
 // Get our API routes
-const api = require('./routes/api');
+// const api = require('./routes/api');
 
 const app = express();
 const server = http.createServer(app);

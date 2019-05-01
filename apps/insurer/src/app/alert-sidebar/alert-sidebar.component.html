@@ -17,7 +17,7 @@
       </div>
       <div class="alert-time" >
           <div class="small-title" >
-          {{ event.eventType.split('_').join(' ') }}
+          {{ eventTypes[event.eventType] }}
           </div>
           {{ event.timestamp | date:'dd/MM/yyyy HH:mm' }}
       </div>

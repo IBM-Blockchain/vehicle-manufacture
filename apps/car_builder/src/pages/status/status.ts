@@ -126,11 +126,14 @@ export class StatusPage {
     
       console.log('insure me please');
 
+      const date = new Date();
+      date.setMonth(date.getMonth() + 12);
+
       const data = JSON.stringify({
         vin: this.order.vin,
         holderId: this.order.ordererId,
         policyType: 2,
-        endDate: Date.now()
+        endDate: date.getTime()
       });
 
       const headers = new Headers();

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WindowRef } from '../window-ref/window-ref.service';
@@ -47,7 +47,7 @@ interface UsageEvent {
   templateUrl: './policy.component.html',
   styleUrls: ['./policy.component.css']
 })
-export class PolicyComponent implements OnInit {
+export class PolicyComponent implements OnInit, OnDestroy {
 
   private L: any;
 
@@ -68,6 +68,10 @@ export class PolicyComponent implements OnInit {
     light: '-.--'
   };
 
+  private listeners: Map<string, any> = new Map();
+
+  public readonly eventTypes = [ 'CRASHED', 'OVERHEATED', 'OIL FREEZING', 'ENGINE_FAILURE'];
+
   constructor(private winRef: WindowRef, private http: HttpClient) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa('system:systempw'));
@@ -79,8 +83,13 @@ export class PolicyComponent implements OnInit {
 
   ngOnInit() {
     this.L = this.winRef.nativeWindow.L;
-    this.get_policy_details();
-    this.handle_map();
+    this.getPolicyDetails();
+    this.handleMap();
+
+    const usageEventListener = this.setupListener(`${this.url}/vehicles/usage/events/added`, (event: any) => {
+      this.usageEvents.push(event);
+    });
+    this.listeners.set('usageEvents', usageEventListener);
 
     // const openWebSocket = () => {
     //   let websocketURL = 'ws://' + location.hostname + ':' + location.port;
@@ -130,12 +139,41 @@ export class PolicyComponent implements OnInit {
 
   }
 
-  async get_policy_details() {
+  ngOnDestroy() {
+    this.listeners.forEach((listener: any) => {
+      listener.close();
+    });
+  }
+
+  setupListener(url: string, onMessage: (msg: any) => void) {
+    const usageEventSource = new (window as any).EventSource(url);
+    usageEventSource.onopen = (evt) => {
+      console.log('OPEN', evt);
+    };
+
+    usageEventSource.onerror = (evt) => {
+        console.log('ERROR', evt);
+        this.setupListener(url, onMessage);
+    };
+
+    usageEventSource.onclose = (evt) => {
+      console.error('Usage event listener closed');
+    };
+
+    usageEventSource.onmessage = (evt) => {
+      const event = JSON.parse(evt.data);
+      onMessage(event);
+    };
+
+    return usageEventSource;
+  }
+
+  async getPolicyDetails() {
     const pathname = window.location.pathname.split('/');
-    const policy_id = pathname[pathname.length - 1];
+    const policyId = pathname[pathname.length - 1];
 
     this.policy = (await this.http.get(
-      `${this.url}/policies/${policy_id}`, this.httpOptions
+      `${this.url}/policies/${policyId}`, this.httpOptions
     ).toPromise()) as any as Policy;
 
     this.user = {
@@ -148,6 +186,7 @@ export class PolicyComponent implements OnInit {
     this.vehicle = (await this.http.get(`${this.url}/vehicles/${this.policy.vin}`, this.httpOptions).toPromise()) as any;
 
     this.usageEvents = (await this.http.get(`${this.url}/policies/${this.policy.id}/usage`, this.httpOptions).toPromise()) as any;
+    console.log(this.usageEvents);
 
     this.ready = true;
 
@@ -174,7 +213,7 @@ export class PolicyComponent implements OnInit {
     // });
   }
 
-  handle_map() {
+  handleMap() {
     const lat = localStorage.getItem('lat');
     const long = localStorage.getItem('long');
 
@@ -208,10 +247,10 @@ export class PolicyComponent implements OnInit {
         timestamp: 1505126421109
       };
     }
-    this.draw_map(location);
+    this.drawMap(location);
   }
 
-  draw_map(location) {
+  drawMap(location) {
     const map_location = [
       location.coords.latitude,
       location.coords.longitude

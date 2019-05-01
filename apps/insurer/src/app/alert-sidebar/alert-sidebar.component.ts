@@ -8,6 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class AlertSidebarComponent implements OnInit {
 
   @Input() usageRecord: Array<object> = [];
+  @Input() eventTypes: Array<string> = [];
 
   constructor() {
   }

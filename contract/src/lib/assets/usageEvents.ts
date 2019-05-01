@@ -5,8 +5,7 @@ import { Object, Property } from 'fabric-contract-api';
 import { Asset } from './asset';
 
 export enum EventType {
-    ACTIVATED = 1,
-    CRASHED,
+    CRASHED = 1,
     OVERHEATED,
     OIL_FREEZING,
     ENGINE_FAILURE,
