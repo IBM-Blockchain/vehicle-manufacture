@@ -3,19 +3,11 @@ SPDX-License-Identifier: Apache-2.0
 */
 
 import { Context } from 'fabric-contract-api';
-import { Order } from '../assets/order';
-import { Policy } from '../assets/policy';
-import { UsageEvent } from '../assets/usageEvents';
-import { Vehicle } from '../assets/vehicle';
+import { Order, Policy, UsageEvent, Vehicle } from '../assets';
 import { State } from '../ledger-api/state';
-import { AssetList } from '../lists/assetlist';
-import { OrganizationList } from '../lists/organizationlist';
-import { ParticipantList } from '../lists/participantlist';
-import { Insurer } from '../organizations/insurer';
-import { Manufacturer } from '../organizations/manufacturer';
-import { Regulator } from '../organizations/regulator';
-import { Person } from '../participants/person';
-import { TelematicsDevice } from '../participants/telematics';
+import { AssetList, OrganizationList, ParticipantList } from '../lists';
+import { Insurer, Manufacturer, Organization, Regulator } from '../organizations';
+import { Participant, Registrar, Task } from '../participants';
 import { VehicleManufactureNetClientIdentity } from './client-identity';
 
 export class VehicleManufactureNetContext extends Context {
@@ -28,10 +20,13 @@ export class VehicleManufactureNetContext extends Context {
     private policyList: AssetList<Policy>;
     private usageList: AssetList<UsageEvent>;
 
+    private caller: Participant;
+    private callerOrg: Organization;
+
     constructor() {
         super();
         this.organizationList = new OrganizationList(this, 'organizations', [Manufacturer, Insurer, Regulator]);
-        this.participantList = new ParticipantList(this, 'participant', [Person, TelematicsDevice]);
+        this.participantList = new ParticipantList(this, 'participant', [Registrar, Task]);
         this.vehicleList = new AssetList(this, 'vehicles', [Vehicle]);
         this.orderList = new AssetList(this, 'orders', [Order]);
         this.policyList = new AssetList(this, 'policies', [Policy]);

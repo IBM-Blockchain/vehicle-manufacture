@@ -1,0 +1,26 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "description": "Common code shared between participating orgs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "test": "npm run lint",
+    "lint": "tslint --project ."
+  },
+  "dependencies": {
+    "@ampretia/x509": "^0.4.0",
+    "express": "^4.16.4",
+    "fabric-network": "1.4.2-snapshot.39",
+    "vehicle-manufacture-contract-wallet-api": "file:../../wallet-api"
+  },
+  "author": "IBM Blockchain",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/express": "^4.16.1",
+    "@types/node": "^11.13.8",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.5"
+  }
+}

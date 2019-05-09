@@ -21,7 +21,7 @@ DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 ################
 # REMOVE NODE LEFTOVERS FROM CHAINCODE
 ################
-# TODO - REMEMEBER TO ADD BACK IN rm -rf node_modules; AND rm -f package-lock.jsonTO BELOW COMMAND
+# TODO - REMEMEBER TO ADD BACK IN rm -rf node_modules; AND rm -f package-lock.json TO BELOW COMMAND
 docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp'
 
 ################
@@ -67,19 +67,29 @@ rm -rf $BASEDIR/tmp
 rm -rf $BASEDIR/vehiclemanufacture_fabric
 
 ################
-# CLEANUP REST SERVERS
+# CLEANUP APPS
 ################
-ARIUM_REST_PORT=3000
-VDA_REST_PORT=3001
-PRINCE_REST_PORT=3002
+CAR_BUILDER_REST_PORT=8100
+ARIUM_REST_PORT=6001
+VDA_REST_PORT=6002
+PRINCE_REST_PORT=4200
 
 ps | grep 'nodemon' | awk '{print $1}' | xargs kill -9
 
-rm -rf $BASEDIR/../apps/rest_server/node_modules
-rm -f $BASEDIR/../apps/rest_server/package-lock.json
-rm -rf $BASEDIR/../apps/rest_server/dist
+APPS_PATH=$BASEDIR/../apps2
 
-for PORT in $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
+# find $APPS_PATH -name "node_modules" -type d -prune -exec rm -rf '{}' +
+# find $APPS_PATH -name "dist" -type d -prune -exec rm -rf '{}' +
+# find $APPS_PATH -name "checkpointers" -type d -prune -exec rm -rf '{}' +
+# find $APPS_PATH -name "package-lock.json" -depth -exec rm {} \;
+
+# find $APPS_PATH/car_builder/client -name "platforms" -type d -prune -exec rm -rf '{}' +
+# find $APPS_PATH/car_builder/client -name "plugins" -type d -prune -exec rm -rf '{}' +
+# find $APPS_PATH/car_builder/client -name "www" -type d -prune -exec rm -rf '{}' +
+
+
+
+for PORT in $CAR_BUILDER_REST_PORT $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
 do
     lsof -i :$PORT | awk '{if(NR>1)print $2}' | xargs kill
 done

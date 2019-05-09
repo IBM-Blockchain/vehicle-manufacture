@@ -8,7 +8,7 @@ export class JSONSerializer extends FabricJSONSerializer {
     public toBuffer(result: any, schema: object = {}, loggerPrefix: string) {
         result = this.serialize(result);
 
-        return super.toBuffer(result, schema, loggerPrefix);
+        return super.toBuffer(result, schema, loggerPrefix);   
     }
 
     private serialize(result: any): any {

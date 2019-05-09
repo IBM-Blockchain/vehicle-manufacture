@@ -1,0 +1,8 @@
+{
+  "name": "vehicleLifecycle",
+  "app_id": "test",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}

@@ -41,6 +41,7 @@ export class OrderRouter extends ContractRouter {
         this.router.get('/:orderId', await this.transactionToCall('getOrder'));
 
         this.router.put('/:orderId/status', async (req: IRequest, res: Response) => {
+
             if (!req.body.hasOwnProperty('status')) {
                 res.status(400);
                 res.send('Bad request. Missing parameters: status');

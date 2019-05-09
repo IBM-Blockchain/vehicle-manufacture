@@ -45,9 +45,6 @@ export default class RestServer {
         const whitelist = ['http://localhost:6001', 'http://localhost:8100', 'http://localhost:4200']        
 
         this.app.use((req, res, next) => {
-
-            console.log('AT LEAST GOT START', req.method, req.url);
-
             //Enabling CORS
             const origin = req.header('Origin');
 

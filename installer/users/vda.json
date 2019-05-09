@@ -1,6 +1,6 @@
 [
     {
-        "name": "system",
+        "name": "registrar",
         "attrs": [
             {
                 "name": "hf.Registrar.Roles",
@@ -11,8 +11,8 @@
                 "value": "vehicle_manufacture.*"
             },
             {
-                "name": "vehicle_manufacture.role",
-                "value": "employee",
+                "name": "vehicle_manufacture.role.participant.create",
+                "value": "y",
                 "ecert": true
             },
             {
@@ -24,40 +24,40 @@
                 "name": "vehicle_manufacture.org_type",
                 "value": "regulator",
                 "ecert": true
-            },
+            }
+        ]
+    },
+    {
+        "name": "audit",
+        "attrs": [
             {
-                "name": "vehicle_manufacture.can_register",
+                "name": "vehicle_manufacture.role.vehicle.read",
                 "value": "y",
                 "ecert": true
-            }
-        ]
-    },
-    {
-        "name": "telematics_1",
-        "attrs": [
+            },
             {
-                "name": "vehicle_manufacture.role",
-                "value": "telematic",
+                "name": "vehicle_manufacture.role.usage_event.read",
+                "value": "y",
                 "ecert": true
-            }
-        ] 
-    },
-    {
-        "name": "paul",
-        "attrs": [
+            },
             {
-                "name": "vehicle_manufacture.role",
-                "value": "private_entity",
+                "name": "vehicle_manufacture.role.policy.read",
+                "value": "y",
                 "ecert": true
-            }
-        ]
-    },
-    {
-        "name": "fred",
-        "attrs": [
+            },
             {
-                "name": "vehicle_manufacture.role",
-                "value": "private_entity",
+                "name": "vehicle_manufacture.role.order.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "VDA",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "regulator",
                 "ecert": true
             }
         ]

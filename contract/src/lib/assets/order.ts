@@ -102,13 +102,9 @@ export class Order extends Asset {
         this._vin = vin;
     }
 
-    public canBeChangedBy(participant: Participant, organization: Organization) {
-        if (participant.orgId !== organization.id) {
-            throw new Error('Participant is not in organization');
-        }
-        return participant.id === this.ordererId ||
-               (participant.isEmployee() && this.vehicleDetails.makeId === organization.id)
-               || participant.isEmployee() && organization instanceof Regulator;
+    public madeByOrg(orgId: string) {
+        console.log(orgId, this.vehicleDetails.makeId);
+        return this.vehicleDetails.makeId === orgId;
     }
 }
 

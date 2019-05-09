@@ -2,12 +2,11 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Contract, Returns, Transaction } from 'fabric-contract-api';
+import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
-import { NetworkName } from '../../constants';
-import { Regulator } from '../organizations/regulator';
-import { Person } from '../participants/person';
-import { TelematicsDevice } from '../participants/telematics';
+import { NetworkName, Roles, RolesPrefix } from '../../constants';
+import { Registrar } from '../participants/registrar';
+import { Task } from '../participants/task';
 import { VehicleManufactureNetContext } from '../utils/context';
 
 const logger = newLogger('PARTICIPANTS_CONTRACT');
@@ -27,19 +26,21 @@ export class ParticipantsContract extends Contract {
     }
 
     @Transaction()
-    @Returns('Person')
-    public async registerSuper(
+    @Returns('Registrar')
+    public async registerRegistrar(
         ctx: VehicleManufactureNetContext, originCode?: string, manufacturerCode?: string,
-    ): Promise<Person> {
+    ): Promise<Registrar> {
+        if (ctx.getClientIdentity().getAttributeValue(RolesPrefix + Roles.PARTICIPANT_CREATE) !== 'y') {
+            throw new Error(
+                `Only callers with role ${RolesPrefix + Roles.PARTICIPANT_CREATE} can register as registrar`,
+            );
+        }
+
         const orgName = ctx.getClientIdentity().getAttributeValue('vehicle_manufacture.company');
         const orgType = ctx.getClientIdentity().getAttributeValue('vehicle_manufacture.org_type');
 
         await this.registerOrganization(ctx, orgName, originCode, manufacturerCode);
         const participant = await ctx.getClientIdentity().newParticipantInstance();
-
-        if (!(participant instanceof Person)) {
-            throw new Error('Only callers of type Person may be registered as a super user');
-        }
 
         switch (orgType) {
             case 'regulator':
@@ -55,37 +56,28 @@ export class ParticipantsContract extends Contract {
     }
 
     @Transaction()
-    @Returns('Person')
-    public async registerPerson(ctx: VehicleManufactureNetContext, name: string, role: string): Promise<Person> {
+    @Param('roles', 'string[]')
+    @Returns('Task')
+    public async registerTask(ctx: VehicleManufactureNetContext, name: string, roles: string[]): Promise<Task> {
         const {organization, participant} = await ctx.getClientIdentity().loadParticipant();
-        if (!participant.canRegister) {
-            throw new Error('This user cannot register new participants');
+
+        if (!participant.hasRole(Roles.PARTICIPANT_CREATE)) {
+            throw new Error(`Only callers with role ${Roles.PARTICIPANT_CREATE} can register a task user`);
         }
 
-        const person = new Person(
-            `${name}@${organization.name}`, role, organization.id, false,
+        roles = roles.filter((role) => {
+            return role.startsWith(RolesPrefix);
+        }).map((role) => {
+            return role.split(RolesPrefix)[1];
+        });
+
+        const person = new Task(
+            `${name}@${organization.name}`, roles, organization.id,
         );
+
         await ctx.getParticipantList().add(person);
 
         return person;
-    }
-
-    @Transaction()
-    @Returns('TelematicsDevice')
-    public async registerTelematicsDevice(
-        ctx: VehicleManufactureNetContext, name: string,
-    ): Promise<TelematicsDevice> {
-        const {organization, participant} = await ctx.getClientIdentity().loadParticipant();
-        if (!participant.canRegister && organization instanceof Regulator) {
-            throw new Error('This user cannot register new participants');
-        }
-
-        const device = new TelematicsDevice(
-            `${name}@${organization.name}`, organization.id,
-        );
-        await ctx.getParticipantList().add(device);
-
-        return device;
     }
 
     private async registerOrganization(

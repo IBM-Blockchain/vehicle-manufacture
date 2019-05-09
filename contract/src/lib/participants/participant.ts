@@ -15,25 +15,21 @@ export class Participant extends State {
     }
 
     @Property()
-    public id: string;
+    public readonly id: string;
 
     @Property()
-    public role: string;
+    public readonly orgId: string;
 
-    @Property()
-    public canRegister: boolean = false;
-
-    @Property()
-    public orgId: string;
+    @Property('roles', 'string[]')
+    protected roles: string[];
 
     constructor(
-        id: string, role: string, orgId: string, canRegister: boolean, participantType: string,
+        id: string, roles: string[], orgId: string, participantType: string,
     ) {
         super(Participant.generateClass(participantType), [id]);
         this.id = id;
-        this.role = role;
+        this.roles = roles;
         this.orgId = orgId;
-        this.canRegister = canRegister;
     }
 
     public serialize(): Buffer {
@@ -49,15 +45,7 @@ export class Participant extends State {
         return Buffer.from(State.serialize(toSerialize));
     }
 
-    public isEmployee() {
-        return this.role === 'employee';
-    }
-
-    public isTelematicDevice() {
-        return this.role === 'telematic';
-    }
-
-    public isPrivateEntity() {
-        return this.role === 'private_entity';
+    public hasRole(role: string): boolean {
+        return this.roles.includes(role);
     }
 }

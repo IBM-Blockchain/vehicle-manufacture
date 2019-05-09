@@ -28,12 +28,9 @@ export class VehicleRouter extends ContractRouter {
 
         this.router.post('/:vin/usage', await this.transactionToCall('addUsageEvent'));
 
-
         this.router.get('/usage/events/added', (req: Request, res: Response) => {
             this.initEventSourceListener(req, res, this.connections, EventNames.ADD_USAGE_EVENT);
         });
-
-        this.router.delete('/usage', await this.transactionToCall('removeUsageEvent'));
 
         await this.fabricProxy.addContractListener('system', 'addUsageEvent', EventNames.ADD_USAGE_EVENT, (err, event) => {
             this.publishEvent(event);

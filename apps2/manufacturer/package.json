@@ -19,6 +19,7 @@
     "express": "^4.15.2",
     "express-less": "^0.1.0",
     "node-red": "^0.20.5",
+    "node-red-contrib-ibm-watson-iot": "^0.2.8",
     "request": "^2.81.0",
     "ws": "^2.3.1"
   },

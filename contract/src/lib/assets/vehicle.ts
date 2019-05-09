@@ -5,7 +5,6 @@ SPDX-License-Identifier: Apache-2.0
 import { Object, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { Manufacturer } from '../organizations/manufacturer';
-import { Person } from '../participants/person';
 import { NotRequired } from '../utils/annotations';
 import { Asset } from './asset';
 import './usageEvents';
@@ -45,14 +44,11 @@ export class Vehicle extends Asset {
 
     private _ownerId: string;
 
-    private _telematicId: string;
-
     @Property()
     private manufactured: number;
 
     constructor(
         id: string,
-        telematicId: string,
         vehicleDetails: IVehicleDetails,
         vehicleStatus: VehicleStatus,
         manufactured: number,
@@ -63,7 +59,6 @@ export class Vehicle extends Asset {
         this.vehicleDetails = vehicleDetails;
         this._vehicleStatus = vehicleStatus;
         this.manufactured = manufactured;
-        this._telematicId = telematicId;
 
         if (ownerId) {
             this._ownerId = ownerId;
@@ -88,16 +83,7 @@ export class Vehicle extends Asset {
         this._vehicleStatus = status;
     }
 
-    @Property()
-    get telematicId(): string {
-        return this._telematicId;
-    }
-
-    public belongsTo(person: Person) {
-        return person.id === this.ownerId;
-    }
-
-    public madeByOrg(person: Person) {
-        return person.orgId === this.vehicleDetails.makeId;
+    public madeByOrg(orgId: string) {
+        return this.vehicleDetails.makeId === orgId;
     }
 }
