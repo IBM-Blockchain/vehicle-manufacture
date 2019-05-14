@@ -1,5 +1,38 @@
 [
     {
+        "name": "paul",
+        "attrs": [{
+            "name": "vehicle_manufacture.role.vehicle.read",
+            "value": "y",
+            "ecert": true
+        },
+        {
+            "name": "vehicle_manufacture.role.usage_event.read",
+            "value": "y",
+            "ecert": true
+        },
+        {
+            "name": "vehicle_manufacture.role.policy.read",
+            "value": "y",
+            "ecert": true
+        },
+        {
+            "name": "vehicle_manufacture.role.order.read",
+            "value": "y",
+            "ecert": true
+        },
+        {
+            "name": "vehicle_manufacture.company",
+            "value": "VDA",
+            "ecert": true
+        },
+        {
+            "name": "vehicle_manufacture.org_type",
+            "value": "private_entity",
+            "ecert": true
+        }]
+    },
+    {
         "name": "registrar",
         "attrs": [
             {

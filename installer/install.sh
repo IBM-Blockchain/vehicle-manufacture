@@ -152,11 +152,12 @@ echo "################"
 echo "# STARTUP APPS"
 echo "################"
 
-APPS_DIR=$BASEDIR/../apps2
+APPS_DIR=$BASEDIR/../apps
 
 INSURER_DIR=$APPS_DIR/insurer
 CAR_BUILDER_DIR=$APPS_DIR/car_builder
-MANUFACTURERER_DIR=$APPS_DIR/manufacturer
+MANUFACTURER_DIR=$APPS_DIR/manufacturer
+REGULATOR_DIR=$APPS_DIR/regulator
 
 cd $APPS_DIR/common
 npm install
@@ -193,11 +194,21 @@ echo "########################"
 echo "# STARTUP MANUFACTURER #"
 echo "########################"
 
-cd $MANUFACTURERER_DIR
+cd $MANUFACTURER_DIR
 npm install
 npm run build
 # npm start > $BASEDIR/tmp/manufacturer.log 2>&1 &
 nodemon > $BASEDIR/tmp/manufacturer.log 2>&1 &
+
+echo "#####################"
+echo "# STARTUP REGULATOR #"
+echo "#####################"
+
+cd $REGULATOR_DIR
+npm install
+npm run build
+# npm start > $BASEDIR/tmp/manufacturer.log 2>&1 &
+nodemon > $BASEDIR/tmp/regulator.log 2>&1 &
 
 CAR_BUILD_PORT=8100
 ARIUM_REST_PORT=6001
@@ -205,7 +216,7 @@ VDA_REST_PORT=6002
 PRINCE_REST_PORT=4200
 
 cd $BASEDIR
-for PORT in $ARIUM_REST_PORT $PRINCE_REST_PORT $CAR_BUILDER_PORT #$VDA_REST_PORT 
+for PORT in $ARIUM_REST_PORT $PRINCE_REST_PORT $CAR_BUILDER_PORT $VDA_REST_PORT 
 do
     printf "WAITING FOR REST SERVER ON PORT $PORT"
     until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT);
@@ -224,7 +235,7 @@ VDA_REGISTER="$VDA_REST_PORT|regulator|$VDA_USERS"
 PRINCE_REGISTER="$PRINCE_REST_PORT|insurer|$PRINCE_USERS"
 ARIUM_REGISTER="$ARIUM_REST_PORT|manufacturer|$ARIUM_USERS"
 
-for REGISTRATION in $PRINCE_REGISTER $ARIUM_REGISTER #$VDA_REGISTER
+for REGISTRATION in $PRINCE_REGISTER $ARIUM_REGISTER $VDA_REGISTER
 do
     PORT="$(cut -d'|' -f1 <<<"$REGISTRATION")"
     TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"

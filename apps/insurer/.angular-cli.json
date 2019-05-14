@@ -5,8 +5,8 @@
   },
   "apps": [
     {
-      "root": "src",
-      "outDir": "dist",
+      "root": "client/src",
+      "outDir": "client/dist",
       "assets": [
         "assets",
         "favicon.ico"
@@ -19,16 +19,16 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "../node_modules/leaflet/dist/leaflet.css",
+        "../../node_modules/leaflet/dist/leaflet.css",
         "styles.css"
       ],
       "scripts": [
-        "../node_modules/leaflet/dist/leaflet.js"
+        "../../node_modules/leaflet/dist/leaflet.js"
       ],
-      "environmentSource": "environments/environment.ts",
+      "environmentSource": "client/environments/environment.ts",
       "environments": {
-        "dev": "environments/environment.ts",
-        "prod": "environments/environment.prod.ts"
+        "dev": "client/environments/environment.ts",
+        "prod": "client/environments/environment.prod.ts"
       }
     }
   ],
@@ -39,13 +39,13 @@
   },
   "lint": [
     {
-      "project": "src/tsconfig.app.json"
+      "project": "client/src/tsconfig.app.json"
     },
     {
-      "project": "src/tsconfig.spec.json"
+      "project": "client/src/tsconfig.spec.json"
     },
     {
-      "project": "e2e/tsconfig.e2e.json"
+      "project": "client/e2e/tsconfig.e2e.json"
     }
   ],
   "test": {

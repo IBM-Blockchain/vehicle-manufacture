@@ -25,7 +25,7 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async placeOrder(
-        ctx: VehicleManufactureNetContext, vehicleDetails: IVehicleDetails, options: IOptions,
+        ctx: VehicleManufactureNetContext, ordererId: string, vehicleDetails: IVehicleDetails, options: IOptions,
     ): Promise<Order> {
         const { participant } = await ctx.getClientIdentity().loadParticipant();
 
@@ -40,7 +40,7 @@ export class VehicleContract extends Contract {
         const id = generateId(ctx.stub.getTxID(), 'ORDER_' + numOrders);
 
         const order = new Order(
-            id, vehicleDetails, OrderStatus.PLACED, options, participant.id,
+            id, vehicleDetails, OrderStatus.PLACED, options, ordererId,
             (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000,
         );
 

@@ -13,5 +13,8 @@
     "fabric-network": "unstable-1.4",
     "fabric-client": "unstable-1.4",
     "fabric-ca-client": "unstable-1.4"
+  },
+  "devDependencies": {
+    "typescript": "^3.4.5"
   }
 }

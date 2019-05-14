@@ -76,7 +76,7 @@ PRINCE_REST_PORT=4200
 
 ps | grep 'nodemon' | awk '{print $1}' | xargs kill -9
 
-APPS_PATH=$BASEDIR/../apps2
+APPS_PATH=$BASEDIR/../apps
 
 # find $APPS_PATH -name "node_modules" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "dist" -type d -prune -exec rm -rf '{}' +
