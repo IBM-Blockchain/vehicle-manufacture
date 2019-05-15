@@ -64,12 +64,17 @@ PRINCE_REST_PORT=4200
 
 ps | grep 'nodemon' | awk '{print $1}' | xargs kill -9
 
+docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node down --volumes
+
 APPS_PATH=$BASEDIR/../apps
 
 # find $APPS_PATH -name "node_modules" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "dist" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "checkpointers" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "package-lock.json" -depth -exec rm {} \;
+rm -rf $APPS_PATH/manufacturer/vehiclemanufacture_fabric/wallet/*/
+rm -rf $APPS_PATH/insurer/vehiclemanufacture_fabric/wallet/*/
+rm -rf $APPS_PATH/regulator/vehiclemanufacture_fabric/wallet/*/
 
 # find $APPS_PATH/car_builder/client -name "platforms" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH/car_builder/client -name "plugins" -type d -prune -exec rm -rf '{}' +

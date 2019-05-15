@@ -69,27 +69,6 @@ npm install
 npm run build
 cd $BASEDIR
 
-echo "###############################"
-echo "# SETUP FABRIC CONFIG FOLDERS #"
-echo "###############################"
-APPS_DIR=$BASEDIR/../apps
-
-FABRIC_CONFIG_NAME=vehiclemanufacture_fabric
-
-ARIUM_LOCAL_FABRIC=$APPS_DIR/manufacturer/$FABRIC_CONFIG_NAME
-VDA_LOCAL_FABRIC=$APPS_DIR/regulator/$FABRIC_CONFIG_NAME
-PRINCE_LOCAL_FABRIC=$APPS_DIR/insurer/$FABRIC_CONFIG_NAME
-
-mkdir -p $ARIUM_LOCAL_FABRIC/wallet
-mkdir -p $VDA_LOCAL_FABRIC/wallet
-mkdir -p $PRINCE_LOCAL_FABRIC/wallet
-
-CCP_TEMPLATE=$BASEDIR/network/connection.tmpl
-
-sed -e 's/{{LOC_ORG_ID}}/Arium/g' $CCP_TEMPLATE > $ARIUM_LOCAL_FABRIC/connection.json
-sed -e 's/{{LOC_ORG_ID}}/VDA/g' $CCP_TEMPLATE > $VDA_LOCAL_FABRIC/connection.json
-sed -e 's/{{LOC_ORG_ID}}/PrinceInsurance/g' $CCP_TEMPLATE > $PRINCE_LOCAL_FABRIC/connection.json
-
 echo "####################"
 echo "# ENROLLING ADMINS #"
 echo "####################"
@@ -133,6 +112,14 @@ mv $BASEDIR/tmp/key.pem $PRINCE_ADMIN_KEY
 echo "####################"
 echo "# IMPORTING ADMINS #"
 echo "####################"
+APPS_DIR=$BASEDIR/../apps
+
+FABRIC_CONFIG_NAME=vehiclemanufacture_fabric
+
+ARIUM_LOCAL_FABRIC=$APPS_DIR/manufacturer/$FABRIC_CONFIG_NAME
+VDA_LOCAL_FABRIC=$APPS_DIR/regulator/$FABRIC_CONFIG_NAME
+PRINCE_LOCAL_FABRIC=$APPS_DIR/insurer/$FABRIC_CONFIG_NAME
+
 CLI_DIR=$BASEDIR/cli_tools
 
 ARIUM_USERS=$APPS_DIR/manufacturer/config/users.json

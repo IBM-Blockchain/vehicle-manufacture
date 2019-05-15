@@ -15,7 +15,7 @@ export async function setup(app, config: IFabricConfig) {
     await router.prepareRoutes();
 
     app.use('/manufacturer/app', express.static(path.join(__dirname, '../../client', 'app')));
-    app.use('/manufacturer/bower_components', express.static(path.join(__dirname, '../../client', 'bower_components')));
+    app.use('/manufacturer/node_modules', express.static(path.join(__dirname, '../..', 'node_modules')));
     app.use('/manufacturer/assets', express.static(path.join(__dirname, '../../client', 'assets')));
     app.use('/manufacturer/data', express.static(path.join(__dirname, '../../client', 'data')));
 

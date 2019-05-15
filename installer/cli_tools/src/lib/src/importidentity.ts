@@ -7,6 +7,9 @@ export class ImportIdentity {
         const resolvedPath = path.resolve(process.cwd(), walletPath);
 
         const walletExists: boolean = await fs.pathExists(resolvedPath);
+
+        console.log('WALLET EXISTS', walletExists, walletPath, resolvedPath);
+
         if (!walletExists) {
             await fs.ensureDir(resolvedPath);
         }

@@ -6,16 +6,20 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/dist/server.js",
-    "postinstall": "bower install",
     "build": "tsc"
   },
   "author": "IBM Blockchain",
   "license": "Apache-2.0",
   "dependencies": {
+    "angular": "^1.7.8",
+    "angular-ui-notification": "^0.3.6",
+    "angular-ui-router": "^1.0.22",
     "body-parser": "^1.17.1",
     "cfenv": "^1.0.4",
     "common": "file:../common",
+    "components-font-awesome": "^5.4.2",
     "config": "^1.26.1",
+    "d3": "^5.9.2",
     "express": "^4.15.2",
     "express-less": "^0.1.0",
     "node-red": "^0.20.5",
@@ -25,7 +29,6 @@
   "devDependencies": {
     "@types/bytebuffer": "^5.0.40",
     "@types/node": "^12.0.1",
-    "bower": "^1.8.0",
     "typescript": "3.2.2"
   }
 }
