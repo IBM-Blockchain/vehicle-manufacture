@@ -1,4 +1,5 @@
-import { BaseCheckpointer, Checkpoint } from 'fabric-network';
+import { Checkpoint } from 'fabric-network';
+import * as BaseCheckpointer from 'fabric-network/lib/impl/event/BaseCheckpointer';
 
 export class GenesisCheckpointer extends BaseCheckpointer {
     constructor() {

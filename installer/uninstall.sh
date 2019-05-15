@@ -47,24 +47,12 @@ docker exec cli bash -c 'cd /etc/hyperledger/config; rm -rf crypto-config; rm -f
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 ################
-# CLEANUP WALLET API
-################
-rm -rf $BASEDIR/../node_modules
-rm -f $BASEDIR/../wallet-api/package-lock.json
-rm -rf $BASEDIR/../wallet-api/dist
-
-################
 # CLEANUP CLI_TOOLS
 ################
 rm -rf $BASEDIR/cli_tools/node_modules
 rm -f $BASEDIR/cli_tools/package-lock.json
 rm -rf $BASEDIR/cli_tools/dist
-
-################
-# CLEANUP WALLET
-################
 rm -rf $BASEDIR/tmp
-rm -rf $BASEDIR/vehiclemanufacture_fabric
 
 ################
 # CLEANUP APPS
@@ -82,6 +70,7 @@ APPS_PATH=$BASEDIR/../apps
 # find $APPS_PATH -name "dist" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "checkpointers" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "package-lock.json" -depth -exec rm {} \;
+find $APPS_PATH -name "vehiclemanufacture_fabric" -type d -prune -exec rm -rf '{}' +
 
 # find $APPS_PATH/car_builder/client -name "platforms" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH/car_builder/client -name "plugins" -type d -prune -exec rm -rf '{}' +

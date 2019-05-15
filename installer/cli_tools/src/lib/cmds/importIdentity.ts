@@ -1,5 +1,5 @@
 import { Argv } from 'yargs';
-import { ImportIdentity } from 'vehicle-manufacture-contract-wallet-api';
+import { ImportIdentity } from '../src/importidentity';
 
 export const command = 'import [options]';
 
@@ -10,11 +10,6 @@ export const builder = (yargs: Argv) => {
         'wallet': {
             type: 'string',
             alias: 'w',
-            required: true
-        },
-        'org': {
-            type: 'string',
-            alias: 'o',
             required: true
         },
         'mspid': {
@@ -44,5 +39,5 @@ export const builder = (yargs: Argv) => {
 };
 
 export const handler = (argv: any) => {
-    return argv.thePromise = ImportIdentity.import(argv['wallet'], argv['mspid'], argv['identity-name'], argv['org'], argv['public-cert'], argv['private-key']);
+    return argv.thePromise = ImportIdentity.import(argv['wallet'], argv['mspid'], argv['identity-name'], argv['public-cert'], argv['private-key']);
 }

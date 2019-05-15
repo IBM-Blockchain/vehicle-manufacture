@@ -3,8 +3,8 @@ import * as fs from 'fs-extra';
 import { FileSystemWallet, X509WalletMixin } from 'fabric-network';
 
 export class ImportIdentity {
-    public static async import(walletPath: string, mspid: string, name: string, org: string, certFile: string, keyFile: string) {
-        const resolvedPath = path.resolve(process.cwd(), walletPath, org);
+    public static async import(walletPath: string, mspid: string, name: string, certFile: string, keyFile: string) {
+        const resolvedPath = path.resolve(process.cwd(), walletPath);
 
         const walletExists: boolean = await fs.pathExists(resolvedPath);
         if (!walletExists) {

@@ -11,50 +11,32 @@ export interface VMUser {
 }
 
 export class Enroll {
-    public static async enrollUsers(wallet: string | Wallet, connectionProfile: string | any, users: Array<VMUser>, adminName: string, org: string) {
-        if (typeof connectionProfile === 'string') {
-            const ccpPath = path.resolve(process.cwd(), connectionProfile);
-            connectionProfile = fs.readJSONSync(ccpPath);
-        }
-
-
-        const {admin, ca} = await this.connectAsAdmin(wallet, connectionProfile, adminName, org)
-
-        if (typeof wallet === 'string') {
-            wallet = this.getWallet(wallet, org);
-        }
-
-        for (let user of users) {
-            await this._enrollUser(wallet, user, admin, ca, connectionProfile.organizations[org].mspid, org);
-        }
-    }
-
     public static async enrollUser(wallet: string | Wallet, connectionProfile: string | any, user: VMUser, adminName: string, org: string) {
         if (typeof connectionProfile === 'string') {
             const ccpPath = path.resolve(process.cwd(), connectionProfile);
             connectionProfile = fs.readJSONSync(ccpPath);
         }
 
-        const {admin, ca} = await this.connectAsAdmin(wallet, connectionProfile, adminName, org)
+        const {admin, ca} = await this.connectAsAdmin(wallet, connectionProfile, adminName)
 
         if (typeof wallet === 'string') {
-            wallet = this.getWallet(wallet, org);
+            wallet = this.getWallet(wallet);
         }
         await this._enrollUser(wallet, user, admin, ca, connectionProfile.organizations[org].mspid, org);
     }
 
-    private static getWallet(walletPath: string, org: string): FileSystemWallet {
+    private static getWallet(walletPath: string): FileSystemWallet {
         // Create a new file system based wallet for managing identities.
         let resolvedPath;
 
-        resolvedPath = path.resolve(process.cwd(), walletPath, org);
+        resolvedPath = path.resolve(process.cwd(), walletPath);
         
         return new FileSystemWallet(resolvedPath);
     }
 
-    private static async connectAsAdmin(wallet: string | Wallet, ccp: object, adminName: string, org: string): Promise<{admin: User, ca: any}> {
+    private static async connectAsAdmin(wallet: string | Wallet, ccp: object, adminName: string): Promise<{admin: User, ca: any}> {
         if (typeof wallet === 'string') {
-            wallet = this.getWallet(wallet, org);
+            wallet = this.getWallet(wallet);
         }
 
         const adminExists = await wallet.exists(adminName);

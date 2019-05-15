@@ -52,7 +52,8 @@ fabric-tools/**
 # Ignore install folders
 node_modules
 **/dist
-vehiclemanufacture_fabric
+vehiclemanufacture_fabric/wallet/*
+!vehiclemanufacture_fabric/wallet/.gitkeep
 tmp
 
 installer/network/crypto-material/*.block

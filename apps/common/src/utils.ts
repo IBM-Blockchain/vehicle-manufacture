@@ -1,6 +1,5 @@
 import * as x509 from '@ampretia/x509';
 import { Request } from 'express';
-import { Enroll, VMUser } from 'vehicle-manufacture-contract-wallet-api';
 import FabricProxy from './fabricproxy';
 import { IUser } from './interfaces/users';
 

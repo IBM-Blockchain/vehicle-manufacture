@@ -4,7 +4,7 @@
     "description": "The Vehicle Manufacture network",
     "version": "1.0",
     "client": {
-        "organization": "{{LOC_ORG_ID}}",
+        "organization": "Arium",
         "connection": {
             "timeout": {
                 "peer": {

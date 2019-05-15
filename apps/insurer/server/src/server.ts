@@ -1,11 +1,11 @@
 import {setup} from './app';
-import { ChannelName, ChaincodeName } from 'common';
+import { ChannelName, ChaincodeName, DefaultLocalConnectionPath, DefaultLocalWalletPath } from 'common';
 
 const port = 4200; // Deal with this
 async function createServer() {
     const app = await setup({
-        walletPath: '../../installer/vehiclemanufacture_fabric/wallet/PrinceInsurance',
-        connectionProfilePath: '../../installer/vehiclemanufacture_fabric/prince_connection.json',
+        walletPath: DefaultLocalWalletPath,
+        connectionProfilePath: DefaultLocalConnectionPath,
         channelName: ChannelName,
         contractName: ChaincodeName,
         org: 'Arium'

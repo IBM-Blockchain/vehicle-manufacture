@@ -1,6 +1,6 @@
 import { setup } from './app';
 import * as express from 'express';
-import { ChannelName, ChaincodeName } from 'common';
+import { ChannelName, ChaincodeName, DefaultLocalConnectionPath, DefaultLocalWalletPath } from 'common';
 import * as RED from 'node-red';
 import * as path from 'path';
 import * as http from 'http';
@@ -23,8 +23,8 @@ async function createServer() {
     app.use(nodeRedSettings.httpNodeRoot, RED.httpNode);
 
     await setup(app,{
-        walletPath: '../../installer/vehiclemanufacture_fabric/wallet/Arium',
-        connectionProfilePath: '../../installer/vehiclemanufacture_fabric/arium_connection.json',
+        walletPath: DefaultLocalWalletPath,
+        connectionProfilePath: DefaultLocalConnectionPath,
         channelName: ChannelName,
         contractName: ChaincodeName,
         org: 'Arium'

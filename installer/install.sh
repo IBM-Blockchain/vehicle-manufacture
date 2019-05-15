@@ -62,14 +62,6 @@ echo "################"
 docker exec arium_cli peer chaincode instantiate -o orderer.example.com:7050 -l node -C vehiclemanufacture -n vehicle-manufacture-chaincode -v 0 -c '{"Args":[]}' -P 'AND ("AriumMSP.member", "VDAMSP.member", "PrinceInsuranceMSP.member")'
 
 echo "################"
-echo "# BUILD WALLET API"
-echo "################"
-cd $BASEDIR/../wallet-api
-npm install
-npm run build
-cd $BASEDIR
-
-echo "################"
 echo "# BUILD CLI_TOOLS"
 echo "################"
 cd $BASEDIR/cli_tools
@@ -77,22 +69,30 @@ npm install
 npm run build
 cd $BASEDIR
 
-echo "################"
-echo "# SETUP WALLET"
-echo "################"
-LOCAL_FABRIC=$BASEDIR/vehiclemanufacture_fabric
-ARIUM_CONNECTION=$LOCAL_FABRIC/arium_connection.json
-VDA_CONNECTION=$LOCAL_FABRIC/vda_connection.json
-PRINCE_CONNECTION=$LOCAL_FABRIC/prince_connection.json
+echo "###############################"
+echo "# SETUP FABRIC CONFIG FOLDERS #"
+echo "###############################"
+APPS_DIR=$BASEDIR/../apps
 
-mkdir -p $LOCAL_FABRIC/wallet
-sed -e 's/{{LOC_ORG_ID}}/Arium/g' $BASEDIR/network/connection.tmpl > $ARIUM_CONNECTION
-sed -e 's/{{LOC_ORG_ID}}/VDA/g' $BASEDIR/network/connection.tmpl > $VDA_CONNECTION
-sed -e 's/{{LOC_ORG_ID}}/PrinceInsurance/g' $BASEDIR/network/connection.tmpl > $PRINCE_CONNECTION
+FABRIC_CONFIG_NAME=vehiclemanufacture_fabric
 
-echo "################"
-echo "# ENROLLING ADMINS"
-echo "################"
+ARIUM_LOCAL_FABRIC=$APPS_DIR/manufacturer/$FABRIC_CONFIG_NAME
+VDA_LOCAL_FABRIC=$APPS_DIR/regulator/$FABRIC_CONFIG_NAME
+PRINCE_LOCAL_FABRIC=$APPS_DIR/insurer/$FABRIC_CONFIG_NAME
+
+mkdir -p $ARIUM_LOCAL_FABRIC/wallet
+mkdir -p $VDA_LOCAL_FABRIC/wallet
+mkdir -p $PRINCE_LOCAL_FABRIC/wallet
+
+CCP_TEMPLATE=$BASEDIR/network/connection.tmpl
+
+sed -e 's/{{LOC_ORG_ID}}/Arium/g' $CCP_TEMPLATE > $ARIUM_LOCAL_FABRIC/connection.json
+sed -e 's/{{LOC_ORG_ID}}/VDA/g' $CCP_TEMPLATE > $VDA_LOCAL_FABRIC/connection.json
+sed -e 's/{{LOC_ORG_ID}}/PrinceInsurance/g' $CCP_TEMPLATE > $PRINCE_LOCAL_FABRIC/connection.json
+
+echo "####################"
+echo "# ENROLLING ADMINS #"
+echo "####################"
 ARIUM_ADMIN_CERT=$BASEDIR/tmp/arium_cert.pem
 ARIUM_ADMIN_KEY=$BASEDIR/tmp/arium_key.pem
 
@@ -130,29 +130,22 @@ docker cp ca2.example.com:$FABRIC_CA_CLIENT_HOME/msp/keystore/key.pem $BASEDIR/t
 mv $BASEDIR/tmp/cert.pem $PRINCE_ADMIN_CERT
 mv $BASEDIR/tmp/key.pem $PRINCE_ADMIN_KEY
 
-echo "################"
-echo "# ENROLLING VEHICLE MANUFACTURE USERS"
-echo "################"
-
+echo "####################"
+echo "# IMPORTING ADMINS #"
+echo "####################"
 CLI_DIR=$BASEDIR/cli_tools
 
-ARIUM_USERS=$BASEDIR/users/arium.json
-VDA_USERS=$BASEDIR/users/vda.json
-PRINCE_USERS=$BASEDIR/users/prince-insurance.json
+ARIUM_USERS=$APPS_DIR/manufacturer/config/users.json
+VDA_USERS=$APPS_DIR/regulator/config/users.json
+PRINCE_USERS=$APPS_DIR/insurer/config/users.json
 
-node $CLI_DIR/dist/index.js import -w $LOCAL_FABRIC/wallet -m AriumMSP -n admin -c $ARIUM_ADMIN_CERT -k $ARIUM_ADMIN_KEY -o Arium
-node $CLI_DIR/dist/index.js import -w $LOCAL_FABRIC/wallet -m VDAMSP -n admin -c $VDA_ADMIN_CERT -k $VDA_ADMIN_KEY -o VDA
-node $CLI_DIR/dist/index.js import -w $LOCAL_FABRIC/wallet -m PrinceInsuranceMSP -n admin -c $PRINCE_ADMIN_CERT -k $PRINCE_ADMIN_KEY -o PrinceInsurance
-
-node $CLI_DIR/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $ARIUM_CONNECTION -u $ARIUM_USERS -a admin -o Arium
-node $CLI_DIR/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $VDA_CONNECTION -u $VDA_USERS -a admin -o VDA
-node $CLI_DIR/dist/index.js enroll -w $LOCAL_FABRIC/wallet -c $PRINCE_CONNECTION -u $PRINCE_USERS -a admin -o PrinceInsurance
+node $CLI_DIR/dist/index.js import -w $ARIUM_LOCAL_FABRIC/wallet -m AriumMSP -n admin -c $ARIUM_ADMIN_CERT -k $ARIUM_ADMIN_KEY -o Arium
+node $CLI_DIR/dist/index.js import -w $VDA_LOCAL_FABRIC/wallet -m VDAMSP -n admin -c $VDA_ADMIN_CERT -k $VDA_ADMIN_KEY -o VDA
+node $CLI_DIR/dist/index.js import -w $PRINCE_LOCAL_FABRIC/wallet -m PrinceInsuranceMSP -n admin -c $PRINCE_ADMIN_CERT -k $PRINCE_ADMIN_KEY -o PrinceInsurance
 
 echo "################"
-echo "# STARTUP APPS"
+echo "# STARTUP APPS #"
 echo "################"
-
-APPS_DIR=$BASEDIR/../apps
 
 INSURER_DIR=$APPS_DIR/insurer
 CAR_BUILDER_DIR=$APPS_DIR/car_builder
@@ -161,7 +154,7 @@ REGULATOR_DIR=$APPS_DIR/regulator
 
 cd $APPS_DIR/common
 npm install
-# npm run build
+npm run build
 cd $BASEDIR
 
 echo "#######################"
@@ -241,7 +234,16 @@ do
     TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"
     USER_LIST="$(cut -d'|' -f3 <<<"$REGISTRATION")"
 
-    echo "REGISTERING TYPE $TYPE"
+    echo "=============================="
+    echo "= REGISTERING FOR TYPE $TYPE ="
+    echo "=============================="
+
+    jq -c '.[]' $USER_LIST | while read row; do
+        echo "ENROLLING $(echo $row | jq -r '.name' )"
+        echo $row | curl -H "Content-Type: application/json" -X POST -u admin:adminpw -d @- http://localhost:$PORT/api/users/enroll
+    done
+
+    echo "REGISTERING REGISTRAR"
     if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
         curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register
     else
