@@ -173,35 +173,36 @@ nodemon > $BASEDIR/tmp/car_builder.log 2>&1 &
 
 cd $BASEDIR
 
+echo "########################"
+echo "# STARTUP MANUFACTURER #"
+echo "########################"
+docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node up -d
+
+# cd $MANUFACTURER_DIR
+# npm install
+# npm run build
+# # npm start > $BASEDIR/tmp/manufacturer.log 2>&1 &
+# nodemon > $BASEDIR/tmp/manufacturer.log 2>&1 &
+
 echo "###################"
 echo "# STARTUP INSURER #"
 echo "###################"
 
-cd $INSURER_DIR
-npm install
-npm run build
-# npm start > $BASEDIR/tmp/insurer.log 2>&1 &
-nodemon > $BASEDIR/tmp/insurer.log 2>&1 &
-
-echo "########################"
-echo "# STARTUP MANUFACTURER #"
-echo "########################"
-
-cd $MANUFACTURER_DIR
-npm install
-npm run build
-# npm start > $BASEDIR/tmp/manufacturer.log 2>&1 &
-nodemon > $BASEDIR/tmp/manufacturer.log 2>&1 &
+# cd $INSURER_DIR
+# npm install
+# npm run build
+# # npm start > $BASEDIR/tmp/insurer.log 2>&1 &
+# nodemon > $BASEDIR/tmp/insurer.log 2>&1 &
 
 echo "#####################"
 echo "# STARTUP REGULATOR #"
 echo "#####################"
 
-cd $REGULATOR_DIR
-npm install
-npm run build
-# npm start > $BASEDIR/tmp/manufacturer.log 2>&1 &
-nodemon > $BASEDIR/tmp/regulator.log 2>&1 &
+# cd $REGULATOR_DIR
+# npm install
+# npm run build
+# # npm start > $BASEDIR/tmp/manufacturer.log 2>&1 &
+# nodemon > $BASEDIR/tmp/regulator.log 2>&1 &
 
 CAR_BUILD_PORT=8100
 ARIUM_REST_PORT=6001
@@ -209,7 +210,7 @@ VDA_REST_PORT=6002
 PRINCE_REST_PORT=4200
 
 cd $BASEDIR
-for PORT in $ARIUM_REST_PORT $PRINCE_REST_PORT $CAR_BUILDER_PORT $VDA_REST_PORT 
+for PORT in $CAR_BUILDER_PORT $ARIUM_REST_PORT # $PRINCE_REST_PORT $VDA_REST_PORT 
 do
     printf "WAITING FOR REST SERVER ON PORT $PORT"
     until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT);
@@ -228,7 +229,7 @@ VDA_REGISTER="$VDA_REST_PORT|regulator|$VDA_USERS"
 PRINCE_REGISTER="$PRINCE_REST_PORT|insurer|$PRINCE_USERS"
 ARIUM_REGISTER="$ARIUM_REST_PORT|manufacturer|$ARIUM_USERS"
 
-for REGISTRATION in $PRINCE_REGISTER $ARIUM_REGISTER $VDA_REGISTER
+for REGISTRATION in $ARIUM_REGISTER # $VDA_REGISTER $PRINCE_REGISTER 
 do
     PORT="$(cut -d'|' -f1 <<<"$REGISTRATION")"
     TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"

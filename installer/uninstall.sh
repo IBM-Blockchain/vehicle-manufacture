@@ -70,7 +70,6 @@ APPS_PATH=$BASEDIR/../apps
 # find $APPS_PATH -name "dist" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "checkpointers" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH -name "package-lock.json" -depth -exec rm {} \;
-find $APPS_PATH -name "vehiclemanufacture_fabric" -type d -prune -exec rm -rf '{}' +
 
 # find $APPS_PATH/car_builder/client -name "platforms" -type d -prune -exec rm -rf '{}' +
 # find $APPS_PATH/car_builder/client -name "plugins" -type d -prune -exec rm -rf '{}' +

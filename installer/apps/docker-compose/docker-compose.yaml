@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  arium_app:
+    image: awjh-ibm/vehicle-manufacture-iot-extension/manufacturer
+    ports:
+      - 6001:6001
+    command: npm start
+    volumes:
+      - ../../../apps/manufacturer/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+    container_name: arium_app
+    
