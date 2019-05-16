@@ -4,7 +4,6 @@ import { PolicyRouter } from './policy';
 
 export class Router extends BaseRouter {
     constructor() {
-        console.log('CALLED');
         super();
 
         this.subRouters = [OrderRouter, PolicyRouter];

@@ -23,6 +23,7 @@
     "express": "^4.15.2",
     "express-less": "^0.1.0",
     "node-red": "^0.20.5",
+    "node-red-contrib-scx-ibmiotapp": "0.0.49",
     "request": "^2.81.0",
     "ws": "^2.3.1"
   },

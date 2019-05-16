@@ -58,7 +58,7 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
   public ready = false;
 
-  private url = 'http://localhost:4200/api';
+  private url = '/api';
   private httpOptions: any;
 
   public liveData = {

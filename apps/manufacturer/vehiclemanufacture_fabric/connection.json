@@ -82,11 +82,11 @@
             "caName": "ca-arium"
         },
         "ca1.example.com": {
-            "url": "http://ca1.example.com:8054",
+            "url": "http://ca1.example.com:7054",
             "caName": "ca-vda"
         },
         "ca2.example.com": {
-            "url": "http://ca2.example.com:9054",
+            "url": "http://ca2.example.com:7054",
             "caName": "ca-princeinsurance"
         }
     }

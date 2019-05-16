@@ -5,10 +5,10 @@ RUN npm install
 COPY ./apps/common /common
 RUN npm run build
 WORKDIR /app
-COPY ./apps/regulator/package.json /app
+COPY ./apps/insurer/package.json /app
 RUN npm install
 RUN npm rebuild
-COPY ./apps/regulator /app
+COPY ./apps/insurer /app
 RUN npm run build
 CMD npm run start
-EXPOSE 6002
+EXPOSE 4200

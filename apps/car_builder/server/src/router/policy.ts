@@ -20,7 +20,7 @@ export class PolicyRouter extends BaseRouter {
             };
 
             try {
-                const data = await post('http://localhost:4200/api/policies/requests', options);
+                const data = await post('http://prince_app:4200/api/policies/requests', options);
                 res.send(data);
             } catch (err) {
                 res.status(500);
@@ -32,7 +32,7 @@ export class PolicyRouter extends BaseRouter {
             this.initEventSourceListener(req, res, this.connections, 'POLICY_CREATED');
         });
 
-        const orderUpdated = new EventSource('http://localhost:4200/api/policies/events/created');
+        const orderUpdated = new EventSource('http://prince_app:4200/api/policies/events/created');
 
         orderUpdated.onopen = (evt) => {
             console.log('OPEN', evt);

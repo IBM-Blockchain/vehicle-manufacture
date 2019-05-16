@@ -61,4 +61,6 @@ installer/network/crypto-material/*.tx
 installer/network/crypto-material/crypto-config
 installer/network/crypto-material/core.yaml
 
+apps/manufacturer/config/.node-red-flow.json.backup
+
 **/checkpointers

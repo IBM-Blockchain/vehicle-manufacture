@@ -20,7 +20,7 @@ export class OrderRouter extends BaseRouter {
             };
 
             try {
-                const data = await post('http://localhost:6001/api/orders', options);
+                const data = await post('http://arium_app:6001/api/orders', options);
                 res.send(data);
             } catch (err) {
                 res.status(500);
@@ -32,7 +32,7 @@ export class OrderRouter extends BaseRouter {
             this.initEventSourceListener(req, res, this.connections, 'UPDATE_ORDER');
         });
 
-        const orderUpdated = new EventSource('http://localhost:6001/api/orders/events/updated');
+        const orderUpdated = new EventSource('http://arium_app:6001/api/orders/events/updated');
 
         orderUpdated.onopen = (evt) => {
             console.log('OPEN', evt);

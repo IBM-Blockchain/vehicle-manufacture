@@ -91,7 +91,7 @@ export class PolicyRouter extends ContractRouter {
             };
 
             try {
-                const data = await post('http://localhost:6001/node-red/api/vin', options);
+                const data = await post('http://arium_app:6001/node-red/api/vin', options);
                 res.send(data);
             } catch (err) {
                 res.status(500);

@@ -10,7 +10,7 @@ export async function setup(config: IFabricConfig) {
     setupMiddleware(app);
 
     app.use('/regulator/app', express.static(path.join(__dirname, '../../client', 'app')));
-    app.use('/regulator/bower_components', express.static(path.join(__dirname, '../../client', 'bower_components')));
+    app.use('/regulator/node_modules', express.static(path.join(__dirname, '../..', 'node_modules')));
     app.use('/regulator/assets', express.static(path.join(__dirname, '../../client', 'assets')));
     app.use('/regulator/data', express.static(path.join(__dirname, '../../client', 'data')));
 

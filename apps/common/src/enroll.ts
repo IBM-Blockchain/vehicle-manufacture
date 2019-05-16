@@ -17,7 +17,7 @@ export class Enroll {
             connectionProfile = fs.readJSONSync(ccpPath);
         }
 
-        const {admin, ca} = await this.connectAsAdmin(wallet, connectionProfile, adminName)
+        const {admin, ca} = await this.connectAsAdmin(wallet, connectionProfile, adminName);
 
         if (typeof wallet === 'string') {
             wallet = this.getWallet(wallet);

@@ -37,7 +37,7 @@ export class VehicleRouter extends ContractRouter {
             const eventType = vin + '-TELEMETRY';
             this.initEventSourceListener(req, res, this.connections, eventType)
             if (!this.telemetryListeners.has(vin)) {
-                const telemetryAdded = new EventSource(`http://localhost:6001/api/vehicles/${vin}/telemetry`);
+                const telemetryAdded = new EventSource(`http://arium_app:6001/api/vehicles/${vin}/telemetry`);
                 this.telemetryListeners.set(vin, telemetryAdded);
 
                 telemetryAdded.onopen = (evt) => {

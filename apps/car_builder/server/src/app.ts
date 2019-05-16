@@ -3,10 +3,8 @@ import * as path from 'path';
 import * as express from 'express';
 import { Router } from './router/router';
 
-export async function setup() {
+export async function setup(): Promise<express.Application> {
     const app = express();
-
-    console.log(path.join(__dirname, '../client/www'));
 
     app.use(express.static(path.join(__dirname, '../../client/www')));
 
