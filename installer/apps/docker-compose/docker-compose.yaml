@@ -2,14 +2,14 @@ version: '2'
 
 services:
   car_builder_app:
-    image: awjh-ibm/vehicle-manufacture-iot-extension/car_builder
+    image: awjh/vehicle-manufacture-iot-extension-car-builder
     ports:
       - 8100:8100
     command: npm start
     container_name: car_builder_app
 
   arium_app:
-    image: awjh-ibm/vehicle-manufacture-iot-extension/manufacturer
+    image: awjh/vehicle-manufacture-iot-extension-manufacturer
     ports:
       - 6001:6001
     command: npm start
@@ -18,7 +18,7 @@ services:
     container_name: arium_app
 
   prince_app:
-    image: awjh-ibm/vehicle-manufacture-iot-extension/insurer
+    image: awjh/vehicle-manufacture-iot-extension-insurer
     ports:
       - 4200:4200
     command: npm start
@@ -27,7 +27,7 @@ services:
     container_name: prince_app
 
   vda_app:
-    image: awjh-ibm/vehicle-manufacture-iot-extension/regulator
+    image: awjh/vehicle-manufacture-iot-extension-regulator
     ports:
       - 6002:6002
     command: npm start

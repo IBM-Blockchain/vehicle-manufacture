@@ -30,13 +30,13 @@ docker exec cli sh /etc/hyperledger/config/rename_sk.sh
 
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
-echo "################"
-echo "# SETUP NETWORK"
-echo "################"
+echo "#################"
+echo "# SETUP NETWORK #"
+echo "#################"
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose.yaml -p node up -d
 
 echo "################"
-echo "# CHANNEL INIT"
+echo "# CHANNEL INIT #"
 echo "################"
 docker exec arium_cli peer channel create -o orderer.example.com:7050 -c vehiclemanufacture -f /etc/hyperledger/configtx/channel.tx --outputBlock /etc/hyperledger/configtx/vehiclemanufacture.block
 sleep 5
@@ -44,26 +44,24 @@ docker exec arium_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanu
 docker exec vda_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
 docker exec princeinsurance_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
 
-echo "################"
-echo "# CHAINCODE INSTALL"
-echo "################"
+echo "#####################"
+echo "# CHAINCODE INSTALL #"
+echo "#####################"
 docker exec arium_cli bash -c "apk add nodejs nodejs-npm python make g++"
 docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; npm install; npm run build'
-
-read -p "PLEASE SETUP THE CHAINCODE CONTAINER MANUALLY THEN PRESS ENTER"
 
 docker exec arium_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
 docker exec vda_cli peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
 docker exec princeinsurance_cli  peer chaincode install -l node -n vehicle-manufacture-chaincode -v 0 -p /etc/hyperledger/contract
 
-echo "################"
-echo "# CHAINCODE INSTANTIATE"
-echo "################"
+echo "#########################"
+echo "# CHAINCODE INSTANTIATE #"
+echo "#########################"
 docker exec arium_cli peer chaincode instantiate -o orderer.example.com:7050 -l node -C vehiclemanufacture -n vehicle-manufacture-chaincode -v 0 -c '{"Args":[]}' -P 'AND ("AriumMSP.member", "VDAMSP.member", "PrinceInsuranceMSP.member")'
 
-echo "################"
-echo "# BUILD CLI_TOOLS"
-echo "################"
+echo "###################"
+echo "# BUILD CLI_TOOLS #"
+echo "###################"
 cd $BASEDIR/cli_tools
 npm install
 npm run build
@@ -210,6 +208,6 @@ do
     done
 done
 
-echo "################"
-echo "# DONE"
-echo "################"
+echo "########"
+echo "# DONE #"
+echo "########"

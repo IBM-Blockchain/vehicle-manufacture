@@ -18,69 +18,56 @@ fi
 
 DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 
-################
-# REMOVE NODE LEFTOVERS FROM CHAINCODE
-################
-# TODO - REMEMEBER TO ADD BACK IN rm -rf node_modules; AND rm -f package-lock.json TO BELOW COMMAND
-docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp'
+########################################
+# REMOVE NODE LEFTOVERS FROM CHAINCODE #
+########################################
+docker exec arium_cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp; rm -rf node_modules; rm -f package-lock.json'
 
-################
-# REMOVE DOCKER CONTAINERS
-################
+############################
+# REMOVE DOCKER CONTAINERS #
+############################
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 docker rm -f $(docker ps -a | grep "dev-peer0.arium" | awk '{print $1}')
 docker rm -f $(docker ps -a | grep "dev-peer0.vda" | awk '{print $1}')
 docker rm -f $(docker ps -a | grep "dev-peer0.prince-insurance" | awk '{print $1}')
 
-################
-# REMOVE DEPLOYED CHAINCODE
-################
+#############################
+# REMOVE DEPLOYED CHAINCODE #
+#############################
 docker rmi $(docker images | grep "^dev-peer0.arium" | awk '{print $3}')
 docker rmi $(docker images | grep "^dev-peer0.vda" | awk '{print $3}')
 docker rmi $(docker images | grep "^dev-peer0.prince-insurance" | awk '{print $3}')
 
-################
-# CLEANUP CRYPTO
-################
+##################
+# CLEANUP CRYPTO #
+##################
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
-docker exec cli bash -c 'cd /etc/hyperledger/config; rm -rf crypto-config; rm -f channel.tx; rm -f core.yaml; rm -f genesis.block; rm -f vehicle_manufacture.block'
+docker exec cli bash -c 'cd /etc/hyperledger/config; rm -rf crypto-config; rm -f channel.tx; rm -f core.yaml; rm -f genesis.block; rm -f vehiclemanufacture.block'
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
-################
-# CLEANUP CLI_TOOLS
-################
+#####################
+# CLEANUP CLI_TOOLS #
+#####################
 rm -rf $BASEDIR/cli_tools/node_modules
 rm -f $BASEDIR/cli_tools/package-lock.json
 rm -rf $BASEDIR/cli_tools/dist
 rm -rf $BASEDIR/tmp
 
 ################
-# CLEANUP APPS
+# CLEANUP APPS #
 ################
 CAR_BUILDER_REST_PORT=8100
 ARIUM_REST_PORT=6001
 VDA_REST_PORT=6002
 PRINCE_REST_PORT=4200
 
-ps | grep 'nodemon' | awk '{print $1}' | xargs kill -9
-
 docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node down --volumes
 
 APPS_PATH=$BASEDIR/../apps
 
-# find $APPS_PATH -name "node_modules" -type d -prune -exec rm -rf '{}' +
-# find $APPS_PATH -name "dist" -type d -prune -exec rm -rf '{}' +
-# find $APPS_PATH -name "checkpointers" -type d -prune -exec rm -rf '{}' +
-# find $APPS_PATH -name "package-lock.json" -depth -exec rm {} \;
 rm -rf $APPS_PATH/manufacturer/vehiclemanufacture_fabric/wallet/*/
 rm -rf $APPS_PATH/insurer/vehiclemanufacture_fabric/wallet/*/
 rm -rf $APPS_PATH/regulator/vehiclemanufacture_fabric/wallet/*/
-
-# find $APPS_PATH/car_builder/client -name "platforms" -type d -prune -exec rm -rf '{}' +
-# find $APPS_PATH/car_builder/client -name "plugins" -type d -prune -exec rm -rf '{}' +
-# find $APPS_PATH/car_builder/client -name "www" -type d -prune -exec rm -rf '{}' +
-
-
 
 for PORT in $CAR_BUILDER_REST_PORT $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
 do
