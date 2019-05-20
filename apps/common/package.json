@@ -12,9 +12,9 @@
   "dependencies": {
     "@ampretia/x509": "^0.4.0",
     "express": "^4.16.4",
-    "fabric-ca-client": "^1.4.1",
-    "fabric-client": "^1.4.1",
-    "fabric-network": "./fabric-network-1.4.2-snapshot.39.tgz"
+    "fabric-ca-client": "unstable-1.4",
+    "fabric-client": "unstable-1.4",
+    "fabric-network": "unstable-1.4"
   },
   "author": "IBM Blockchain",
   "license": "Apache-2.0",

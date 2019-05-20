@@ -136,7 +136,7 @@ export default class FabricProxy {
 
                 blocks.push(this.formatBlock(block, metadata));
 
-                if (block.header.number * 1 === height - 1) { // *1 as actually a string
+                if (Number(block.header.number) === height - 1) { // *1 as actually a string
                     resolve(true);
                 }
             };
@@ -286,7 +286,7 @@ export default class FabricProxy {
         });
 
         return {
-            number: block.header.number * 1, // *1 as actually a string
+            number: Number(block.header.number), // *1 as actually a string
             transactions: blockTransactions,
         };
     }

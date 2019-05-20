@@ -187,16 +187,16 @@ export class PolicyComponent implements OnInit, OnDestroy {
     const lat = localStorage.getItem('lat');
     const long = localStorage.getItem('long');
 
-    let location = {};
-
-    if (lat === 'null' || long === 'null') {
+    if (!lat || lat === 'null' || !long || long === 'null') {
       console.log('NO LOCATION SENT');
       // LOCATION WAS NOT SUPPLIED TRY TO USE LOCATION OF INSURER TO POSITION MAP AS LIKELY DEMO RUNNING IN SAME PLACE 
       navigator.geolocation.getCurrentPosition((position) => {
-        location = position;
+        const location = position;
+
+        this.drawMap(location);
       }, (error) => {
         // COULDN'T GET LOCATION OF WHERE BROWSER IS RUNNING USE A DEFAULT
-        location = {
+        const location = {
           coords: {
             accuracy: 20,
             latitude: 41.1149552,
@@ -204,11 +204,13 @@ export class PolicyComponent implements OnInit, OnDestroy {
           },
           timestamp: 1505126421109
         };
+
+        this.drawMap(location);
       });
     } else {
       console.log('LOCATION SENT');
       // USER SUPPLIED LOCATION
-      location = {
+      const location = {
         coords: {
           accuracy: 20,
           latitude: lat,
@@ -216,8 +218,9 @@ export class PolicyComponent implements OnInit, OnDestroy {
         },
         timestamp: 1505126421109
       };
+
+      this.drawMap(location);
     }
-    this.drawMap(location);
   }
 
   drawMap(location) {
