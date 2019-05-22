@@ -48,9 +48,9 @@ docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 #####################
 # CLEANUP CLI_TOOLS #
 #####################
-# rm -rf $BASEDIR/cli_tools/node_modules
-# rm -f $BASEDIR/cli_tools/package-lock.json
-# rm -rf $BASEDIR/cli_tools/dist
+rm -rf $BASEDIR/cli_tools/node_modules
+rm -f $BASEDIR/cli_tools/package-lock.json
+rm -rf $BASEDIR/cli_tools/dist
 rm -rf $BASEDIR/tmp
 
 ################

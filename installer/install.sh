@@ -71,8 +71,8 @@ echo "###################"
 echo "# BUILD CLI_TOOLS #"
 echo "###################"
 cd $BASEDIR/cli_tools
-# npm install
-# npm run build
+npm install
+npm run build
 cd $BASEDIR
 
 echo "####################"
@@ -91,7 +91,7 @@ mkdir $BASEDIR/tmp
 
 FABRIC_CA_CLIENT_HOME=/root/fabric-ca/clients/admin
 
-docker exec tlsca.arium.com bash -c "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME fabric-ca-client enroll -u https://admin:adminpw@tlsca.arium.com:7054 --tls.certfiles /etc/hyperledger/fabric-ca-server-tlsca/tlsca.arium.com-cert.pem --enrollment.profile tls"
+docker exec tlsca.arium.com bash -c "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME fabric-ca-client enroll -u https://admin:adminpw@tlsca.arium.com:7054 --tls.certfiles /etc/hyperledger/fabric-ca-server-tlsca/tlsca.arium.com-cert.pem"
 docker exec tlsca.arium.com bash -c "cd $FABRIC_CA_CLIENT_HOME/msp/keystore; find ./ -name '*_sk' -exec mv {} key.pem \;"
 docker cp tlsca.arium.com:$FABRIC_CA_CLIENT_HOME/msp/signcerts/cert.pem $BASEDIR/tmp
 docker cp tlsca.arium.com:$FABRIC_CA_CLIENT_HOME/msp/keystore/key.pem $BASEDIR/tmp
@@ -99,7 +99,7 @@ docker cp tlsca.arium.com:$FABRIC_CA_CLIENT_HOME/msp/keystore/key.pem $BASEDIR/t
 mv $BASEDIR/tmp/cert.pem $ARIUM_ADMIN_CERT
 mv $BASEDIR/tmp/key.pem $ARIUM_ADMIN_KEY
 
-docker exec tlsca.vda.com bash -c "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME fabric-ca-client enroll -u https://admin:adminpw@tlsca.vda.com:7054 --tls.certfiles /etc/hyperledger/fabric-ca-server-tlsca/tlsca.vda.com-cert.pem  --enrollment.profile tls"
+docker exec tlsca.vda.com bash -c "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME fabric-ca-client enroll -u https://admin:adminpw@tlsca.vda.com:7054 --tls.certfiles /etc/hyperledger/fabric-ca-server-tlsca/tlsca.vda.com-cert.pem"
 docker exec tlsca.vda.com bash -c "cd $FABRIC_CA_CLIENT_HOME/msp/keystore; find ./ -name '*_sk' -exec mv {} key.pem \;"
 docker cp tlsca.vda.com:$FABRIC_CA_CLIENT_HOME/msp/signcerts/cert.pem $BASEDIR/tmp
 docker cp tlsca.vda.com:$FABRIC_CA_CLIENT_HOME/msp/keystore/key.pem $BASEDIR/tmp
@@ -107,7 +107,7 @@ docker cp tlsca.vda.com:$FABRIC_CA_CLIENT_HOME/msp/keystore/key.pem $BASEDIR/tmp
 mv $BASEDIR/tmp/cert.pem $VDA_ADMIN_CERT
 mv $BASEDIR/tmp/key.pem $VDA_ADMIN_KEY
 
-docker exec tlsca.prince-insurance.com bash -c "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME fabric-ca-client enroll -u https://admin:adminpw@tlsca.prince-insurance.com:7054 --tls.certfiles /etc/hyperledger/fabric-ca-server-tlsca/tlsca.prince-insurance.com-cert.pem  --enrollment.profile tls"
+docker exec tlsca.prince-insurance.com bash -c "FABRIC_CA_CLIENT_HOME=$FABRIC_CA_CLIENT_HOME fabric-ca-client enroll -u https://admin:adminpw@tlsca.prince-insurance.com:7054 --tls.certfiles /etc/hyperledger/fabric-ca-server-tlsca/tlsca.prince-insurance.com-cert.pem"
 docker exec tlsca.prince-insurance.com bash -c "cd $FABRIC_CA_CLIENT_HOME/msp/keystore; find ./ -name '*_sk' -exec mv {} key.pem \;"
 docker cp tlsca.prince-insurance.com:$FABRIC_CA_CLIENT_HOME/msp/signcerts/cert.pem $BASEDIR/tmp
 docker cp tlsca.prince-insurance.com:$FABRIC_CA_CLIENT_HOME/msp/keystore/key.pem $BASEDIR/tmp

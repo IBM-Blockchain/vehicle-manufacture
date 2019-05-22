@@ -46,7 +46,7 @@ export class Enroll {
         }
 
         const gateway = new Gateway();
-        await gateway.connect(ccp, { wallet, identity: adminName, discovery: { enabled: false ,  asLocalhost: true } });
+        await gateway.connect(ccp, { clientTlsIdentity: adminName, wallet, identity: adminName, discovery: { enabled: false  } });
 
         const ca = gateway.getClient().getCertificateAuthority();
 

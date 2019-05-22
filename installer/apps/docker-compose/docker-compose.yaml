@@ -12,9 +12,7 @@ services:
     image: awjh/vehicle-manufacture-iot-extension-manufacturer
     ports:
       - 6001:6001
-    command: sh
-    stdin_open: true
-    tty: true
+    command: npm start
     volumes:
       - ../../../apps/manufacturer/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
       - ../../../installer/network/crypto-material/crypto-config:/msp
