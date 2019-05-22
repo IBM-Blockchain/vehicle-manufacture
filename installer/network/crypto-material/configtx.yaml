@@ -99,7 +99,7 @@ Orderer: &OrdererDefaults
 
     # Orderer Type: The orderer implementation to start
     # Available types are "solo" and "kafka"
-    OrdererType: solo
+    # OrdererType: solo
 
     Addresses:
         - orderer.example.com:7050
@@ -297,20 +297,35 @@ Organizations:
 ################################################################################
 Profiles:
 
-    ThreeOrgsOrdererGenesis:
+    SampleMultiNodeEtcdRaft:
         <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
         Orderer:
             <<: *OrdererDefaults
+            OrdererType: etcdraft
+            EtcdRaft:
+                Consenters:
+                - Host: orderer.example.com
+                  Port: 7050
+                  ClientTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+                  ServerTLSCert: crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+            Addresses:
+                - orderer.example.com:7050
             Organizations:
-                - *OrdererOrg
+            - *OrdererOrg
             Capabilities:
                 <<: *OrdererCapabilities
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+            - <<: *OrdererOrg
         Consortiums:
             SampleConsortium:
                 Organizations:
-                    - *Arium
-                    - *VDA
-                    - *PrinceInsurance
+                - *Arium
+                - *VDA
+                - *PrinceInsurance
     ThreeOrgsChannel:
         <<: *ChannelDefaults
         Consortium: SampleConsortium

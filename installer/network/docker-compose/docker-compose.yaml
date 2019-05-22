@@ -15,23 +15,23 @@ version: '2'
 
 services:
 
-  ca0.example.com:
+  tlsca.arium.com:
     extends:
         file: docker-compose-base.yaml
         service: ca0
-    container_name: ca0.example.com
+    container_name: tlsca.arium.com
 
-  ca1.example.com:
+  tlsca.vda.com:
     extends:
         file: docker-compose-base.yaml
         service: ca1
-    container_name: ca1.example.com
+    container_name: tlsca.vda.com
 
-  ca2.example.com:
+  tlsca.prince-insurance.com:
     extends:
         file: docker-compose-base.yaml
         service: ca2
-    container_name: ca2.example.com
+    container_name: tlsca.prince-insurance.com
 
   orderer.example.com:
     extends:
@@ -57,11 +57,24 @@ services:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.arium.com:5984
 
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg1/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg1/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg1/tls/ca.crt
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRE=true
+      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg1/tls/ca.crt /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
+      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.key
+      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
     ports:
       - 7051:7051
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peer
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+        - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/users/:/etc/hyperledger/users
     depends_on:
       - orderer.example.com
       - couchdb.arium.com
@@ -94,11 +107,25 @@ services:
 
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.vda.com:5984
+
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg2/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg2/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg2/tls/ca.crt
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg2/tls/ca.crt /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
+      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.key
+      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
     ports:
       - 8051:8051
     volumes:
         - /var/run/:/host/var/run/
         - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com:/etc/hyperledger/peer
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+        - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/users/:/etc/hyperledger/users
     depends_on:
       - orderer.example.com
       - couchdb.vda.com
@@ -131,11 +158,24 @@ services:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.prince-insurance.com:5984
 
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg3/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg3/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg3/tls/ca.crt
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRE=true
+      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg3/tls/ca.crt /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem
+      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
+      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
     ports:
       - 9051:9051
     volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/users/:/etc/hyperledger/users
     depends_on:
       - orderer.example.com
       - couchdb.prince-insurance.com
@@ -162,8 +202,23 @@ services:
       - CORE_PEER_ADDRESS=peer0.arium.com:7051
       - CORE_PEER_LOCALMSPID=AriumMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/config/crypto-config/peerOrganizations/arium.com/users/Admin@arium.com/msp
+
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg1/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg1/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg1/tls/ca.crt
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg1/tls/ca.crt /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
+      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.key
+      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
     volumes:
       - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/users/:/etc/hyperledger/users
     depends_on:
       - peer0.arium.com
       
@@ -179,8 +234,22 @@ services:
       - CORE_PEER_ADDRESS=peer0.vda.com:8051
       - CORE_PEER_LOCALMSPID=VDAMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/config/crypto-config/peerOrganizations/vda.com/users/Admin@vda.com/msp
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg2/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg2/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg2/tls/ca.crt
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg2/tls/ca.crt /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
+      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.key
+      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
     volumes:
       - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/users/:/etc/hyperledger/users
     depends_on:
       - peer0.vda.com
 
@@ -196,7 +265,21 @@ services:
       - CORE_PEER_ADDRESS=peer0.prince-insurance.com:9051
       - CORE_PEER_LOCALMSPID=PrinceInsuranceMSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/config/crypto-config/peerOrganizations/prince-insurance.com/users/Admin@prince-insurance.com/msp
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg3/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg3/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg3/tls/ca.crt
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg3/tls/ca.crt /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem
+      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
+      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
     volumes:
       - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/users/:/etc/hyperledger/users
     depends_on:
       - peer0.prince-insurance.com

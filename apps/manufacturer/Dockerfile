@@ -1,7 +1,6 @@
 FROM node:8
 WORKDIR /common
 COPY ./apps/common/package.json /common
-COPY ./apps/common/fabric-network-1.4.2-snapshot.39.tgz /common
 RUN npm install
 COPY ./apps/common /common
 RUN npm run build

@@ -35,7 +35,7 @@
                 "peer0.arium.com"
             ],
             "certificateAuthorities": [
-                "ca0.example.com"
+                "tlsca.arium.com"
             ]
         },
         "VDA": {
@@ -44,7 +44,7 @@
                 "peer0.vda.com"
             ],
             "certificateAuthorities": [
-                "ca1.example.com"
+                "tlsca.vda.com"
             ]
         },
         "PrinceInsurance": {
@@ -53,40 +53,67 @@
                 "peer0.prince-insurance.com"
             ],
             "certificateAuthorities": [
-                "ca2.example.com"
+                "tlsca.prince-insurance.com"
             ]
         }
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpc://orderer.example.com:7050"
+            "url": "grpcs://orderer.example.com:7050",
+            "tlsCACerts": {
+                "path": "/msp/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "orderer.example.com"
+            }
         }
     },
     "peers": {
         "peer0.arium.com": {
-            "url": "grpc://peer0.arium.com:7051",
-            "eventUrl": "grpc://peer0.arium.com:7053"
+            "url": "grpcs://peer0.arium.com:7051",
+            "eventUrl": "grpcs://peer0.arium.com:7053",
+            "tlsCACerts": {
+                "path": "/msp/peerOrganizations/arium.com/peers/peer0.arium.com/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.arium.com",
+                "request-timeout": 120001
+            }
         },
         "peer0.vda.com": {
-            "url": "grpc://peer0.vda.com:8051",
-            "eventUrl": "grpc://peer0.vda.com:8053"
+            "url": "grpcs://peer0.vda.com:8051",
+            "eventUrl": "grpcs://peer0.vda.com:8053",
+            "tlsCACerts": {
+                "path": "/msp/peerOrganizations/vda.com/peers/peer0.vda.com/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.vda.com",
+                "request-timeout": 120001
+            }
         },
         "peer0.prince-insurance.com": {
-            "url": "grpc://peer0.prince-insurance.com:9051",
-            "eventUrl": "grpc://peer0.prince-insurance.com:9053"
+            "url": "grpcs://peer0.prince-insurance.com:9051",
+            "eventUrl": "grpcs://peer0.prince-insurance.com:9053",
+            "tlsCACerts": {
+                "path": "/msp/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/tls/ca.crt"
+            },
+            "grpcOptions": {
+                "ssl-target-name-override": "peer0.prince-insurance.com",
+                "request-timeout": 120001
+            }
         }
     },
     "certificateAuthorities": {
-        "ca0.example.com": {
-            "url": "http://ca0.example.com:7054",
+        "tlsca.arium.com": {
+            "url": "https://tlsca.arium.com:7054",
             "caName": "ca-arium"
         },
-        "ca1.example.com": {
-            "url": "http://ca1.example.com:7054",
+        "tlsca.vda.com": {
+            "url": "https://tlsca.vda.com:7054",
             "caName": "ca-vda"
         },
-        "ca2.example.com": {
-            "url": "http://ca2.example.com:7054",
+        "tlsca.prince-insurance.com": {
+            "url": "https://tlsca.prince-insurance.com:7054",
             "caName": "ca-princeinsurance"
         }
     }

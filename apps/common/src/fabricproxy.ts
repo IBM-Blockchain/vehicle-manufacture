@@ -188,10 +188,13 @@ export default class FabricProxy {
             const gateway = new Gateway();
             // Set connection options; use 'admin' identity from application wallet
             const connectionOptions = {
+                clientTlsIdentity: user,
                 discovery: {enabled: false},
                 identity: user,
                 wallet: this.wallet,
             };
+
+            // console.log('CONNECTION', connectionOptions);
 
             // Connect to gateway using application specified parameters
             await gateway.connect(this.ccp, connectionOptions);

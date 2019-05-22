@@ -21,11 +21,15 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca-arium
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.arium.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/key.pem
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-tlsca/tlsca.arium.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-tlsca/key.pem
     ports:
       - "7054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
       - ../crypto-material/crypto-config/peerOrganizations/arium.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/tlsca:/etc/hyperledger/fabric-ca-server-tlsca
     container_name: ca_peerArium
 
   ca1:
@@ -35,11 +39,15 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca-vda
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.vda.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/key.pem
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-tlsca/tlsca.vda.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-tlsca/key.pem
     ports:
       - "8054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
       - ../crypto-material/crypto-config/peerOrganizations/vda.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/tlsca/:/etc/hyperledger/fabric-ca-server-tlsca
     container_name: ca_peerVDA
 
   ca2:
@@ -49,11 +57,15 @@ services:
       - FABRIC_CA_SERVER_CA_NAME=ca-princeinsurance
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.prince-insurance.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/key.pem
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-tlsca/tlsca.prince-insurance.com-cert.pem
+      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-tlsca/key.pem
     ports:
       - "9054:7054"
     command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
     volumes:
       - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/ca/:/etc/hyperledger/fabric-ca-server-config
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/tlsca/:/etc/hyperledger/fabric-ca-server-tlsca
     container_name: ca_peerPrinceInsurance
 
   orderer:
@@ -67,6 +79,12 @@ services:
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/orderer/msp
       - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=node_default
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt, /etc/hyperledger/peerOrg1/tls/ca.crt, /etc/hyperledger/peerOrg2/tls/ca.crt, /etc/hyperledger/peerOrg3/tls/ca.crt]
+      # ORDERER_GENERAL_TLS_CLIENTROOTCAS = [orderer_rootca + peerorg_rootca + peers_rootca]
+      - ORDERER_GENERAL_TLS_CLIENTROOTCAS=[/etc/hyperledger/orderer/tls/ca.crt, /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem, /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem, /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem, /etc/hyperledger/peerOrg1/tls/ca.crt, /etc/hyperledger/peerOrg2/tls/ca.crt, /etc/hyperledger/peerOrg3/tls/ca.crt]
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/orderer
     command: orderer
     ports:
@@ -98,7 +116,7 @@ services:
       - CORE_LOGGING_PEER_GOSSIP=${DOCKER_DEBUG}
 
       # TLS SETTINGS
-      - CORE_PEER_TLS_ENABLED=false
+      - CORE_PEER_TLS_ENABLED=true
 
       ## the following setting redirects chaincode container logs to the peer container logs
       - CORE_VM_DOCKER_ATTACHSTDOUT=true
@@ -128,7 +146,7 @@ services:
       - FABRIC_LOGGING_SPEC=${DOCKER_DEBUG}
 
       # TLS SETTINGS
-      - CORE_PEER_TLS_ENABLED=false
+      - CORE_PEER_TLS_ENABLED=true
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:

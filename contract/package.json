@@ -30,8 +30,8 @@
   "dependencies": {
     "@ampretia/x509": "^0.4.0",
     "asn1js": "^2.0.22",
-    "fabric-contract-api": "unstable-1.4",
-    "fabric-shim": "unstable-1.4",
+    "fabric-contract-api": "1.4.2-snapshot.26",
+    "fabric-shim": "1.4.2-snapshot.27",
     "get-params": "^0.1.2",
     "pkijs": "^2.1.76",
     "reflect-metadata": "^0.1.13",

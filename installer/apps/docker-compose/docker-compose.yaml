@@ -1,20 +1,23 @@
 version: '2'
 
 services:
-  car_builder_app:
-    image: awjh/vehicle-manufacture-iot-extension-car-builder
-    ports:
-      - 8100:8100
-    command: npm start
-    container_name: car_builder_app
+  # car_builder_app:
+  #   image: awjh/vehicle-manufacture-iot-extension-car-builder
+  #   ports:
+  #     - 8100:8100
+  #   command: npm start
+  #   container_name: car_builder_app
 
   arium_app:
     image: awjh/vehicle-manufacture-iot-extension-manufacturer
     ports:
       - 6001:6001
-    command: npm start
+    command: sh
+    stdin_open: true
+    tty: true
     volumes:
       - ../../../apps/manufacturer/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+      - ../../../installer/network/crypto-material/crypto-config:/msp
     container_name: arium_app
 
   prince_app:
@@ -24,6 +27,7 @@ services:
     command: npm start
     volumes:
       - ../../../apps/insurer/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+      - ../../../installer/network/crypto-material/crypto-config:/msp
     container_name: prince_app
 
   vda_app:
@@ -33,5 +37,6 @@ services:
     command: npm start
     volumes:
       - ../../../apps/regulator/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+      - ../../../installer/network/crypto-material/crypto-config:/msp
     container_name: vda_app
     
