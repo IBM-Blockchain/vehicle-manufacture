@@ -60,10 +60,6 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg1/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg1/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg1/tls/ca.crt
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRE=true
-      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg1/tls/ca.crt /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
-      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.key
-      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
       - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.key
       - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
     ports:
@@ -111,10 +107,6 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg2/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg2/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg2/tls/ca.crt
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
-      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg2/tls/ca.crt /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
-      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.key
-      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
       - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.key
       - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
     ports:
@@ -161,10 +153,6 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg3/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg3/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg3/tls/ca.crt
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRE=true
-      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg3/tls/ca.crt /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem
-      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
-      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
       - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
       - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
     ports:
@@ -206,10 +194,6 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg1/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg1/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg1/tls/ca.crt
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
-      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg1/tls/ca.crt /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
-      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.key
-      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
       - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.key
       - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
     volumes:
@@ -237,10 +221,6 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg2/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg2/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg2/tls/ca.crt
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
-      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg2/tls/ca.crt /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem
-      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.key
-      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
       - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.key
       - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
     volumes:
@@ -268,10 +248,6 @@ services:
       - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg3/tls/server.key
       - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg3/tls/server.crt
       - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg3/tls/ca.crt
-      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
-      - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/etc/hyperledger/peerOrg3/tls/ca.crt /etc/hyperledger/peerOrg3/msp/cacerts/ca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg3/msp/tlscacerts/tlsca.prince-insurance.com-cert.pem /etc/hyperledger/peerOrg2/msp/cacerts/ca.vda.com-cert.pem /etc/hyperledger/peerOrg2/msp/tlscacerts/tlsca.vda.com-cert.pem /etc/hyperledger/peerOrg1/msp/cacerts/ca.arium.com-cert.pem /etc/hyperledger/peerOrg1/msp/tlscacerts/tlsca.arium.com-cert.pem
-      - CORE_PEER_TLS_CLIENTKEY_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
-      - CORE_PEER_TLS_CLIENTCERT_FILE=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
       - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
       - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
     volumes:
