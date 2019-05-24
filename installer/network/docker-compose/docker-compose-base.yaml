@@ -18,6 +18,7 @@ services:
     image: hyperledger/fabric-ca${DOCKER_IMG_TAG}
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_CLIENT_HOME=/root/fabric-ca/clients/admin
       - FABRIC_CA_SERVER_CA_NAME=ca-arium
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.arium.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/key.pem
@@ -36,6 +37,7 @@ services:
     image: hyperledger/fabric-ca${DOCKER_IMG_TAG}
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_CLIENT_HOME=/root/fabric-ca/clients/admin
       - FABRIC_CA_SERVER_CA_NAME=ca-vda
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.vda.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/key.pem
@@ -54,6 +56,7 @@ services:
     image: hyperledger/fabric-ca${DOCKER_IMG_TAG}
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_CLIENT_HOME=/root/fabric-ca/clients/admin
       - FABRIC_CA_SERVER_CA_NAME=ca-princeinsurance
       - FABRIC_CA_SERVER_CA_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.prince-insurance.com-cert.pem
       - FABRIC_CA_SERVER_CA_KEYFILE=/etc/hyperledger/fabric-ca-server-config/key.pem

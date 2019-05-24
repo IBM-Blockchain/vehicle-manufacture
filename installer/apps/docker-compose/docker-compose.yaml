@@ -1,12 +1,12 @@
 version: '2'
 
 services:
-  # car_builder_app:
-  #   image: awjh/vehicle-manufacture-iot-extension-car-builder
-  #   ports:
-  #     - 8100:8100
-  #   command: npm start
-  #   container_name: car_builder_app
+  car_builder_app:
+    image: awjh/vehicle-manufacture-iot-extension-car-builder
+    ports:
+      - 8100:8100
+    command: npm start
+    container_name: car_builder_app
 
   arium_app:
     image: awjh/vehicle-manufacture-iot-extension-manufacturer

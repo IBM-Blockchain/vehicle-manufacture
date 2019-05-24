@@ -106,15 +106,42 @@
     "certificateAuthorities": {
         "tlsca.arium.com": {
             "url": "https://tlsca.arium.com:7054",
-            "caName": "ca-arium"
+            "caName": "ca-arium",
+            "tlsOptions": {
+                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
+            },
+            "tlsCACerts": {
+                "path": "/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
+            },
+            "httpOptions": {
+                "verify": false
+            }
         },
         "tlsca.vda.com": {
             "url": "https://tlsca.vda.com:7054",
-            "caName": "ca-vda"
+            "caName": "ca-vda",
+            "tlsOptions": {
+                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
+            },
+            "tlsCACerts": {
+                "path": "/msp/peerOrganizations/vda.com/tlsca/tlsca.vda.com-cert.pem"
+            },
+            "httpOptions": {
+                "verify": false
+            }
         },
         "tlsca.prince-insurance.com": {
             "url": "https://tlsca.prince-insurance.com:7054",
-            "caName": "ca-princeinsurance"
+            "caName": "ca-princeinsurance",
+            "tlsOptions": {
+                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
+            },
+            "tlsCACerts": {
+                "path": "/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
+            },
+            "httpOptions": {
+                "verify": false
+            }
         }
     }
 }
