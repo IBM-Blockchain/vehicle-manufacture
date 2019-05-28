@@ -14,7 +14,7 @@ services:
       - 6001:6001
     command: npm start
     volumes:
-      - ../../../apps/manufacturer/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+      - ../../../apps/manufacturer/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric
       - ../../../installer/network/crypto-material/crypto-config:/msp
     container_name: arium_app
 
@@ -24,7 +24,7 @@ services:
       - 4200:4200
     command: npm start
     volumes:
-      - ../../../apps/insurer/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+      - ../../../apps/insurer/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric
       - ../../../installer/network/crypto-material/crypto-config:/msp
     container_name: prince_app
 
@@ -34,7 +34,6 @@ services:
       - 6002:6002
     command: npm start
     volumes:
-      - ../../../apps/regulator/vehiclemanufacture_fabric/wallet:/app/vehiclemanufacture_fabric/wallet
+      - ../../../apps/regulator/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric
       - ../../../installer/network/crypto-material/crypto-config:/msp
     container_name: vda_app
-    
