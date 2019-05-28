@@ -26,16 +26,6 @@ limitations under the License.
     </ion-card>
 
     <ion-card *ngIf="ready" >
-      <ion-card-header>
-        Insurer Settings
-      </ion-card-header>
-
-      <ion-card-content>
-        <label for="insureHttp" >Web Socket Address:</label><input type="text" placeholder="WS address" id="insureWs" name="insureWs" [(ngModel)]="storedConfig.insurer" />
-      </ion-card-content>
-    </ion-card>
-
-    <ion-card *ngIf="ready" >
       <button id="updateBtn" ion-button color="secondary" (click)="update()" >Update <img src="assets/arrow_right.svg" /></button>
     </ion-card>
   </div>

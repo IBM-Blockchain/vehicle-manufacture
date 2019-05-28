@@ -13,8 +13,7 @@ import { ReplaySubject } from 'rxjs';
 export class ConfigProvider {
 
   private config = {
-    restServer: null, 
-    insurer: null
+    restServer: null
   };
 
   public ready: ReplaySubject<boolean> = new  ReplaySubject(1);
@@ -29,8 +28,7 @@ export class ConfigProvider {
     .catch((err) => {
       console.log('ERROR GETTING CONFIG USING DEFAULT', err.message);
       this.config = {
-        "restServer": "/api",
-        "insurer": "/api"
+        "restServer": "/api"
       }    
       this.ready.next(true);  
     })
