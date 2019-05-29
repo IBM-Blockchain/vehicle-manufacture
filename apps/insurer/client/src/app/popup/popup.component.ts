@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { VehicleService } from '../vehicle.service';
 
 export interface PolicyRequest {
   requestId: string;
@@ -41,7 +42,7 @@ export class PopupComponent implements OnInit {
   public requestee: User;
   public vehicleDetails: VehicleDetails;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private vehicleService: VehicleService) {
     this.url = '/api';
   }
 
@@ -58,12 +59,13 @@ export class PopupComponent implements OnInit {
       surname: 'Harris',
       memberSince: 1415923200000,
       address: ['40 Garick Pass', 'Newbury', 'United Kingdom']
-    }
+    };
 
-    this.http.get(`${this.url}/vehicles/${this.request.vin}`, options).subscribe((data: any) => {
-      this.vehicleDetails = data.vehicleDetails;
-      this.vehicleDetails.image = `${this.vehicleDetails.makeId}_${this.vehicleDetails.modelType}.svg`.toLowerCase();
-    });
+    this.vehicleService.get(this.request.vin)
+      .subscribe((vehicleDetails) => {
+        this.vehicleDetails = vehicleDetails;
+        this.vehicleDetails.image = `${this.vehicleDetails.makeId}_${this.vehicleDetails.modelType}.svg`.toLowerCase();
+      });
   }
 
   cancel() {

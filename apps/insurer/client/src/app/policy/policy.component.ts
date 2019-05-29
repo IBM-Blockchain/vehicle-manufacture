@@ -2,6 +2,10 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WindowRef } from '../window-ref/window-ref.service';
+import { PolicyService } from '../policy.service';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/mergeMap';
+import { VehicleService } from '../vehicle.service';
 
 interface Policy {
   id: string;
@@ -75,7 +79,11 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
   public readonly eventTypes = [ 'ACTIVATED', 'CRASHED', 'OVERHEATED', 'OIL FREEZING', 'ENGINE_FAILURE'];
 
-  constructor(private winRef: WindowRef, private http: HttpClient, private ref: ChangeDetectorRef) {
+  constructor(private winRef: WindowRef,
+              private http: HttpClient,
+              private ref: ChangeDetectorRef,
+              private policyService: PolicyService,
+              private vehicleService: VehicleService) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa('policies:policies'));
 
@@ -95,9 +103,10 @@ export class PolicyComponent implements OnInit, OnDestroy {
     });
     this.listeners.set('usageEvents', usageEventListener);
 
-    this.http.post(`${this.url}/policies/${this.policy.id}/setup`, {vin: this.policy.vin}, this.httpOptions).subscribe((data: any) => {
-      console.log('Successfully sent VIN');
-    });
+    this.policyService.setup(this.policy)
+      .subscribe(() => {
+        console.log('Successfully sent VIN');
+      });
 
     this.setupListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, (data) => {
       if (!data.hasOwnProperty('connected')) {
@@ -163,22 +172,25 @@ export class PolicyComponent implements OnInit, OnDestroy {
     const pathname = window.location.pathname.split('/');
     const policyId = pathname[pathname.length - 1];
 
-    this.policy = (await this.http.get(
-      `${this.url}/policies/${policyId}`, this.httpOptions
-    ).toPromise()) as any as Policy;
+    this.policyService.get(policyId)
+      .flatMap((policy: Policy) => {
+        this.policy = policy;
+        this.user = {
+          forename: this.policy.holderId.split('@')[0],
+          surname: 'Harris',
+          memberSince: 1415923200000,
+          address: ['40 Garick Pass', 'Newbury', 'United Kingdom']
+        };
 
-    this.user = {
-      forename: this.policy.holderId.split('@')[0],
-      surname: 'Harris',
-      memberSince: 1415923200000,
-      address: ['40 Garick Pass', 'Newbury', 'United Kingdom']
-    };
-
-    this.vehicle = (await this.http.get(`${this.url}/vehicles/${this.policy.vin}`, this.httpOptions).toPromise()) as any;
-
-    this.usageEvents = ((await this.http.get(`${this.url}/policies/${this.policy.id}/usage`, this.httpOptions).toPromise()) as any).sort((a, b) => {
-      return b.timestamp - a.timestamp;
-    });
+        return this.policyService.getUsageEvents(this.policy);
+      })
+      .flatMap((usageEvents: UsageEvent[]) => {
+        this.usageEvents = usageEvents.sort((a, b) => {
+          return b.timestamp - a.timestamp;
+        });
+        return this.vehicleService.get(this.policy.vin);
+      })
+      .subscribe((vehicle) => this.vehicle = vehicle);
 
     this.ready = true;
   }
@@ -189,7 +201,7 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
     if (!lat || lat === 'null' || !long || long === 'null') {
       console.log('NO LOCATION SENT');
-      // LOCATION WAS NOT SUPPLIED TRY TO USE LOCATION OF INSURER TO POSITION MAP AS LIKELY DEMO RUNNING IN SAME PLACE 
+      // LOCATION WAS NOT SUPPLIED TRY TO USE LOCATION OF INSURER TO POSITION MAP AS LIKELY DEMO RUNNING IN SAME PLACE
       navigator.geolocation.getCurrentPosition((position) => {
         const location = position;
 
