@@ -17,6 +17,17 @@ else
 fi
 
 DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+APP_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
+
+ALIVE_FABRIC_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
+ALIVE_APP_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
+if [ "$ALIVE_FABRIC_DOCKER_IMAGES" -ne 0 ] || [ "$ALIVE_APP_DOCKER_IMAGES" -ne 0 ]; then
+    echo "###################################"
+    echo "# STOP NOT COMPLETE. RUNNING STOP #"
+    echo "###################################"
+
+    source $BASEDIR/stop.sh
+fi
 
 echo '########################################'
 echo '# REMOVE NODE LEFTOVERS FROM CHAINCODE #'

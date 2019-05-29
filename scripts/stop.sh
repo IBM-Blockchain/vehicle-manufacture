@@ -16,12 +16,13 @@ else
     BASEDIR=$(pwd)/${BASEDIR}
 fi
 
-DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+APP_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
 
 echo '############################'
 echo '# REMOVE DOCKER CONTAINERS #'
 echo '############################'
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 docker rm -f $(docker ps -a | grep "dev-peer0.arium" | awk '{print $1}')
 docker rm -f $(docker ps -a | grep "dev-peer0.vda" | awk '{print $1}')
 docker rm -f $(docker ps -a | grep "dev-peer0.prince-insurance" | awk '{print $1}')
@@ -36,9 +37,9 @@ docker rmi $(docker images | grep "^dev-peer0.prince-insurance" | awk '{print $3
 echo '##################'
 echo '# CLEANUP CRYPTO #'
 echo '##################'
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 docker exec cli bash -c 'cd /etc/hyperledger/config; rm -rf crypto-config; rm -f channel.tx; rm -f core.yaml; rm -f genesis.block; rm -f vehiclemanufacture.block'
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 echo '###############'
 echo '# CLEANUP TMP #'
@@ -63,7 +64,7 @@ docker exec arium_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
 docker exec vda_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
 docker exec prince_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
 
-docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node down --volumes
+docker-compose -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 
 for PORT in $CAR_BUILDER_REST_PORT $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
 do
