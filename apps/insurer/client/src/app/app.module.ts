@@ -11,6 +11,9 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { AlertSidebarComponent } from './alert-sidebar/alert-sidebar.component';
 import { OverviewComponent } from './overview/overview.component';
 import { PopupComponent } from './popup/popup.component';
+import { VehicleService } from './vehicle.service';
+import { Config } from './config';
+import { PolicyService } from './policy.service';
 
 const routes: Routes = [
   { path: 'overview',  component: OverviewComponent },
@@ -33,7 +36,12 @@ const routes: Routes = [
     HttpClientModule,
     RouterModule.forRoot(routes)
   ],
-  providers: [WindowRef],
+  providers: [
+    WindowRef,
+    VehicleService,
+    PolicyService,
+    Config
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
