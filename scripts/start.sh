@@ -1,6 +1,22 @@
 #!/bin/bash
 BASEDIR=$(dirname "$0")
 
+if [[ "$(uname)" -eq "Linux" ]] &&  type xdg-open > /dev/null ; then
+    #Inform the user demo being built in terminal window
+    #Geometry= set window to size needed & not in front of desktop files
+    gnome-terminal --geometry=39x10+300+100 -e "bash -c \"
+    echo Vehicle Lifecycle Demo is now starting.;
+    echo ;
+    echo Please wait 5 min whilst we build the;
+    echo network and apps for you to play with.;
+    echo ;
+    echo If you\'re an itching developer, you can ;
+    echo see what we build at /VLC/install.sh;
+    echo ;
+    echo Close this window at any time;
+    exec bash\""
+fi
+
 if [ $BASEDIR = '.' ]
 then
     BASEDIR=$(pwd)
@@ -19,7 +35,7 @@ if [ ! -d "$BASEDIR/../contract/node_modules" ] || [ ! -d "$BASEDIR/../contract/
     echo "# INSTALL NOT COMPLETE. RUNNING INSTALLER #"
     echo "###########################################"
 
-    source $BASEDIR/install.sh
+    $BASEDIR/install.sh
 fi
 
 DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
@@ -169,7 +185,7 @@ VDA_REGISTER="$VDA_PORT|regulator|$VDA_USERS"
 PRINCE_REGISTER="$PRINCE_PORT|insurer|$PRINCE_USERS"
 ARIUM_REGISTER="$ARIUM_PORT|manufacturer|$ARIUM_USERS"
 
-for REGISTRATION in $ARIUM_REGISTER $PRINCE_REGISTER $VDA_REGISTER 
+for REGISTRATION in $ARIUM_REGISTER $PRINCE_REGISTER $VDA_REGISTER
 do
     PORT="$(cut -d'|' -f1 <<<"$REGISTRATION")"
     TYPE="$(cut -d'|' -f2 <<<"$REGISTRATION")"
@@ -237,7 +253,7 @@ case "$(uname)" in
             echo "Could not detect web browser to use - please launch the demo in your chosen browser. See the README.md for which hosts/ports to open"
         fi
         ;;
-    *) 
+    *)
         echo "Demo not launched. OS currently not supported"
         ;;
 esac
