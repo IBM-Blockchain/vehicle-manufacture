@@ -189,9 +189,10 @@ export class PolicyComponent implements OnInit, OnDestroy {
         });
         return this.vehicleService.get(this.policy.vin);
       })
-      .subscribe((vehicle) => this.vehicle = vehicle);
-
-    this.ready = true;
+      .subscribe((vehicle) => {
+        this.vehicle = vehicle;
+        this.ready = true;
+      });
   }
 
   handleMap() {
