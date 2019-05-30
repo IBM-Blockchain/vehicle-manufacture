@@ -35,7 +35,7 @@ if [ ! -d "$BASEDIR/../contract/node_modules" ] || [ ! -d "$BASEDIR/../contract/
     echo "# INSTALL NOT COMPLETE. RUNNING INSTALLER #"
     echo "###########################################"
 
-    source $BASEDIR/install.sh
+    $BASEDIR/install.sh
 fi
 
 DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
