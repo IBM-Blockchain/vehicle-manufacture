@@ -19,11 +19,9 @@ interface User {
 
 interface VehicleDetails {
   makeId: string;
+  manufactured: number;
   modelType: string;
   colour: string;
-  manufacturingDate: number;
-  extras: string[];
-  trim: string;
   image: string;
 }
 
@@ -62,8 +60,9 @@ export class PopupComponent implements OnInit {
     };
 
     this.vehicleService.get(this.request.vin)
-      .subscribe((vehicleDetails) => {
-        this.vehicleDetails = vehicleDetails;
+      .subscribe((vehicle) => {
+        this.vehicleDetails = vehicle.vehicleDetails as any;
+        this.vehicleDetails.manufactured = vehicle.manufactured;
         this.vehicleDetails.image = `${this.vehicleDetails.makeId}_${this.vehicleDetails.modelType}.svg`.toLowerCase();
       });
   }

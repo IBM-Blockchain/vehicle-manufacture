@@ -1,4 +1,4 @@
-import { ContractNames, ContractRouter, FabricProxy, IRequest } from 'common';
+import { ContractNames, ContractRouter, FabricProxy, IRequest, Config } from 'common';
 import { Response } from 'express';
 import { v4 } from 'uuid';
 import { EventNames } from '../constants';
@@ -24,6 +24,8 @@ export class PolicyRouter extends ContractRouter {
     }
 
     public async prepareRoutes() {
+        const manufacturerUrl = await Config.getAppUrl('manufacturer');
+
         this.router.get('/', await this.transactionToCall('getPolicies'));
 
         this.router.post('/', async (req: IRequest, res) => {
@@ -91,7 +93,7 @@ export class PolicyRouter extends ContractRouter {
             };
 
             try {
-                const data = await post('http://arium_app:6001/node-red/api/vin', options);
+                const data = await post(manufacturerUrl + '/node-red/api/vin', options);
                 res.send(data);
             } catch (err) {
                 res.status(500);
@@ -99,8 +101,10 @@ export class PolicyRouter extends ContractRouter {
             }
         });
 
-        await this.fabricProxy.addContractListener('admin', 'createPolicy', EventNames.CREATE_POLICY, (err, event, txId, status, blockNumber) => {
-            this.publishEvent(event);
-        }, {filtered: false, replay: true});
+        await this.fabricProxy.addContractListener(
+            'admin', 'createPolicy', EventNames.CREATE_POLICY, (err, event, txId, status, blockNumber) => {
+                this.publishEvent(event);
+            }, {filtered: false, replay: true},
+        );
     }
 }

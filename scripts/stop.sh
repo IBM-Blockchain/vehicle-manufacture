@@ -49,10 +49,10 @@ rm -rf $BASEDIR/tmp
 echo '################'
 echo '# CLEANUP APPS #'
 echo '################'
-CAR_BUILDER_REST_PORT=8100
-ARIUM_REST_PORT=6001
-VDA_REST_PORT=6002
-PRINCE_REST_PORT=4200
+CAR_BUILDER_PORT=6004
+ARIUM_PORT=6001
+VDA_PORT=6002
+PRINCE_PORT=6003
 
 APPS_PATH=$BASEDIR/../apps
 
@@ -66,7 +66,7 @@ docker exec prince_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
 
 docker-compose -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 
-for PORT in $CAR_BUILDER_REST_PORT $ARIUM_REST_PORT $VDA_REST_PORT $PRINCE_REST_PORT
+for PORT in $CAR_BUILDER_PORT $ARIUM_PORT $VDA_PORT $PRINCE_PORT
 do
     lsof -i :$PORT | awk '{if(NR>1)print $2}' | xargs kill
 done

@@ -1,18 +1,20 @@
-import {setup} from './app';
-import { ChannelName, ChaincodeName, DefaultLocalConnectionPath, DefaultLocalWalletPath } from 'common';
+import { ChaincodeName, ChannelName, Config, DefaultLocalConnectionPath, DefaultLocalWalletPath } from 'common';
+import { setup } from './app';
 
-const port = 6002; // Deal with this
 async function createServer() {
+    const port = (await Config.readConfig()).regulator.port;
+
     const app = await setup({
-        walletPath: DefaultLocalWalletPath,
-        connectionProfilePath: DefaultLocalConnectionPath,
         channelName: ChannelName,
+        connectionProfilePath: DefaultLocalConnectionPath,
         contractName: ChaincodeName,
-        org: 'Arium'
+        org: 'VDA',
+        walletPath: DefaultLocalWalletPath,
     });
+
     app.listen(port, () => {
-        console.log(`Server started on port ${port}`)
-    })
+        console.log(`Server started on port ${port}`);
+    });
 }
 
 createServer();

@@ -20,6 +20,8 @@ echo "#####################"
 echo "# CHAINCODE INSTALL #"
 echo "#####################"
 
+echo "$DOCKER_COMPOSE_DIR/docker-compose-cli.yaml"
+
 docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 
 docker exec cli bash -c "apk add nodejs nodejs-npm python make g++"

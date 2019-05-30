@@ -25,13 +25,12 @@ interface User {
 }
 
 interface VehicleDetails {
-  makeId: string;
-  modelType: string;
-  colour: string;
   manufactured: number;
-  extras: string[];
-  trim: string;
-  image: string;
+  vehicleDetails: {
+    makeId: string;
+    modelType: string;
+    colour: string;
+  }
 }
 
 interface UsageEvent {

@@ -144,13 +144,13 @@ REGULATOR_DIR=$APPS_DIR/regulator
 
 docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node up -d
 
-CAR_BUILD_PORT=8100
-ARIUM_REST_PORT=6001
-VDA_REST_PORT=6002
-PRINCE_REST_PORT=4200
+CAR_BUILDER_PORT=6004
+ARIUM_PORT=6001
+VDA_PORT=6002
+PRINCE_PORT=6003
 
 cd $BASEDIR
-for PORT in $CAR_BUILDER_PORT $ARIUM_REST_PORT $PRINCE_REST_PORT $VDA_REST_PORT 
+for PORT in $CAR_BUILDER_PORT $ARIUM_PORT $VDA_PORT $PRINCE_PORT
 do
     printf "WAITING FOR REST SERVER ON PORT $PORT"
     until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT);
@@ -165,9 +165,9 @@ echo "##################################"
 echo "# REGISTER EVERYONE IN CHAINCODE #"
 echo "##################################"
 
-VDA_REGISTER="$VDA_REST_PORT|regulator|$VDA_USERS"
-PRINCE_REGISTER="$PRINCE_REST_PORT|insurer|$PRINCE_USERS"
-ARIUM_REGISTER="$ARIUM_REST_PORT|manufacturer|$ARIUM_USERS"
+VDA_REGISTER="$VDA_PORT|regulator|$VDA_USERS"
+PRINCE_REGISTER="$PRINCE_PORT|insurer|$PRINCE_USERS"
+ARIUM_REGISTER="$ARIUM_PORT|manufacturer|$ARIUM_USERS"
 
 for REGISTRATION in $ARIUM_REGISTER $PRINCE_REGISTER $VDA_REGISTER 
 do
@@ -217,14 +217,14 @@ echo "#####################"
 echo "# STARTING BROWSERS #"
 echo "#####################"
 
-URLS="http://localhost:8100 http://localhost:6001/ http://localhost:6002 http://localhost:4200 http://localhost:6001/node-red"
+URLS="http://localhost:$CAR_BUILDER_PORT http://localhost:$ARIUM_PORT/ http://localhost:$VDA_PORT http://localhost:$PRINCE_PORT http://localhost:$ARIUM_PORT/node-red"
 case "$(uname)" in
     "Darwin")
         open ${URLS}
         ;;
     "Linux")
         if [ -n "$BROWSER" ] ; then
-            $BROWSER http://localhost:8100 http://localhost:6001/ http://localhost:6002 http://localhost:4200 http://localhost:6001/node-red
+            $BROWSER ${URLS}
         elif which x-www-browser > /dev/null ; then
             nohup x-www-browser ${URLS} < /dev/null > /dev/null 2>&1 &
         elif which xdg-open > /dev/null ; then
@@ -232,7 +232,7 @@ case "$(uname)" in
                 xdg-open ${URL}
             done
         elif which gnome-open > /dev/null ; then
-            gnome-open http://localhost:8100 http://localhost:6001/ http://localhost:6002 http://localhost:4200 http://localhost:6001/node-red
+            gnome-open ${URLS}
         else
             echo "Could not detect web browser to use - please launch the demo in your chosen browser. See the README.md for which hosts/ports to open"
         fi

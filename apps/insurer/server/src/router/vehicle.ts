@@ -1,4 +1,4 @@
-import { ContractRouter, FabricProxy, ContractNames, IRequest } from 'common';
+import { ContractRouter, FabricProxy, ContractNames, IRequest, Config } from 'common';
 import { Response } from 'express';
 import { v4 } from 'uuid';
 import { EventNames } from '../constants';
@@ -26,6 +26,8 @@ export class VehicleRouter extends ContractRouter {
     }
 
     public async prepareRoutes() {
+        const manufacturerUrl = await Config.getAppApiUrl('manufacturer');
+
         this.router.get('/usage', await this.transactionToCall('getUsageEvents'));
 
         this.router.get('/usage/events/added', (req: IRequest, res: Response) => {
@@ -35,9 +37,9 @@ export class VehicleRouter extends ContractRouter {
         this.router.get('/:vin/telemetry', (req: IRequest, res: Response) => {
             const vin = req.params.vin;
             const eventType = vin + '-TELEMETRY';
-            this.initEventSourceListener(req, res, this.connections, eventType)
+            this.initEventSourceListener(req, res, this.connections, eventType);
             if (!this.telemetryListeners.has(vin)) {
-                const telemetryAdded = new EventSource(`http://arium_app:6001/api/vehicles/${vin}/telemetry`);
+                const telemetryAdded = new EventSource(`${manufacturerUrl}/vehicles/${vin}/telemetry`);
                 this.telemetryListeners.set(vin, telemetryAdded);
 
                 telemetryAdded.onopen = (evt) => {

@@ -17,4 +17,4 @@ RUN npm rebuild
 COPY ./apps/car_builder/server /app/server
 RUN npm run build
 CMD npm run start
-EXPOSE 8100
+EXPOSE 6004

@@ -1,3 +1,4 @@
+export * from './config';
 export * from './constants';
 export { default as FabricProxy } from './fabricproxy';
 export * from './enroll';

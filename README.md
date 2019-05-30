@@ -15,10 +15,10 @@ This demo has been tested to work on Ubuntu and MacOS.
 
 Clone this git repository and then run the `install.sh` file located in the `installer` folder. This will bring up a Hyperledger Fabric network the 4 applications used in this demo. Once the installer has finished running the applications will be available at the following locations:
 
-- Car builder - http://localhost:8100
 - Manufacturer - http://localhost:6001
 - Regulator - http://localhost:6002
-- Insurer - http://localhost:4200]
+- Insurer - http://localhost:6003
+- Car builder - http://localhost:6004
 
 ## Uninstalling the demo
 Run `uninstall.sh` located in the `installer` folder. This will teardown the Hyperledger Fabric network and the applications used in the demo as well as cleaning artifacts left by the installer for tools used. The wallets will also be emptied.

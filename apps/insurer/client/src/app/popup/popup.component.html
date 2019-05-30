@@ -48,7 +48,6 @@
         Registered on: {{ vehicleDetails.manufactured | date: 'dd MMM yyyy' }}<br>
         2.4L Engine, 340 bhp<br>
         5 Doors<br>
-        <span class="capitalise" >{{ vehicleDetails.trim }}</span> Trim <br />
         <div class="capitalise">
           <div *ngFor="let extra of vehicleDetails.extras">{{ extra }}</div>
         </div>

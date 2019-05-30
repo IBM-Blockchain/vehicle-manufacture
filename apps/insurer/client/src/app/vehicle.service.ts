@@ -7,23 +7,21 @@ import { Config } from './config';
 
 const EventTypes = [ 'ACTIVATED', 'CRASHED', 'OVERHEATED', 'OIL_FREEZING', 'ENGINE_FAILURE'];
 
-interface VehicleDetails {
-  makeId: string;
-  modelType: string;
-  colour: string;
+interface Vehicle {
   manufactured: number;
-  manufacturingDate: number;
-  extras: string[];
-  trim: string;
-  image: string;
+  vehicleDetails: {
+    makeId: string;
+    modelType: string;
+    colour: string;
+  }
 }
 
 @Injectable()
 export class VehicleService {
   constructor(private config: Config, private http: HttpClient) {}
 
-  get(vin: string): Observable<VehicleDetails> {
-    return this.http.get(`${this.config.manufacturer_url}/vehicles/${vin}`, VehicleService.headerOptions()) as Observable<VehicleDetails>
+  get(vin: string): Observable<Vehicle> {
+    return this.http.get(`${this.config.manufacturer_url}/vehicles/${vin}`, VehicleService.headerOptions()) as Observable<Vehicle>
   }
 
   getUsage(): Observable<any[]> {

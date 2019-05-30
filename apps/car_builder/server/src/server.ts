@@ -1,12 +1,13 @@
-import {setup} from './app';
-import { ChannelName, ChaincodeName } from 'common';
+import { Config } from 'common';
+import { setup } from './app';
 
-const port = 8100; // Deal with this
 async function createServer() {
+    const port = (await Config.readConfig()).carBuilder.port;
     const app = await setup();
+
     app.listen(port, () => {
-        console.log(`Server started on port ${port}`)
-    })
+        console.log(`Server started on port ${port}`);
+    });
 }
 
 createServer();
