@@ -1,7 +1,7 @@
 #!/bin/bash
 BASEDIR=$(dirname "$0")
 
-if [[ "$(uname)" -eq "Linux" ]] &&  type xdg-open > /dev/null ; then
+if [[ "$(uname)" -eq "Linux" ]] &&  type gnome-terminal > /dev/null ; then
     #Inform the user demo being built in terminal window
     #Geometry= set window to size needed & not in front of desktop files
     gnome-terminal --geometry=39x10+300+100 -e "bash -c \"
