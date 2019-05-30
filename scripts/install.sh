@@ -4,10 +4,10 @@ BASEDIR=$(dirname "$0")
 if [ $BASEDIR = '.' ]
 then
     BASEDIR=$(pwd)
-elif [ $BASEDIR:1:2 = './' ]
+elif [ ${BASEDIR:0:2} = './' ]
 then
     BASEDIR=$(pwd)${BASEDIR:1}
-elif [ $BASEDIR:1:1 = '/' ]
+elif [ ${BASEDIR:0:1} = '/' ]
 then
     BASEDIR=${BASEDIR}
 else
