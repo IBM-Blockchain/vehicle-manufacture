@@ -9,7 +9,7 @@ then
     BASEDIR=$(pwd)${BASEDIR:1}
 elif [ $BASEDIR:1:1 = '/' ]
 then
-    BASEDIR=$(pwd)${BASEDIR}
+    BASEDIR=${BASEDIR}
 else
     BASEDIR=$(pwd)/${BASEDIR}
 fi
