@@ -91,9 +91,32 @@ export class PolicyComponent implements OnInit, OnDestroy {
     };
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.L = this.winRef.nativeWindow.L;
-    await this.getPolicyDetails();
+    this.getPolicyDetails()
+      .flatMap((vehicle) => {
+        this.vehicle = vehicle;
+        this.ready = true;
+        return this.policyService.setup(this.policy)
+      })
+      .subscribe(() => {
+        console.log('Successfully sent VIN');
+        this.setupListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, (data) => {
+          if (!data.hasOwnProperty('connected')) {
+            this.deviceConnected = true;
+            for (const key in data) {
+              if (data.hasOwnProperty(key)) {
+                data[key] = parseFloat(String(data[key])).toFixed(2);
+              }
+            }
+            this.liveData = data;
+            this.ref.detectChanges();
+          } else {
+            this.deviceConnected = data.connected;
+          }
+          this.connectionTimeout();
+        });
+      });
     this.handleMap();
 
     const usageEventListener = this.setupListener(`${this.url}/vehicles/usage/events/added`, (event: any) => {
@@ -101,28 +124,6 @@ export class PolicyComponent implements OnInit, OnDestroy {
       this.usageEvents.unshift(event);
     });
     this.listeners.set('usageEvents', usageEventListener);
-
-    this.policyService.setup(this.policy)
-      .subscribe(() => {
-        console.log('Successfully sent VIN');
-      });
-
-    this.setupListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, (data) => {
-      if (!data.hasOwnProperty('connected')) {
-        this.deviceConnected = true;
-        for (const key in data) {
-          if (data.hasOwnProperty(key)) {
-            data[key] = parseFloat(String(data[key])).toFixed(2);
-          }
-        }
-        this.liveData = data;
-        this.ref.detectChanges();
-      } else {
-        this.deviceConnected = data.connected;
-      }
-      this.connectionTimeout();
-    });
-
   }
 
   ngOnDestroy() {
@@ -167,11 +168,11 @@ export class PolicyComponent implements OnInit, OnDestroy {
     return usageEventSource;
   }
 
-  async getPolicyDetails() {
+  getPolicyDetails() {
     const pathname = window.location.pathname.split('/');
     const policyId = pathname[pathname.length - 1];
 
-    this.policyService.get(policyId)
+    return this.policyService.get(policyId)
       .flatMap((policy: Policy) => {
         this.policy = policy;
         this.user = {
@@ -188,10 +189,6 @@ export class PolicyComponent implements OnInit, OnDestroy {
           return b.timestamp - a.timestamp;
         });
         return this.vehicleService.get(this.policy.vin);
-      })
-      .subscribe((vehicle) => {
-        this.vehicle = vehicle;
-        this.ready = true;
       });
   }
 
