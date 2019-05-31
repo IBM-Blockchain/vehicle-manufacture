@@ -2,13 +2,14 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Property } from 'fabric-contract-api';
+import { Object as ContractObject, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName } from '../../constants';
 import { State } from '../ledger-api/state';
 
 const logger = newLogger('PARTICIPANT');
 
+@ContractObject()
 export class Participant extends State {
     public static generateClass(participantType: string): string {
         return NetworkName + '.participants.'  + participantType;
