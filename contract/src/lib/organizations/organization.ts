@@ -2,10 +2,11 @@
 SPDX-License-Identifier: Apache-2.0
 */
 
-import { Property } from 'fabric-contract-api';
+import { Object, Property } from 'fabric-contract-api';
 import { NetworkName } from '../../constants';
 import { State } from '../ledger-api/state';
 
+@Object()
 export class Organization extends State {
     public static generateClass(orgType: string): string {
         return NetworkName + '.organizations.' + orgType;

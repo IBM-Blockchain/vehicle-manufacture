@@ -4,7 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 
 'use strict';
 
-import { Property } from 'fabric-contract-api';
+import { Object as ContractObject, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import * as getParams from 'get-params';
 
@@ -15,6 +15,7 @@ export interface IState<T> {
     getClass(): string;
 }
 
+@ContractObject()
 export class State {
 
     public static serialize(object: object): Buffer {
@@ -118,6 +119,7 @@ export class State {
 }
 
 // tslint:disable:max-classes-per-file
+@ContractObject()
 export class IHistoricState<T extends State> {
     public value: T;
 
