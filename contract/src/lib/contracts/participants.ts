@@ -65,7 +65,10 @@ export class ParticipantsContract extends Contract {
             throw new Error(`Only callers with role ${Roles.PARTICIPANT_CREATE} can register a task user`);
         }
 
-        roles = roles.filter((role) => {
+        roles = roles.map((role) => {
+            role = role.split('"').join('');
+            return role;
+        }).filter((role) => {
             return role.startsWith(RolesPrefix);
         }).map((role) => {
             return role.split(RolesPrefix)[1];
