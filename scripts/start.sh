@@ -223,6 +223,9 @@ do
             fi
 
             ATTRS="$ATTRS]"
+            echo "+++++++${row}+++++++"
+            echo $ATTRS
+            echo "++++++++++++++++++++"
 
             curl -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "roles": '"$ATTRS"'}' -u registrar:registrarpw http://localhost:$PORT/api/users/task/register
         fi
