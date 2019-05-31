@@ -1,6 +1,4 @@
-#!/bin/sh
-BASEDIR=$(dirname "$0")
-
+#!/bin/bash
 BASEDIR=$(dirname "$0")
 
 if [ $BASEDIR = '.' ]
@@ -54,15 +52,9 @@ ARIUM_PORT=6001
 VDA_PORT=6002
 PRINCE_PORT=6003
 
-APPS_PATH=$BASEDIR/../apps
-
-rm -rf $APPS_PATH/manufacturer/vehiclemanufacture_fabric/wallet/*/
-rm -rf $APPS_PATH/insurer/vehiclemanufacture_fabric/wallet/*/
-rm -rf $APPS_PATH/regulator/vehiclemanufacture_fabric/wallet/*/
-
-docker exec arium_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
-docker exec vda_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
-docker exec prince_app bash -c 'vehiclemanufacture_fabric/wallet/*/'
+docker exec arium_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
+docker exec vda_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
+docker exec prince_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
 
 docker-compose -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 

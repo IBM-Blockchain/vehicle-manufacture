@@ -1,6 +1,4 @@
-#!/bin/sh
-BASEDIR=$(dirname "$0")
-
+#!/bin/bash
 BASEDIR=$(dirname "$0")
 
 if [ $BASEDIR = '.' ]
