@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Config } from './config';
-import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
+import { Config } from './config';
 import { PolicyRequest } from './popup/popup.component';
 
 interface Policy {
@@ -45,6 +45,16 @@ export class PolicyService {
 
   get(policyId: string | number) {
     return this.http.get(`${this.config.insurer_url}/policies/${policyId}`, PolicyService.headerOptions());
+  }
+
+  getLatestPolicy() {
+    return this.getAll()
+      .map((policies) => {
+        policies = policies.sort((a, b) => {
+          return b.startDate - a.startDate;
+        });
+        return policies[0];
+      });
   }
 
   getUsageEvents(policy: Policy): Observable<UsageEvent[]> {

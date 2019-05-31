@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { PolicyService } from '../policy.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -9,8 +10,9 @@ import { Router, NavigationEnd } from '@angular/router';
 export class SidebarComponent {
 
   selected: any;
+  latestPolicy: any;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private policyService: PolicyService) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd ) {
         if (event.url.indexOf('policy') > -1) {
@@ -20,6 +22,11 @@ export class SidebarComponent {
         }
       }
     });
+
+    this.policyService.getLatestPolicy()
+      .subscribe((policy) => {
+        this.latestPolicy = policy;
+      });
   }
 
   select(route) {
