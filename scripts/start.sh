@@ -8,10 +8,8 @@ if [[ "$(uname)" -eq "Linux" ]] &&  type gnome-terminal > /dev/null ; then
     echo Vehicle Lifecycle Demo is now starting.;
     echo ;
     echo Please wait 5 min whilst we build the;
-    echo network and apps for you to play with.;
-    echo ;
-    echo If you\'re an itching developer, you can ;
-    echo see what we build at /VLC/install.sh;
+    echo network and apps for you. They will open;
+    echo automatically.;
     echo ;
     echo Close this window at any time;
     exec bash\""
