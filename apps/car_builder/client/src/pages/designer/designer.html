@@ -16,7 +16,7 @@ limitations under the License.
 <ion-content padding fullscreen>
   <div class="header-background"></div>
 
-  <ion-slides [spaceBetween]="-60" [initialSlide]=1 pager>
+  <ion-slides [spaceBetween]="-60" [initialSlide]=1 [slidesPerView]="numSlides" pager>
     <ion-slide *ngFor="let car of cars">
       <car-slide [car]="car"></car-slide>
     </ion-slide>
