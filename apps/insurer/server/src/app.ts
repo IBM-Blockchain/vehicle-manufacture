@@ -17,6 +17,8 @@ export async function setup(config: IFabricConfig) {
 
     await router.prepareRoutes();
 
+    console.log(router.getRouter());
+
     app.use('/api', authHandlerFactory(getAuth), router.getRouter());
 
     app.use('/api/*', (req, res) => {

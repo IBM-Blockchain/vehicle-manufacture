@@ -12,6 +12,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 page-builder {
+  #build-details {
+    display: flex;
+
+    & > div:first-of-type {
+      flex: 1;
+    }
+
+    & > div:last-of-type {
+      margin-right: 25px;
+    }
+
+    #rand {
+      cursor: pointer;
+    }
+  }
+
   ion-card.card:first-of-type {
     margin-bottom: 28px;
   }
@@ -62,6 +78,7 @@ page-builder {
     }
 
     h2 {
+      text-transform: capitalize;
       padding: 0 0 0 25px;
     }
 
@@ -91,7 +108,7 @@ page-builder {
       border-top: 1px solid rgba(0, 0, 0, 0.12);
     }
 
-    .top-option-item {
+    div:first-of-type {
       margin: 0;
     }
 
@@ -113,7 +130,7 @@ page-builder {
           width: 180px;
         }
 
-        .sunburst {
+        .orange {
           background-image: linear-gradient(-180deg, #ffa047 0%, #d97122 100%);
         }
 
@@ -122,7 +139,7 @@ page-builder {
         }
 
         .purple {
-          background-image: linear-gradient(-134deg, #3023ae 0%, #c96dd8 100%);
+          background-image: linear-gradient(-180deg, #c96dd8 0%, #3023ae 100%);
         }
 
         .green {
@@ -134,7 +151,7 @@ page-builder {
         }
 
         .grape {
-          background-image: linear-gradient(-134deg, #ae2358 0%, #c96dd8 100%);
+          background-image: linear-gradient(-180deg, #c96dd8 0%, #ae2358 100%);
         }
       }
 
@@ -145,7 +162,7 @@ page-builder {
           width: 240px;
         }
 
-        .red {
+        .rum {
           background-image: url('../assets/red_leather.jpg');
         }
 
@@ -195,6 +212,7 @@ page-builder {
         }
 
         h4 {
+          text-transform: capitalize;
           font-family: OpenSans;
           font-size: 15px;
           color: map-get($colors, dark);

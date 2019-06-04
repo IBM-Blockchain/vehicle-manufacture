@@ -13,7 +13,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { GenesisCheckpointer } from './checkpointer';
 import { IFabricConfig } from './interfaces/config';
-import { IChaincodeMetadata, IContractMetadata } from './interfaces/metadata';
+import { IChaincodeMetadata } from './interfaces/metadata';
 import { IUser } from './interfaces/users';
 import Utils from './utils';
 

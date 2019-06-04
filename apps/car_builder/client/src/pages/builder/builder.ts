@@ -11,11 +11,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
-import { StatusPage } from '../status/status';
+import { Component, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
 import { Http } from '@angular/http';
+import { NavController, NavParams } from 'ionic-angular';
 import { ConfigProvider } from '../../providers/config/config';
+import { StatusPage } from '../status/status';
+
+interface IOption {
+  description?: string,
+  name: string,
+  price?: number
+}
 
 /**
  * Generated class for the BuilderPage page.
@@ -31,9 +37,55 @@ export class BuilderPage {
   car: any;
   states: any;
   selected: string;
+
+  private options: {[s: string]: IOption[]} = {
+    trim: [{
+      description: 'A simple but elegant finishing trim for your Arium.',
+      name: 'standard',
+      price: 0
+    }, {
+      description: 'Sleek and aerodynamic tweaks to stand above the crowd.',
+      name: 'executive',
+      price: 450
+    }],
+    colour: [{
+      name: 'sunburst orange'
+    }, {
+      name: 'inferno red'
+    }, {
+      name: 'royal purple'
+    }, {
+      name: 'alpine green'
+    }, {
+      name: 'statement blue'
+    }, {
+      name: 'vibrant grape'
+    }],
+    interior: [{
+      name: 'red rum'
+    }, {
+      name: 'papyrus'
+    }, {
+      name: 'rotor grey'
+    }, {
+      name: 'noble brown'
+    }],
+    extras: [{
+      description: 'Total piece of mind for the perfect Arium motoring experience.',
+      name: 'extended warranty',
+      price: 150
+    }, {
+      description: 'Stylish privacy and protection from the sun\'s rays.',
+      name: 'tinted windows',
+      price: 450
+    }]
+  };
   
   private config = {};
   private ready = false;
+
+  @ViewChild('trim', {read: ElementRef}) trim: ElementRef;
+
 
   constructor(private navController: NavController, private navParams: NavParams, private http: Http, private configProvider: ConfigProvider) {
     this.car = navParams.get('car');
@@ -121,6 +173,7 @@ export class BuilderPage {
           car: full_car,
           order: JSON.parse(this.response)
         });
+
       } else if (this.readyState === 4) {
         document.getElementById('purchase').getElementsByTagName('span')[0].innerHTML = 'An error occurred';
         console.log('RESPONSE TEXT', this.responseText);
@@ -155,4 +208,15 @@ export class BuilderPage {
     }
   }
 
+  @HostListener('click', ['$event.target'])
+  randomBuild(event) {
+    if (event.id === 'app-title') {
+      Object.keys(this.options).forEach((key) => {
+        const option = this.options[key];
+        if (key !== 'extras') {
+          this.states[key] = option[Math.floor(Math.random() * option.length)].name;
+        }
+      });
+    }
+  }
 }
