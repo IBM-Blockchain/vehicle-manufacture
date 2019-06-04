@@ -47,9 +47,9 @@ rm -rf $BASEDIR/tmp
 echo '################'
 echo '# CLEANUP APPS #'
 echo '################'
-CAR_BUILDER_PORT=6004
-ARIUM_PORT=6001
-VDA_PORT=6002
+CAR_BUILDER_PORT=6001
+ARIUM_PORT=6002
+VDA_PORT=6004
 PRINCE_PORT=6003
 
 docker exec arium_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'

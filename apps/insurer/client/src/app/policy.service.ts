@@ -40,15 +40,15 @@ export class PolicyService {
   constructor(private config: Config, private http: HttpClient) {}
 
   getAll() {
-    return this.http.get(`${this.config.manufacturer_url}/policies`, PolicyService.headerOptions());
+    return this.http.get(`${this.config.insurer_url}/policies`, PolicyService.headerOptions());
   }
 
   get(policyId: string | number) {
-    return this.http.get(`${this.config.manufacturer_url}/policies/${policyId}`, PolicyService.headerOptions());
+    return this.http.get(`${this.config.insurer_url}/policies/${policyId}`, PolicyService.headerOptions());
   }
 
   getUsageEvents(policy: Policy): Observable<UsageEvent[]> {
-    return this.http.get(`${this.config.manufacturer_url}/policies/${policy.id}/usage`, PolicyService.headerOptions()) as Observable<UsageEvent[]>;
+    return this.http.get(`${this.config.insurer_url}/policies/${policy.id}/usage`, PolicyService.headerOptions()) as Observable<UsageEvent[]>;
   }
 
   provideInsurance({approve, requestId}: {approve: boolean, requestId: string}) {
@@ -69,7 +69,7 @@ export class PolicyService {
       return;
     }
 
-    return this.http.post(`${this.config.manufacturer_url}/policies`, request, PolicyService.headerOptions())
+    return this.http.post(`${this.config.insurer_url}/policies`, request, PolicyService.headerOptions())
       .map((policy: any) => {
         this.requestStack.pop();
         window.location.href = '/policy/' + policy.id;
@@ -80,11 +80,11 @@ export class PolicyService {
   popRequest(requestId: string) {
     this.requestStack.pop();
     return this.http.delete(
-      `${this.config.manufacturer_url}/policies/requests/${requestId}`, Object.assign({responseType: 'text'}, PolicyService.headerOptions())
+      `${this.config.insurer_url}/policies/requests/${requestId}`, Object.assign({responseType: 'text'}, PolicyService.headerOptions())
       );
   }
 
   setup(policy: Policy) {
-    return this.http.post(`${this.config.manufacturer_url}/policies/${policy.id}/setup`, {vin: policy.vin}, PolicyService.headerOptions());
+    return this.http.post(`${this.config.insurer_url}/policies/${policy.id}/setup`, {vin: policy.vin}, PolicyService.headerOptions());
   }
 }

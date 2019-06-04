@@ -15,10 +15,10 @@ This demo has been tested to work on Ubuntu and MacOS.
 
 Clone this git repository and then run the `install.sh` file located in the `installer` folder. This will bring up a Hyperledger Fabric network the 4 applications used in this demo. Once the installer has finished running the applications will be available at the following locations:
 
-- Manufacturer - http://localhost:6001
-- Regulator - http://localhost:6002
+- Car builder - http://localhost:6001
+- Manufacturer - http://localhost:6002
 - Insurer - http://localhost:6003
-- Car builder - http://localhost:6004
+- Regulator - http://localhost:6004
 
 ## Uninstalling the demo
 Run `uninstall.sh` located in the `installer` folder. This will teardown the Hyperledger Fabric network and the applications used in the demo as well as cleaning artifacts left by the installer for tools used. The wallets will also be emptied.
@@ -27,7 +27,7 @@ Run `uninstall.sh` located in the `installer` folder. This will teardown the Hyp
 
 ### IoT data
 
-IoT data enters the demo via the manufacturers node-red flow which can be found at http://localhost:6001/node-red
+IoT data enters the demo via the manufacturers node-red flow which can be found at http://localhost:6002/node-red
 
 > Note: Loading the insurer's policy page assigns the vehicle that the data being streamed by the sensor relates to.
 > Note: In a session only one of each type of usage event is pushed to the blockchain to prevent unwanted duplicates when giving the demo. You can start a new demo by disconnecting and reconnecting your sensortag or by clicking the 'PUSH CONNECT EVENT' input node.

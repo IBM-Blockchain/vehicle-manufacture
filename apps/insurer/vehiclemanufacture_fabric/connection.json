@@ -59,9 +59,9 @@
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpcs://localhost:7050",
+            "url": "grpcs://orderer.example.com:7050",
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
+                "path": "/msp/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "orderer.example.com"
@@ -70,10 +70,10 @@
     },
     "peers": {
         "peer0.arium.com": {
-            "url": "grpcs://localhost:7051",
-            "eventUrl": "grpcs://localhost:7053",
+            "url": "grpcs://peer0.arium.com:7051",
+            "eventUrl": "grpcs://peer0.arium.com:7053",
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/tls/ca.crt"
+                "path": "/msp/peerOrganizations/arium.com/peers/peer0.arium.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.arium.com",
@@ -81,10 +81,10 @@
             }
         },
         "peer0.vda.com": {
-            "url": "grpcs://localhost:8051",
-            "eventUrl": "grpcs://localhost:8053",
+            "url": "grpcs://peer0.vda.com:8051",
+            "eventUrl": "grpcs://peer0.vda.com:8053",
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/tls/ca.crt"
+                "path": "/msp/peerOrganizations/vda.com/peers/peer0.vda.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.vda.com",
@@ -92,10 +92,10 @@
             }
         },
         "peer0.prince-insurance.com": {
-            "url": "grpcs://localhost:9051",
-            "eventUrl": "grpcs://localhost:9053",
+            "url": "grpcs://peer0.prince-insurance.com:9051",
+            "eventUrl": "grpcs://peer0.prince-insurance.com:9053",
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/tls/ca.crt"
+                "path": "/msp/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.prince-insurance.com",
@@ -105,39 +105,39 @@
     },
     "certificateAuthorities": {
         "tlsca.arium.com": {
-            "url": "https://localhost:7054",
+            "url": "https://tlsca.arium.com:7054",
             "caName": "ca-arium",
             "tlsOptions": {
-                "trustedRoots": ["/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
+                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
             },
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
+                "path": "/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
             },
             "httpOptions": {
                 "verify": false
             }
         },
         "tlsca.vda.com": {
-            "url": "https://localhost:7054",
+            "url": "https://tlsca.vda.com:7054",
             "caName": "ca-vda",
             "tlsOptions": {
-                "trustedRoots": ["/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
+                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
             },
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/vda.com/tlsca/tlsca.vda.com-cert.pem"
+                "path": "/msp/peerOrganizations/vda.com/tlsca/tlsca.vda.com-cert.pem"
             },
             "httpOptions": {
                 "verify": false
             }
         },
         "tlsca.prince-insurance.com": {
-            "url": "https://localhost:7054",
+            "url": "https://tlsca.prince-insurance.com:7054",
             "caName": "ca-princeinsurance",
             "tlsOptions": {
-                "trustedRoots": ["/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
+                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
             },
             "tlsCACerts": {
-                "path": "/Users/user/Documents/Fabric-Dev/src/github.com/ibm-blockchain/vehicle-manufacture-iot-extension/scripts/network/crypto-material/crypto-config/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
+                "path": "/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
             },
             "httpOptions": {
                 "verify": false

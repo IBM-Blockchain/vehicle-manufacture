@@ -160,9 +160,9 @@ REGULATOR_DIR=$APPS_DIR/regulator
 
 docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node up -d
 
-CAR_BUILDER_PORT=6004
-ARIUM_PORT=6001
-VDA_PORT=6002
+CAR_BUILDER_PORT=6001
+ARIUM_PORT=6002
+VDA_PORT=6004
 PRINCE_PORT=6003
 
 cd $BASEDIR

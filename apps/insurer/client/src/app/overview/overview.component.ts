@@ -67,7 +67,6 @@ export class OverviewComponent implements OnInit {
     });
 
     this.setupListener(`${this.url}/policies/events/requested`, (request: PolicyRequest) => {
-      console.log('GIVE THEM TO ME', request);
       this.policyService.requestStack.push(request);
     });
   }

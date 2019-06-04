@@ -2,7 +2,7 @@
     "carBuilder": {
         "secureConnection": false,
         "domain": "car_builder_app",
-        "port": 6004,
+        "port": 6001,
         "apiPath": "/api"
     },
     "insurer": {
@@ -14,13 +14,13 @@
     "manufacturer": {
         "secureConnection": false,
         "domain": "arium_app",
-        "port": 6001,
+        "port": 6002,
         "apiPath": "/api"
     },
     "regulator": {
         "secureConnection": false,
         "domain": "vda_app",
-        "port": 6002,
+        "port": 6004,
         "apiPath": "/api"
     }
 }

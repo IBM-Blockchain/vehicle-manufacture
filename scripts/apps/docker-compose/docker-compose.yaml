@@ -4,14 +4,14 @@ services:
   car_builder_app:
     image: awjh/vehicle-manufacture-iot-extension-car-builder
     ports:
-      - 6004:6004
+      - 6001:6001
     command: npm start
     container_name: car_builder_app
 
   arium_app:
     image: awjh/vehicle-manufacture-iot-extension-manufacturer
     ports:
-      - 6001:6001
+      - 6002:6002
     command: npm start
     volumes:
       - ../../../apps/manufacturer/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric
@@ -31,7 +31,7 @@ services:
   vda_app:
     image: awjh/vehicle-manufacture-iot-extension-regulator
     ports:
-      - 6002:6002
+      - 6004:6004
     command: npm start
     volumes:
       - ../../../apps/regulator/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric

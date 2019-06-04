@@ -51,7 +51,6 @@ export class VehicleRouter extends ContractRouter {
                 };
 
                 telemetryAdded.onmessage = (evt) => {
-                    console.log(evt);
                     this.publishEvent({
                         event_name: eventType,
                         payload: Buffer.from(evt.data),
