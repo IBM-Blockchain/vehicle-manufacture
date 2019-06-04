@@ -236,7 +236,7 @@ echo "#####################"
 echo "# STARTING BROWSERS #"
 echo "#####################"
 
-URLS="http://localhost:$CAR_BUILDER_PORT http://localhost:$ARIUM_PORT/ http://localhost:$VDA_PORT http://localhost:$PRINCE_PORT http://localhost:$ARIUM_PORT/node-red"
+URLS="http://localhost:$CAR_BUILDER_PORT http://localhost:$ARIUM_PORT http://localhost:$PRINCE_PORT http://localhost:$VDA_PORT http://localhost:$ARIUM_PORT/node-red"
 case "$(uname)" in
     "Darwin")
         open ${URLS}
