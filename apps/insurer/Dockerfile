@@ -13,4 +13,4 @@ RUN npm rebuild
 COPY ./apps/insurer /app
 RUN npm run build
 CMD npm run start
-EXPOSE 6003
+EXPOSE 6004

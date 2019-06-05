@@ -21,7 +21,7 @@ services:
   prince_app:
     image: awjh/vehicle-manufacture-iot-extension-insurer
     ports:
-      - 6003:6003
+      - 6004:6004
     command: npm start
     volumes:
       - ../../../apps/insurer/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric
@@ -31,7 +31,7 @@ services:
   vda_app:
     image: awjh/vehicle-manufacture-iot-extension-regulator
     ports:
-      - 6004:6004
+      - 6003:6003
     command: npm start
     volumes:
       - ../../../apps/regulator/vehiclemanufacture_fabric:/app/vehiclemanufacture_fabric

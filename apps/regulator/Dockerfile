@@ -13,4 +13,4 @@ RUN npm rebuild
 COPY ./apps/regulator /app
 RUN npm run build
 CMD npm run start
-EXPOSE 6004
+EXPOSE 6003

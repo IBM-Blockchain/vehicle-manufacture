@@ -49,8 +49,8 @@ echo '# CLEANUP APPS #'
 echo '################'
 CAR_BUILDER_PORT=6001
 ARIUM_PORT=6002
-VDA_PORT=6004
-PRINCE_PORT=6003
+VDA_PORT=6003
+PRINCE_PORT=6004
 
 docker exec arium_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
 docker exec vda_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'

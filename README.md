@@ -17,8 +17,8 @@ Clone this git repository and then run the `install.sh` file located in the `ins
 
 - Car builder - http://localhost:6001
 - Manufacturer - http://localhost:6002
-- Insurer - http://localhost:6003
-- Regulator - http://localhost:6004
+- Regulator - http://localhost:6003
+- Insurer - http://localhost:6004
 
 ## Uninstalling the demo
 Run `uninstall.sh` located in the `installer` folder. This will teardown the Hyperledger Fabric network and the applications used in the demo as well as cleaning artifacts left by the installer for tools used. The wallets will also be emptied.
