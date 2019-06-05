@@ -63,4 +63,6 @@ scripts/network/crypto-material/core.yaml
 
 apps/manufacturer/config/.node-red-flow.json.backup
 
+vm_demo_logs_*
+
 **/checkpointers

@@ -1,0 +1,64 @@
+#!/bin/bash
+BASEDIR=$(dirname "$0")
+
+if [ $BASEDIR = '.' ]
+then
+    BASEDIR=$(pwd)
+elif [ ${BASEDIR:0:2} = './' ]
+then
+    BASEDIR=$(pwd)${BASEDIR:1}
+elif [ ${BASEDIR:0:1} = '/' ]
+then
+    BASEDIR=${BASEDIR}
+else
+    BASEDIR=$(pwd)/${BASEDIR}
+fi
+
+echo '##########################'
+echo '# CREATING LOG DIRECTORY #'
+echo '##########################'
+NOW=$(date "+%Y%m%d_%H%M%S")
+OUTPUT_DIR="$BASEDIR/../vm_demo_logs_$NOW"
+
+mkdir "$OUTPUT_DIR"
+
+NETWORK_OUTPUT_DIR="$OUTPUT_DIR/network"
+CHAINCODE_OUTPUT_DIR="$OUTPUT_DIR/chaincode"
+APP_OUTPUT_DIR="$OUTPUT_DIR/apps"
+
+mkdir "$NETWORK_OUTPUT_DIR"
+mkdir "$CHAINCODE_OUTPUT_DIR"
+mkdir "$APP_OUTPUT_DIR"
+
+echo '##########################'
+echo '# GATHERING NETWORK LOGS #'
+echo '##########################'
+for container in $(docker-compose -f scripts/network/docker-compose/docker-compose.yaml -p node config --services); do
+    docker logs $container &> "$NETWORK_OUTPUT_DIR/$container.log"
+done
+
+echo '############################'
+echo '# GATHERING CHAINCODE LOGS #'
+echo '############################'
+for participant in 'arium' 'vda' 'prince'; do
+    for container in $(docker ps -a | grep "dev-peer0.$participant" | awk '{print $1}'); do
+        docker logs $container &> "$CHAINCODE_OUTPUT_DIR/$participant.log"
+    done
+done
+
+echo '######################'
+echo '# GATHERING APP LOGS #'
+echo '######################'
+for container in $(docker-compose -f scripts/apps/docker-compose/docker-compose.yaml -p node config --services); do
+    docker logs $container &> "$APP_OUTPUT_DIR/$container.log"
+done
+
+echo '###############'
+echo '# MAKING ZIP #'
+echo '##############'
+zip -r "$OUTPUT_DIR.zip" "$OUTPUT_DIR"
+rm -rf "$OUTPUT_DIR"
+
+echo '###########################'
+echo '# GATHERING LOGS COMPLETE #'
+echo '###########################'
