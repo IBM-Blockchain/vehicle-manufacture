@@ -21,11 +21,11 @@ export class VehicleService {
   constructor(private config: Config, private http: HttpClient) {}
 
   get(vin: string): Observable<Vehicle> {
-    return this.http.get(`${this.config.manufacturer_url}/vehicles/${vin}`, VehicleService.headerOptions()) as Observable<Vehicle>
+    return this.http.get(`${this.config.insurer_url}/vehicles/${vin}`, VehicleService.headerOptions()) as Observable<Vehicle>
   }
 
   getUsage(): Observable<any[]> {
-    return this.http.get(`${this.config.manufacturer_url}/vehicles/usage`, VehicleService.headerOptions())
+    return this.http.get(`${this.config.insurer_url}/vehicles/usage`, VehicleService.headerOptions())
       .map((events: any[]) => {
         return events.map((event) => {
           return {

@@ -40,7 +40,7 @@ export class PolicyService {
   constructor(private config: Config, private http: HttpClient) {}
 
   getAll() {
-    return this.http.get(`${this.config.insurer_url}/policies`, PolicyService.headerOptions());
+    return this.http.get(`${this.config.insurer_url}/policies`, PolicyService.headerOptions()) as Observable<any[]>;
   }
 
   get(policyId: string | number) {
