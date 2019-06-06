@@ -16,6 +16,15 @@ fi
 
 DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 
+#################
+# SETUP LOGGING #
+#################
+LOG_PATH=$BASEDIR/logs
+mkdir $LOG_PATH
+
+exec > >(tee -i $LOG_PATH/install.log)
+exec 2>&1
+
 echo "#####################"
 echo "# CHAINCODE INSTALL #"
 echo "#####################"

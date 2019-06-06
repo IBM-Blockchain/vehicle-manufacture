@@ -41,6 +41,11 @@ rm -rf $BASEDIR/cli_tools/node_modules
 rm -f $BASEDIR/cli_tools/package-lock.json
 rm -rf $BASEDIR/cli_tools/dist
 
+echo '################'
+echo '# CLEANUP LOGS #'
+echo '################'
+rm -rf $BASEDIR/logs
+
 echo "######################"
 echo "# UNINSTALL COMPLETE #"
 echo "######################"

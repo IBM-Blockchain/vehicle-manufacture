@@ -28,6 +28,15 @@ else
     BASEDIR=$(pwd)/${BASEDIR}
 fi
 
+#################
+# SETUP LOGGING #
+#################
+LOG_PATH=$BASEDIR/logs
+mkdir $LOG_PATH
+
+exec > >(tee -i $LOG_PATH/start.log)
+exec 2>&1
+
 if [ ! -d "$BASEDIR/../contract/node_modules" ] || [ ! -d "$BASEDIR/../contract/dist" ] || [ ! -d "$BASEDIR/cli_tools/node_modules" ] || [ ! -d "$BASEDIR/cli_tools/dist" ]; then
     echo "###########################################"
     echo "# INSTALL NOT COMPLETE. RUNNING INSTALLER #"

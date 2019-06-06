@@ -14,6 +14,15 @@ else
     BASEDIR=$(pwd)/${BASEDIR}
 fi
 
+#################
+# SETUP LOGGING #
+#################
+LOG_PATH=$BASEDIR/logs
+mkdir $LOG_PATH
+
+exec > >(tee -i $LOG_PATH/stop.log)
+exec 2>&1
+
 NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 APP_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
 
@@ -52,16 +61,18 @@ ARIUM_PORT=6002
 VDA_PORT=6003
 PRINCE_PORT=6004
 
-docker exec arium_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
-docker exec vda_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
-docker exec prince_app bash -c 'rm -rf vehiclemanufacture_fabric/wallet/*/'
-
 docker-compose -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 
 for PORT in $CAR_BUILDER_PORT $ARIUM_PORT $VDA_PORT $PRINCE_PORT
 do
     lsof -i :$PORT | awk '{if(NR>1)print $2}' | xargs kill
 done
+
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
+docker exec cli bash -c 'rm -rf /etc/apps/manufacturer/vehiclemanufacture_fabric/wallet/*/'
+docker exec cli bash -c 'rm -rf /etc/apps/insurer/vehiclemanufacture_fabric/wallet/*/'
+docker exec cli bash -c 'rm -rf /etc/apps/regulator/vehiclemanufacture_fabric/wallet/*/'
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 echo "#################"
 echo "# STOP COMPLETE #"
