@@ -2,14 +2,14 @@ version: '2'
 
 services:
   car_builder_app:
-    image: awjh/vehicle-manufacture-iot-extension-car-builder
+    image: awjh/vehicle-manufacture-iot-extension-car-builder@sha256:fafc260ff82dc893b7663828677cc6e15b776322beda1661d230d02b8
     ports:
       - 6001:6001
     command: npm start
     container_name: car_builder_app
 
   arium_app:
-    image: awjh/vehicle-manufacture-iot-extension-manufacturer
+    image: awjh/vehicle-manufacture-iot-extension-manufacturer@sha256:2cc2100ce4a17f241aa222176ad46bb423ad507242dfaa29d48534d4f
     ports:
       - 6002:6002
     command: npm start
@@ -19,7 +19,7 @@ services:
     container_name: arium_app
 
   prince_app:
-    image: awjh/vehicle-manufacture-iot-extension-insurer
+    image: awjh/vehicle-manufacture-iot-extension-insurer@sha256:f84171eec093de165ddc95666eaf6c74a8828e36d608d23a9c575436f
     ports:
       - 6004:6004
     command: npm start
@@ -29,7 +29,7 @@ services:
     container_name: prince_app
 
   vda_app:
-    image: awjh/vehicle-manufacture-iot-extension-regulator
+    image: awjh/vehicle-manufacture-iot-extension-regulator@sha256:4c36cff3bfc94f754eacf14ec5fd82a2b3e3bafc91c034e4f4c6d068321232fc
     ports:
       - 6003:6003
     command: npm start
