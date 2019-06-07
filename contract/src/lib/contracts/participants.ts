@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName, Roles, RolesPrefix } from '../../constants';
@@ -75,7 +74,6 @@ export class ParticipantsContract extends Contract {
         if (!participant.hasRole(Roles.PARTICIPANT_CREATE)) {
             throw new Error(`Only callers with role ${Roles.PARTICIPANT_CREATE} can register a task user`);
         }
-
         roles = roles.map((role) => {
             role = role.split('"').join('');
             return role;

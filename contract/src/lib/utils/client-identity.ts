@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { ClientIdentity, newLogger } from 'fabric-shim';
 import { RolesPrefix } from '../../constants';
 import { Insurer } from '../organizations/insurer';
