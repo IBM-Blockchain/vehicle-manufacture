@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { ParticipantsContract } from './lib/contracts/participants';
 import { VehicleContract } from './lib/contracts/vehicle';
 import { JSONSerializer } from './serializer';

@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { ClientIdentity, newLogger } from 'fabric-shim';
 import { RolesPrefix } from '../../constants';
 import { Insurer } from '../organizations/insurer';
@@ -54,23 +53,9 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         }
     }
 
-    public async updateParticipant(): Promise<Participant> {
-        const newParticipant = await this.newParticipantInstance();
-        await this.ctx.getParticipantList().update(newParticipant);
-        const participant = await this.ctx.getParticipantList().get(newParticipant.id);
-
-        return participant;
-    }
-
-    public async newParticipantInstance(): Promise<Participant> {
+    public newParticipantInstance(): Participant {
         const id = this.getAttributeValue(ID_FIELD);
         const orgId = id.split('@')[1];
-
-        try {
-            await this.ctx.getOrganizationList().get(orgId);
-        } catch (err) {
-            logger.warn(`Organization ${orgId} does not exist`);
-        }
 
         if (this.assertAttributeValue(REGISTRAR_ROLE_FIELD, 'y')) {
             return new Registrar(id, orgId);

@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { Context } from 'fabric-contract-api';
 import { Order, Policy, UsageEvent, Vehicle } from '../assets';
 import { State } from '../ledger-api/state';

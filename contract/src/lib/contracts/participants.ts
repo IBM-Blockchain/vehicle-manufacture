@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import { NetworkName, Roles, RolesPrefix } from '../../constants';
@@ -51,7 +50,7 @@ export class ParticipantsContract extends Contract {
         const orgType = ctx.getClientIdentity().getAttributeValue('vehicle_manufacture.org_type');
 
         await this.registerOrganization(ctx, orgName, originCode, manufacturerCode);
-        const participant = await ctx.getClientIdentity().newParticipantInstance();
+        const participant = ctx.getClientIdentity().newParticipantInstance();
 
         switch (orgType) {
             case 'regulator':
