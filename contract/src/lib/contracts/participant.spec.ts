@@ -28,7 +28,7 @@ const should = chai.should();
 chai.use(sinonChai);
 chai.use(chaiAsPromied);
 
-describe.only('Participant', () => {
+describe('Participant', () => {
     let sandbox: sinon.SinonSandbox;
     let contract: ParticipantsContract;
     let ctx: sinon.SinonStubbedInstance<VehicleManufactureNetContext>;
