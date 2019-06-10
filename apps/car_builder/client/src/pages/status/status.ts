@@ -137,7 +137,7 @@ export class StatusPage {
       });
 
       const headers = new Headers();
-      headers.append('Authorization', 'Basic ' + btoa('paul:paulpw'));
+      headers.append('Authorization', 'Basic ' + btoa(this.config.user + ':' + this.config.user + 'pw'));
       headers.append('Content-Type', 'application/json');
       const reqOpts = new RequestOptions({});
       reqOpts.headers = headers;

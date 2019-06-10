@@ -24,7 +24,13 @@ exec > >(tee -i $LOG_PATH/stop.log)
 exec 2>&1
 
 NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
-APP_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
+APPS_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
+
+echo "###########################"
+echo "# SET ENV VARS FOR DOCKER #"
+echo "###########################"
+export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
+export $(cat $APPS_DOCKER_COMPOSE_DIR/.env | xargs)
 
 echo '############################'
 echo '# REMOVE DOCKER CONTAINERS #'
@@ -61,7 +67,7 @@ ARIUM_PORT=6002
 VDA_PORT=6003
 PRINCE_PORT=6004
 
-docker-compose -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
+docker-compose -f $APPS_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node down --volumes
 
 for PORT in $CAR_BUILDER_PORT $ARIUM_PORT $VDA_PORT $PRINCE_PORT
 do
@@ -73,6 +79,12 @@ docker exec cli bash -c 'rm -rf /etc/apps/manufacturer/vehiclemanufacture_fabric
 docker exec cli bash -c 'rm -rf /etc/apps/insurer/vehiclemanufacture_fabric/wallet/*/'
 docker exec cli bash -c 'rm -rf /etc/apps/regulator/vehiclemanufacture_fabric/wallet/*/'
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
+
+echo "#############################"
+echo "# CLEAN ENV VARS FOR DOCKER #"
+echo "#############################"
+unset $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
+unset $(cat $APPS_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
 
 echo "#################"
 echo "# STOP COMPLETE #"

@@ -25,12 +25,20 @@ page-login {
     background: url("../assets/background.png");
     background-size: cover;
 
-    #cog {
+    #settings {
       position: absolute;
       top: 25px;
       right: 25px;
-      cursor: pointer;
       z-index: 11;
+      color: #FFF;
+      text-transform: capitalize;
+      display: flex;
+      align-items: center;
+
+      #cog {
+        margin-left: 25px;
+        cursor: pointer;
+      }
     }
 
     .map {

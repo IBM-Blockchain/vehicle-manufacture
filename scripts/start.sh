@@ -8,8 +8,8 @@ if [[ "$(uname)" -eq "Linux" ]] &&  type gnome-terminal > /dev/null ; then
     echo Vehicle Lifecycle Demo is now starting.;
     echo ;
     echo Please wait 5 min whilst we build the;
-    echo network and apps for you. They will open;
-    echo automatically.;
+    echo network and apps for you. They will;
+    echo open automatically.;
     echo ;
     echo Close this window at any time;
     exec bash\""
@@ -45,13 +45,20 @@ if [ ! -d "$BASEDIR/../contract/node_modules" ] || [ ! -d "$BASEDIR/../contract/
     $BASEDIR/install.sh
 fi
 
-DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+APPS_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
 CRYPTO_CONFIG=$BASEDIR/network/crypto-material/crypto-config
 
-echo "################"
-echo "# GENERATE CRYPTO"
-echo "################"
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
+echo "###########################"
+echo "# SET ENV VARS FOR DOCKER #"
+echo "###########################"
+export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
+export $(cat $APPS_DOCKER_COMPOSE_DIR/.env | xargs)
+
+echo "###################"
+echo "# GENERATE CRYPTO #"
+echo "###################"
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 
 docker exec cli cryptogen generate --config=/etc/hyperledger/config/crypto-config.yaml --output /etc/hyperledger/config/crypto-config
 docker exec cli configtxgen -profile SampleMultiNodeEtcdRaft -outputBlock /etc/hyperledger/config/genesis.block
@@ -59,12 +66,12 @@ docker exec cli configtxgen -profile ThreeOrgsChannel -outputCreateChannelTx /et
 docker exec cli cp /etc/hyperledger/fabric/core.yaml /etc/hyperledger/config
 docker exec cli sh /etc/hyperledger/config/rename_sk.sh
 
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 echo "#################"
 echo "# SETUP NETWORK #"
 echo "#################"
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose.yaml -p node up -d
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node up -d
 
 echo "################"
 echo "# CHANNEL INIT #"
@@ -165,7 +172,7 @@ CAR_BUILDER_DIR=$APPS_DIR/car_builder
 MANUFACTURER_DIR=$APPS_DIR/manufacturer
 REGULATOR_DIR=$APPS_DIR/regulator
 
-docker-compose -f $BASEDIR/apps/docker-compose/docker-compose.yaml -p node up -d
+docker-compose -f $APPS_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node up -d
 
 CAR_BUILDER_PORT=6001
 ARIUM_PORT=6002
@@ -267,6 +274,12 @@ case "$(uname)" in
         echo "Demo not launched. OS currently not supported"
         ;;
 esac
+
+echo "#############################"
+echo "# CLEAN ENV VARS FOR DOCKER #"
+echo "#############################"
+unset $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
+unset $(cat $APPS_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
 
 echo "####################"
 echo "# STARTUP COMPLETE #"

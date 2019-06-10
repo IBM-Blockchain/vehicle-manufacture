@@ -14,11 +14,17 @@ else
     BASEDIR=$(pwd)/${BASEDIR}
 fi
 
-DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
-APP_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
+NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+APPS_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
 
-ALIVE_FABRIC_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
-ALIVE_APP_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $APP_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
+echo "###########################"
+echo "# SET ENV VARS FOR DOCKER #"
+echo "###########################"
+export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
+export $(cat $APPS_DOCKER_COMPOSE_DIR/.env | xargs)
+
+ALIVE_FABRIC_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
+ALIVE_APP_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $APPS_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
 if [ "$ALIVE_FABRIC_DOCKER_IMAGES" -ne 0 ] || [ "$ALIVE_APP_DOCKER_IMAGES" -ne 0 ]; then
     echo "###################################"
     echo "# STOP NOT COMPLETE. RUNNING STOP #"
@@ -30,9 +36,9 @@ fi
 echo '########################################'
 echo '# REMOVE NODE LEFTOVERS FROM CHAINCODE #'
 echo '########################################'
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 docker exec cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp; rm -rf node_modules; rm -f package-lock.json'
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 echo '#####################'
 echo '# CLEANUP CLI_TOOLS #'
@@ -45,6 +51,13 @@ echo '################'
 echo '# CLEANUP LOGS #'
 echo '################'
 rm -rf $BASEDIR/logs
+
+echo "#############################"
+echo "# CLEAN ENV VARS FOR DOCKER #"
+echo "#############################"
+unset $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
+unset $(cat $APPS_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
+
 
 echo "######################"
 echo "# UNINSTALL COMPLETE #"

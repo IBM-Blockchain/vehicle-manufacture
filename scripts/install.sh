@@ -14,7 +14,7 @@ else
     BASEDIR=$(pwd)/${BASEDIR}
 fi
 
-DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
+NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 
 #################
 # SETUP LOGGING #
@@ -25,18 +25,21 @@ mkdir $LOG_PATH
 exec > >(tee -i $LOG_PATH/install.log)
 exec 2>&1
 
+echo "###########################"
+echo "# SET ENV VARS FOR DOCKER #"
+echo "###########################"
+export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
+
 echo "#####################"
 echo "# CHAINCODE INSTALL #"
 echo "#####################"
 
-echo "$DOCKER_COMPOSE_DIR/docker-compose-cli.yaml"
-
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 
 docker exec cli bash -c "apk add nodejs nodejs-npm python make g++"
 docker exec cli bash -c 'cd /etc/hyperledger/contract; npm install; npm run build'
 
-docker-compose -f $DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
+docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
 
 echo "###################"
 echo "# BUILD CLI_TOOLS #"
@@ -45,6 +48,11 @@ cd $BASEDIR/cli_tools
 npm install
 npm run build
 cd $BASEDIR
+
+echo "#############################"
+echo "# CLEAN ENV VARS FOR DOCKER #"
+echo "#############################"
+unset $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | sed -E 's/(.*)=.*/\1/' | xargs)
 
 echo "####################"
 echo "# INSTALL COMPLETE #"

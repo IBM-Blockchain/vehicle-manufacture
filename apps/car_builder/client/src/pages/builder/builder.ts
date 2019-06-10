@@ -14,7 +14,7 @@ limitations under the License.
 import { Component, ElementRef, OnInit, ViewChild, HostListener } from '@angular/core';
 import { Http } from '@angular/http';
 import { NavController, NavParams } from 'ionic-angular';
-import { ConfigProvider } from '../../providers/config/config';
+import { ConfigProvider, IConfig } from '../../providers/config/config';
 import { StatusPage } from '../status/status';
 
 interface IOption {
@@ -81,7 +81,7 @@ export class BuilderPage {
     }]
   };
   
-  private config = {};
+  private config: IConfig;
   private ready = false;
 
   @ViewChild('trim', {read: ElementRef}) trim: ElementRef;
@@ -153,7 +153,7 @@ export class BuilderPage {
     var order = {
       vehicleDetails: vehicleDetails,
       options: options,
-      ordererId: 'paul@VDA', // PAUL HAS LOGGED INTO THE APP USING HIS VDA "GOVERNMENT" ID, PRETEND THE APP HAS GOT THIS FROM THE LOGIN AND NOT HARDCODED
+      ordererId: this.config.user + '@VDA', // PAUL HAS LOGGED INTO THE APP USING HIS VDA "GOVERNMENT" ID, PRETEND THE APP HAS GOT THIS FROM THE LOGIN AND NOT HARDCODED
     };
 
     var full_car = {};
@@ -181,7 +181,7 @@ export class BuilderPage {
     });
     xhr.open("POST", `${this.config['restServer']}/orders`);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.setRequestHeader("Authorization", "Basic " + btoa("paul:paulpw"));
+    xhr.setRequestHeader("Authorization", 'Basic ' + btoa(this.config.user + ':' + this.config.user + 'pw'));
     xhr.send(data);
     document.getElementById('purchase').getElementsByTagName('span')[0].innerHTML = 'Sending request...';
   }

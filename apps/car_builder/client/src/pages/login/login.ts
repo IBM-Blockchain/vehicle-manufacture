@@ -15,6 +15,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { DesignerPage } from '../designer/designer';
 import { SettingsPage } from '../settings/settings';
+import { ConfigProvider } from '../../providers/config/config';
 
 /**
  * Generated class for the LoginPage page.
@@ -27,16 +28,19 @@ import { SettingsPage } from '../settings/settings';
   templateUrl: 'login.html',
 })
 export class LoginPage {
-  designerPage: DesignerPage;
 
-  config: Object;
+  public user: string;
 
-  constructor(public navController: NavController, public navParams: NavParams) {}
+  constructor(public navController: NavController, public navParams: NavParams, private configProvider: ConfigProvider) {
+    this.configProvider.ready.subscribe((ready) => {
+      if (ready) {
+        this.user = this.configProvider.getConfig().user;
+      }
+    });
+  }
 
   login() {
-    this.navController.push(DesignerPage, {
-      config: this.config
-    });
+    this.navController.push(DesignerPage);
   }
 
   settings() {

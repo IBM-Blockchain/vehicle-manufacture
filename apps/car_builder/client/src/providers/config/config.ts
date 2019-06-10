@@ -22,11 +22,18 @@ import { ReplaySubject } from 'rxjs';
   See https://angular.io/docs/ts/latest/guide/dependency-injection.html
   for more info on providers and Angular 2 DI.
 */
+
+export interface IConfig {
+  restServer: string;
+  user: string;
+}
+
 @Injectable()
 export class ConfigProvider {
 
-  private config = {
-    restServer: null
+  private config: IConfig = {
+    restServer: null,
+    user: null
   };
 
   public ready: ReplaySubject<boolean> = new  ReplaySubject(1);
@@ -34,20 +41,20 @@ export class ConfigProvider {
   constructor(public http: Http) {
     this.loadConfig()
     .then((config) => {
-      throw new Error();
-      // this.config = config;
-      // this.ready.next(true);
+      this.config = config;
+      this.ready.next(true);
     })
     .catch((err) => {
       console.log('ERROR GETTING CONFIG USING DEFAULT', err.message);
       this.config = {
-        "restServer": "/api"
+        "restServer": "/api",
+        "user": "paul",
       }    
       this.ready.next(true);  
     })
   }
 
-  getConfig() {
+  getConfig(): IConfig {
     if(localStorage.getItem('config')){
       return JSON.parse(localStorage.getItem('config'));
     }
@@ -55,7 +62,7 @@ export class ConfigProvider {
     return this.config;
   }
 
-  setConfig(newConfig) {
+  setConfig(newConfig: IConfig) {
     localStorage.setItem('config', JSON.stringify(newConfig));
   }
 
@@ -64,10 +71,10 @@ export class ConfigProvider {
   }
 
   loadConfig(): Promise<any> {
-    // Load the config data.
-    return this.http.get('/assets/config.json')
-    .map((res: Response) => res.json())
-    .toPromise();
+    // TODO - Load config from file
+    return new Promise((res, rej) => {
+      rej('Failed to load config')
+    });
   }
 
 }
