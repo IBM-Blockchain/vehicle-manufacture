@@ -24,6 +24,12 @@ CONTRACT_DIR=$DIR/contract
 
 cd ${DIR}
 
+# Start the X virtual frame buffer used by Karma.
+if [ -r "/etc/init.d/xvfb" ]; then
+    export DISPLAY=:99.0
+    sh -e /etc/init.d/xvfb start
+fi
+
 echo "==> Running tests"
 for dir in $COMMON_DIR $BUILDER_DIR_CLIENT $BUILDER_DIR_SERVER $INSURER_DIR $MANUFACTURER_DIR $REGULATOR_DIR $CONTRACT_DIR
 do
