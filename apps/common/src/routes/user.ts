@@ -12,12 +12,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { Response } from 'express';
-import { ContractNames } from '../constants';
+import { CONTRACT_NAMES } from '../constants';
+import { Enroll } from '../enroll';
 import FabricProxy from '../fabricproxy';
 import { IRequest } from '../interfaces';
 import Utils from '../utils';
 import { ContractRouter } from './utils/contractRouter';
-import { Enroll } from '../enroll';
 
 export class ParticipantContractRouter extends ContractRouter {
     public static basePath = 'users';
@@ -25,20 +25,25 @@ export class ParticipantContractRouter extends ContractRouter {
     constructor(fabricProxy: FabricProxy) {
         super(fabricProxy);
 
-        this.contractName = ContractNames.participant;
+        this.contractName = CONTRACT_NAMES.participant;
     }
 
     public async prepareRoutes() {
         this.router.post('/enroll', async (req: IRequest, res: Response) => {
             try {
-                await Enroll.enrollUser(this.fabricProxy.wallet, this.fabricProxy.ccp, req.body, req.user, this.fabricProxy.ccp.client.organization);
+                await Enroll.enrollUser(
+                    this.fabricProxy.wallet,
+                    this.fabricProxy.ccp,
+                    req.body,
+                    req.user,
+                    this.fabricProxy.ccp.client.organization,
+                );
                 res.send();
             } catch (err) {
                 res.status(400);
                 res.send('Error registering user. ' + err.message);
             }
         });
-
 
         this.router.post('/:participantType/register', async (req: IRequest, res: Response) => {
             if (req.params.participantType === 'registrar') {

@@ -11,20 +11,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import * as path from 'path';
 import * as fs from 'fs-extra';
+import * as path from 'path';
 
-import { FileSystemWallet, Gateway, X509WalletMixin, Wallet } from 'fabric-network';
-import { User } from 'fabric-client';
 import { IKeyValueAttribute } from 'fabric-ca-client';
+import { User } from 'fabric-client';
+import { FileSystemWallet, Gateway, Wallet, X509WalletMixin } from 'fabric-network';
 
-export interface VMUser {
+export interface IVMUser {
     name: string;
-    attrs: Array<IKeyValueAttribute>
+    attrs: IKeyValueAttribute[];
 }
 
 export class Enroll {
-    public static async enrollUser(wallet: string | Wallet, connectionProfile: string | any, user: VMUser, adminName: string, org: string) {
+    public static async enrollUser(
+        wallet: string | Wallet,
+        connectionProfile: string | any,
+        user: IVMUser, adminName: string,
+        org: string) {
         if (typeof connectionProfile === 'string') {
             const ccpPath = path.resolve(process.cwd(), connectionProfile);
             connectionProfile = fs.readJSONSync(ccpPath);
@@ -43,11 +47,12 @@ export class Enroll {
         let resolvedPath;
 
         resolvedPath = path.resolve(process.cwd(), walletPath);
-        
+
         return new FileSystemWallet(resolvedPath);
     }
 
-    private static async connectAsAdmin(wallet: string | Wallet, ccp: object, adminName: string): Promise<{admin: User, ca: any}> {
+    private static async connectAsAdmin(wallet: string | Wallet, ccp: object, adminName: string)
+    : Promise<{admin: User, ca: any}> {
         if (typeof wallet === 'string') {
             wallet = this.getWallet(wallet);
         }
@@ -55,11 +60,16 @@ export class Enroll {
         const adminExists = await wallet.exists(adminName);
 
         if (!adminExists) {
-        	throw new Error('Failed to setup admin. Have you enrolled them?');
+            throw new Error('Failed to setup admin. Have you enrolled them?');
         }
 
         const gateway = new Gateway();
-        await gateway.connect(ccp, { clientTlsIdentity: adminName, wallet, identity: adminName, discovery: { enabled: false  } });
+        await gateway.connect(ccp, {
+            clientTlsIdentity: adminName,
+            discovery: { enabled: false  },
+            identity: adminName,
+            wallet,
+        });
 
         const ca = gateway.getClient().getCertificateAuthority();
 
@@ -68,7 +78,13 @@ export class Enroll {
         return {admin: adminIdentity, ca};
     }
 
-    private static async _enrollUser(wallet: FileSystemWallet, user: VMUser, admin: User, ca: any, mspid: string, org: string): Promise<void> {
+    private static async _enrollUser(
+        wallet: FileSystemWallet,
+        user: IVMUser,
+        admin: User,
+        ca: any,
+        mspid: string,
+        org: string): Promise<void> {
         // Check to see if we've already enrolled the user.
         const userExists = await wallet.exists(user.name);
         if (userExists) {
@@ -76,10 +92,10 @@ export class Enroll {
         }
 
         const attrs = user.attrs;
-        attrs.push({name: 'vehicle_manufacture.username', value: user.name + '@' + org, ecert: true})
+        attrs.push({name: 'vehicle_manufacture.username', value: user.name + '@' + org, ecert: true});
 
         // Register the user, enroll the user, and import the new identity into the wallet.
-        const secret = await ca.register({ affiliation: '', enrollmentID: user.name, role: 'client', attrs: attrs }, admin);
+        const secret = await ca.register({ affiliation: '', enrollmentID: user.name, role: 'client', attrs }, admin);
 
         const enrollment = await ca.enroll({ enrollmentID: user.name, enrollmentSecret: secret });
 

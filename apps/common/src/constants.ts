@@ -11,15 +11,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-export const ChaincodeName = 'vehicle-manufacture-chaincode';
-export const ChannelName= 'vehiclemanufacture';
+export const CHAINCODE_NAME = 'vehicle-manufacture-chaincode';
+export const CHANNEL_NAME = 'vehiclemanufacture';
 
-export const DefaultLocalFabricPath = './vehiclemanufacture_fabric';
-export const DefaultLocalWalletPath = DefaultLocalFabricPath + '/wallet';
-export const DefaultLocalConnectionPath = DefaultLocalFabricPath + '/connection.json';
+export const DEFAULT_LOCAL_FABRIC_PATH = './vehiclemanufacture_fabric';
+export const DEFAULT_LOCAL_WALLET_PATH = DEFAULT_LOCAL_FABRIC_PATH + '/wallet';
+export const DEFAULT_LOCAL_CONNECTION_PATH = DEFAULT_LOCAL_FABRIC_PATH + '/connection.json';
 
-export const ContractNames = {
-    system: 'org.hyperleder.fabric',
+export const CONTRACT_NAMES = {
     participant: 'org.acme.vehicle_network.participants',
+    system: 'org.hyperleder.fabric',
     vehicle: 'org.acme.vehicle_network.vehicles',
 };

@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ContractRouter, FabricProxy, ContractNames, IRequest, Config } from 'common';
+import { ContractRouter, FabricProxy, CONTRACT_NAMES, IRequest, Config } from 'common';
 import { Response } from 'express';
 import { v4 } from 'uuid';
 import { EventNames } from '../constants';
@@ -33,7 +33,7 @@ export class VehicleRouter extends ContractRouter {
     constructor(fabricProxy: FabricProxy) {
         super(fabricProxy);
 
-        this.contractName = ContractNames.vehicle;
+        this.contractName = CONTRACT_NAMES.vehicle;
 
         this.telemetryListeners = new Map();
     }

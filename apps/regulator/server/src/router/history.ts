@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ContractNames, ContractRouter, FabricProxy, IRequest } from 'common';
+import { CONTRACT_NAMES, ContractRouter, FabricProxy, IRequest } from 'common';
 import { Response } from 'express';
 
 export class HistoryRouter extends ContractRouter {
@@ -20,7 +20,7 @@ export class HistoryRouter extends ContractRouter {
     constructor(fabricProxy: FabricProxy) {
         super(fabricProxy);
 
-        this.contractName = ContractNames.vehicle;
+        this.contractName = CONTRACT_NAMES.vehicle;
     }
 
     public async prepareRoutes() {
@@ -48,7 +48,7 @@ export class HistoryRouter extends ContractRouter {
             delete transaction.caller.msp;
             return transaction;
         });
-        
+
         return block;
     }
 }

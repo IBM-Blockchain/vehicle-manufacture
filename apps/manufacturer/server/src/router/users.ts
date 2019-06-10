@@ -12,14 +12,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { Response } from 'express';
-import { ContractRouter, Enroll, FabricProxy, IRequest, Utils, ContractNames } from 'common';
+import { ContractRouter, Enroll, FabricProxy, IRequest, Utils, CONTRACT_NAMES } from 'common';
 
 export class ParticipantContractRouter extends ContractRouter {
     public static basePath = 'users';
 
     constructor(fabricProxy: FabricProxy) {
         super(fabricProxy);
-        this.contractName = ContractNames.participant;
+        this.contractName = CONTRACT_NAMES.participant;
     }
 
     public async prepareRoutes() {
