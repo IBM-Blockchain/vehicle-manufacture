@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { Object, Property } from 'fabric-contract-api';
 import { NetworkName } from '../../constants';
 import { State } from '../ledger-api/state';

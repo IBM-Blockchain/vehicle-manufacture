@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-
 import { NetworkName } from '../../constants';
 import { Asset } from '../assets/asset';
 import { IState } from '../ledger-api/state';
