@@ -1,6 +1,6 @@
 {
   "name": "iot-extension-vehicle-manufacture-insurance",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "license": "Apache-2.0",
   "author": "IBM Blockchain",
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "vehicle-manufacture-contract-cli-tools",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "a chaincode defining business logic for letters of credit",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
