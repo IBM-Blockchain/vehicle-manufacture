@@ -48,7 +48,10 @@ describe('#ClientIdentity', () => {
     before(() => {
         cleanCache();
 
-        mockery.enable();
+        mockery.enable({
+            warnOnReplace: false,
+            warnOnUnregistered: false,
+        });
     });
 
     beforeEach(() => {

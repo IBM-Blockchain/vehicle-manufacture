@@ -13,8 +13,6 @@ limitations under the License.
 */
 import * as chai from 'chai';
 import * as chaiAsPromied from 'chai-as-promised';
-import { resolveTxt } from 'dns';
-import { ClientIdentity } from 'fabric-shim';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { Roles, RolesPrefix } from '../../constants';
@@ -28,7 +26,7 @@ const should = chai.should();
 chai.use(sinonChai);
 chai.use(chaiAsPromied);
 
-describe('Participant', () => {
+describe('#ParticipantContract', () => {
     let sandbox: sinon.SinonSandbox;
     let contract: ParticipantsContract;
     let ctx: sinon.SinonStubbedInstance<VehicleManufactureNetContext>;
@@ -55,14 +53,14 @@ describe('Participant', () => {
         sandbox.restore();
     });
 
-    describe('#createContext', ()  => {
+    describe('createContext', ()  => {
         it('should create a VehicleManufacturerNetContext instance', () => {
             const newCtx = contract.createContext();
             newCtx.should.be.instanceof(VehicleManufactureNetContext);
         });
     });
 
-    describe('#getOrganizations', async () => {
+    describe('getOrganizations', async () => {
         it('should return everything from the organization list', async () => {
             const stubOrgs = [new Organization('1', 'org1', 'regulator')];
             organizationList.getAll.resolves(stubOrgs);
@@ -71,7 +69,7 @@ describe('Participant', () => {
         });
     });
 
-    describe('#registerRegistrar', () => {
+    describe('registerRegistrar', () => {
         it('should throw if the attribute Roles.PARTICIPANT_CREATE is not "y"', async () => {
             stubAttribute(ctx, RolesPrefix + Roles.PARTICIPANT_CREATE, 'n');
             await contract.registerRegistrar(ctx as any, 'UK', 'LG')
@@ -105,7 +103,7 @@ describe('Participant', () => {
         }
     });
 
-    describe('#registerTask', () => {
+    describe('registerTask', () => {
         let participant;
         let organization;
 
@@ -133,7 +131,7 @@ describe('Participant', () => {
         });
     });
 
-    describe('#registerOrganization', () => {
+    describe('registerOrganization', () => {
         it('should register an organization', async () => {
             organizationList.exists.resolves(false);
             clientIdentity.newOrganizationInstance.returns('organization');

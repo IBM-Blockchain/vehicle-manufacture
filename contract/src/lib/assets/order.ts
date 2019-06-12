@@ -113,7 +113,6 @@ export class Order extends Asset {
     }
 
     public madeByOrg(orgId: string) {
-        console.log(orgId, this.vehicleDetails.makeId);
         return this.vehicleDetails.makeId === orgId;
     }
 }
