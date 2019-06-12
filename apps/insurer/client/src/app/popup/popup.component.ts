@@ -21,6 +21,10 @@ export interface PolicyRequest {
   holderId: string;
   policyType: number;
   endDate: number;
+  location: {
+    latitude: string;
+    longitude: string; // shh the IoT sensor doesn't send location so car builder fakes it ;)
+  }
 }
 
 interface User {
@@ -85,6 +89,10 @@ export class PopupComponent implements OnInit {
   }
 
   approve() {
+    const location_data = this.request.location;
+
+    localStorage.setItem('lat', location_data.latitude);
+    localStorage.setItem('long', location_data.longitude);
     this.actioned.emit({approve: true, requestId: this.request.requestId});
   }
 }

@@ -123,8 +123,6 @@ export class StatusPage {
     this.stage[5] = "Insured";
 
     const success = async (position) => {
-    
-      console.log('insure me please');
 
       const date = new Date();
       date.setMonth(date.getMonth() + 12);
@@ -133,7 +131,11 @@ export class StatusPage {
         vin: this.order.vin,
         holderId: this.order.ordererId,
         policyType: 2,
-        endDate: date.getTime()
+        endDate: date.getTime(),
+        location: {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        }
       });
 
       const headers = new Headers();
