@@ -66,3 +66,5 @@ apps/manufacturer/config/.node-red-flow.json.backup
 vm_demo_logs_*
 
 **/checkpointers
+**/local_connection.json
+**/local_connection.tmp

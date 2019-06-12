@@ -26,9 +26,27 @@ exec > >(tee -i $LOG_PATH/install.log)
 exec 2>&1
 
 echo "###########################"
-echo "# SET ENV VARS FOR DOCKER #"
+echo "# set env vars for docker #"
 echo "###########################"
 export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
+
+echo "####################################################"
+echo "# COPY AND TEMPLATE LOCAL AND APPS connection.json #"
+echo "####################################################"
+
+CONNECTION_TMPL_LOCATION="${BASEDIR}/../apps/build/connection.tmpl.json"
+
+for APP in "insurer" "manufacturer" "regulator"; do
+    APP_LOCATION="${BASEDIR}/../apps/${APP}"
+    CONFIG_LOCATION="${APP_LOCATION}/vehiclemanufacture_fabric"
+    APP_ABSOLUTE_DIR=$(pwd | sed 's/app.*//g')
+    LOCAL_MSP="${APP_ABSOLUTE_DIR}/scripts/network/crypto-material/crypto-config"
+    touch $CONFIG_LOCATION/local_connection.json
+    sed 's#/MSP_DIR#'${LOCAL_MSP}'#g' $CONNECTION_TMPL_LOCATION > $CONFIG_LOCATION/local_connection.json
+    # sed 's#://.*.com#://localhost#g' $CONFIG_LOCATION/local_connection.json > $CONFIG_LOCATION/local_connection.json
+    sed 's#://.*.com#://localhost#g' $CONFIG_LOCATION/local_connection.json > $CONFIG_LOCATION/local_connection.tmp
+    mv $CONFIG_LOCATION/local_connection.tmp $CONFIG_LOCATION/local_connection.json
+done
 
 echo "#####################"
 echo "# CHAINCODE INSTALL #"
