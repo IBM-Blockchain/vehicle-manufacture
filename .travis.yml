@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+- '8'
+before_install:
+- "./.travis/before-install.sh"
+install:
+- "./.travis/install.sh"
+before_script:
+- "./.travis/before-script.sh"
+script:
+- "./.travis/script.sh"
+after_failure: tail -n +1 -- /home/travis/.npm/_logs/*-debug.log
+sudo: required

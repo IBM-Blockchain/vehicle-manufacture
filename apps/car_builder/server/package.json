@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc",
-    "build:watch": "tsc -w"
+    "build:watch": "tsc -w",
+    "test": "echo 'No tests implemented';"
   },
   "author": "IBM Blockchain",
   "license": "Apache-2.0",

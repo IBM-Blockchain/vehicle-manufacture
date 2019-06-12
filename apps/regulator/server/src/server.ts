@@ -11,18 +11,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ChaincodeName, ChannelName, Config, DefaultLocalConnectionPath, DefaultLocalWalletPath } from 'common';
+import { CHAINCODE_NAME, CHANNEL_NAME, Config, DEFAULT_LOCAL_CONNECTION_PATH, DEFAULT_LOCAL_WALLET_PATH } from 'common';
 import { setup } from './app';
 
 async function createServer() {
     const port = (await Config.readConfig()).regulator.port;
 
     const app = await setup({
-        channelName: ChannelName,
-        connectionProfilePath: DefaultLocalConnectionPath,
-        contractName: ChaincodeName,
+        channelName: CHANNEL_NAME,
+        connectionProfilePath: DEFAULT_LOCAL_CONNECTION_PATH,
+        contractName: CHAINCODE_NAME,
         org: 'VDA',
-        walletPath: DefaultLocalWalletPath,
+        walletPath: DEFAULT_LOCAL_WALLET_PATH,
     });
 
     app.listen(port, () => {

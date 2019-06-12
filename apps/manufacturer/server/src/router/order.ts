@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ContractRouter, FabricProxy, ContractNames, IRequest } from 'common';
+import { ContractRouter, FabricProxy, CONTRACT_NAMES, IRequest } from 'common';
 import { Response } from 'express';
 import { v1 } from 'uuid';
 
@@ -43,14 +43,14 @@ export class OrderRouter extends ContractRouter {
     constructor(fabricProxy: FabricProxy) {
         super(fabricProxy);
 
-        this.contractName = ContractNames.vehicle;
+        this.contractName = CONTRACT_NAMES.vehicle;
     }
 
     public async prepareRoutes() {
         this.router.get('/', await this.transactionToCall('getOrders'));
-        
+
         this.router.post('/', await this.transactionToCall('placeOrder'));
-        
+
         this.router.get('/:orderId', await this.transactionToCall('getOrder'));
 
         this.router.put('/:orderId/status', async (req: IRequest, res: Response) => {

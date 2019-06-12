@@ -8,7 +8,8 @@
         "build": "ionic-app-scripts build",
         "ionic:watch": "ionic-app-scripts watch",
         "ionic:build": "ionic-app-scripts build",
-        "ionic:serve": "ionic-app-scripts serve"
+        "ionic:serve": "ionic-app-scripts serve",
+        "test": "echo 'No tests implemented';"
     },
     "dependencies": {
         "@ionic-native/geolocation": "3.4.2",

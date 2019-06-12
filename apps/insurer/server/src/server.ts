@@ -11,17 +11,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {setup} from './app';
-import { ChannelName, ChaincodeName, DefaultLocalConnectionPath, DefaultLocalWalletPath, Config } from 'common';
+import { CHAINCODE_NAME, CHANNEL_NAME, Config, DEFAULT_LOCAL_CONNECTION_PATH, DEFAULT_LOCAL_WALLET_PATH } from 'common';
+import { setup } from './app';
 
 async function createServer() {
     const port = (await Config.readConfig()).insurer.port;
 
     const app = await setup({
-        walletPath: DefaultLocalWalletPath,
-        connectionProfilePath: DefaultLocalConnectionPath,
-        channelName: ChannelName,
-        contractName: ChaincodeName,
+        walletPath: DEFAULT_LOCAL_WALLET_PATH,
+        connectionProfilePath: DEFAULT_LOCAL_CONNECTION_PATH,
+        channelName: CHANNEL_NAME,
+        contractName: CHAINCODE_NAME,
         org: 'PrinceInsurance'
     });
 

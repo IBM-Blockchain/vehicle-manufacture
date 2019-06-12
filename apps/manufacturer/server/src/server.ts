@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { ChaincodeName, ChannelName, Config, DefaultLocalConnectionPath, DefaultLocalWalletPath } from 'common';
+import { CHAINCODE_NAME, CHANNEL_NAME, Config, DEFAULT_LOCAL_CONNECTION_PATH, DEFAULT_LOCAL_WALLET_PATH } from 'common';
 import * as express from 'express';
 import * as http from 'http';
 import * as RED from 'node-red';
@@ -37,11 +37,11 @@ async function createServer() {
     app.use(nodeRedSettings.httpNodeRoot, RED.httpNode);
 
     await setup(app, {
-        channelName: ChannelName,
-        connectionProfilePath: DefaultLocalConnectionPath,
-        contractName: ChaincodeName,
+        channelName: CHANNEL_NAME,
+        connectionProfilePath: DEFAULT_LOCAL_CONNECTION_PATH,
+        contractName: CHAINCODE_NAME,
         org: 'Arium',
-        walletPath: DefaultLocalWalletPath,
+        walletPath: DEFAULT_LOCAL_WALLET_PATH,
     });
 
     server.listen(port, () => {
