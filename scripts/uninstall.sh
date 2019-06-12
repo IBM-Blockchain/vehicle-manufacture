@@ -39,6 +39,7 @@ echo '########################################'
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 docker exec cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp; rm -rf node_modules; rm -f package-lock.json'
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
+rm -rf $BASEDIR/**/local_connection.json
 
 echo '#####################'
 echo '# CLEANUP CLI_TOOLS #'

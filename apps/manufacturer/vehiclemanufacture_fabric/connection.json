@@ -4,7 +4,7 @@
     "description": "The Vehicle Manufacture network",
     "version": "1.0",
     "client": {
-        "organization": "Arium",
+        "organization": "VDA",
         "connection": {
             "timeout": {
                 "peer": {
