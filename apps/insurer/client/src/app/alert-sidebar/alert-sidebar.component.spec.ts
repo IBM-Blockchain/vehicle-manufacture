@@ -12,6 +12,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { AlertSidebarComponent } from './alert-sidebar.component';
 
@@ -21,6 +23,7 @@ describe('AlertSidebarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports: [ HttpClientTestingModule, RouterTestingModule ],
       declarations: [ AlertSidebarComponent ]
     })
     .compileComponents();

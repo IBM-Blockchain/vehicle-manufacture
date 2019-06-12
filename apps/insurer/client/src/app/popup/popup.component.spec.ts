@@ -12,16 +12,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { PopupComponent } from './popup.component';
+import 'rxjs/add/observable/of';
+import { Observable } from 'rxjs';
+import { VehicleService } from '../vehicle.service';
 
 describe('PopupComponent', () => {
   let component: PopupComponent;
   let fixture: ComponentFixture<PopupComponent>;
+  let mockVehicleService;
 
   beforeEach(async(() => {
+    mockVehicleService = jasmine.createSpyObj(['get'])
+    mockVehicleService.get.and.returnValue(Observable.of({vehicleDetails: {}}));
     TestBed.configureTestingModule({
-      declarations: [ PopupComponent ]
+      imports: [ HttpClientTestingModule ],
+      declarations: [ PopupComponent ],
+      providers: [
+        { provide: VehicleService, useValue: mockVehicleService }
+      ]
     })
     .compileComponents();
   }));
@@ -29,6 +40,7 @@ describe('PopupComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PopupComponent);
     component = fixture.componentInstance;
+    component.request = {holderId: 'liam@Arium'} as any;
     fixture.detectChanges();
   });
 

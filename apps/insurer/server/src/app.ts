@@ -22,7 +22,7 @@ export async function setup(config: IFabricConfig) {
 
     setupMiddleware(app);
 
-    app.use(express.static(path.join(__dirname, '../../client/dist')));
+    app.use(express.static(path.join(__dirname, '../../client/dist/insurer')));
 
     const fabricProxy = new FabricProxy(config);
 
@@ -38,7 +38,7 @@ export async function setup(config: IFabricConfig) {
     });
 
     app.use('/*', (req, res) => {
-        res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+        res.sendFile(path.join(__dirname, '../../client/dist/insurer/index.html'));
     });
 
     return app;

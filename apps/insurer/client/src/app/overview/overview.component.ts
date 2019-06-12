@@ -43,7 +43,7 @@ export class OverviewComponent implements OnInit {
   public usageLoaded = false;
 
   get request_stack() {
-    return this.policyService.requestStack;
+    return this.policyService.requestStack || [];
   }
 
   constructor(private vehicleService: VehicleService,
@@ -64,6 +64,7 @@ export class OverviewComponent implements OnInit {
     this.vehicleService.getUsage()
       .subscribe((events) => {
         this.alerts = events;
+        console.log(this.alerts);
         this.usageLoaded = true;
       });
 

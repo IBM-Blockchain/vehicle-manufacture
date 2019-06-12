@@ -14,7 +14,8 @@ limitations under the License.
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/mergeMap';
+import { Observable } from 'rxjs';
 import { Config } from './config';
 import { PolicyRequest } from './popup/popup.component';
 
@@ -71,7 +72,8 @@ export class PolicyService {
   }
 
   getUsageEvents(policy: Policy): Observable<UsageEvent[]> {
-    return this.http.get(`${this.config.insurer_url}/policies/${policy.id}/usage`, PolicyService.headerOptions()) as Observable<UsageEvent[]>;
+    return this.http
+    .get(`${this.config.insurer_url}/policies/${policy.id}/usage`, PolicyService.headerOptions()) as Observable<UsageEvent[]>;
   }
 
   provideInsurance({approve, requestId}: {approve: boolean, requestId: string}) {

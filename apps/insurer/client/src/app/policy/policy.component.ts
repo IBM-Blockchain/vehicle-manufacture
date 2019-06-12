@@ -16,9 +16,9 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WindowRef } from '../window-ref/window-ref.service';
 import { PolicyService } from '../policy.service';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
 import { VehicleService } from '../vehicle.service';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/switchMap';
 
 interface Policy {
   id: string;
@@ -141,7 +141,9 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.listeners.forEach((listener: any) => {
-      listener.close();
+      if (listener) {
+        listener.close();
+      }
     });
   }
 

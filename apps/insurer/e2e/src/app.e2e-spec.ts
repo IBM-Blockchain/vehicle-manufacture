@@ -11,8 +11,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-/* SystemJS module definition */
-declare var module: NodeModule;
-interface NodeModule {
-  id: string;
-}
+import { AppPage } from './app.po';
+
+describe('workspace-project App', () => {
+  let page: AppPage;
+
+  beforeEach(() => {
+    page = new AppPage();
+  });
+
+  it('should display welcome message', () => {
+    page.navigateTo();
+    expect(page.getParagraphText()).toEqual('Welcome to insurer!');
+  });
+});

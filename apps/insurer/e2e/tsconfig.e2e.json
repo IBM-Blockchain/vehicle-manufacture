@@ -1,8 +1,7 @@
 {
-  "extends": "../../ts-client-config.json",
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/client/e2e",
-    "baseUrl": "./",
+    "outDir": "../out-tsc/app",
     "module": "commonjs",
     "target": "es5",
     "types": [

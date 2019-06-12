@@ -5,7 +5,7 @@
         <div id="customer-name" class="capitalise" >{{ user.forename }} {{ user.surname }}</div>
         <div id="policy-details-holder">
             <div id="customer-details" >
-                Owner of an <b>{{ vehicle.vehicleDetails.makeId }} {{ vehicle.vehicleDetails.modelType}}</b><br />
+                Owner of an <b>{{ vehicle?.vehicleDetails?.makeId }} {{ vehicle?.vehicleDetails?.modelType}}</b><br />
                 With Prince Insurance since {{ user.memberSince | date: 'dd MMM yyyy' }}<br />
                 Insured on <b>{{ policy.startDate | date:'d MMM y'}}</b><br /><br />
                 Lives at:<br />
@@ -14,13 +14,13 @@
                 United Kingdom
             </div>
             <div id="car-details" >
-                <span><b>{{ vehicle.vehicleDetails.makeId }} {{ vehicle.vehicleDetails.modelType }}</b></span><br />
+                <span><b>{{ vehicle?.vehicleDetails?.makeId }} {{ vehicle?.vehicleDetails?.modelType }}</b></span><br />
                 New Vehicle<br />
                 Owned by: <span>{{ user.forename }} {{ user.surname }}</span><br />
                 Registered on: {{ vehicle.manufactured | date:'d MMM y'}}<br />
                 2.5L Engine 240bhp<br />
                 5 Doors<br />
-                Colour: <span>{{ vehicle.vehicleDetails.colour }}</span>
+                Colour: <span>{{ vehicle?.vehicleDetails?.colour }}</span>
             </div>
         </div>
     </div>

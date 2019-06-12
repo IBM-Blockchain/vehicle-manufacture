@@ -12,16 +12,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { SidebarComponent } from './sidebar.component';
+import { Observable } from 'rxjs';
+import { PolicyService } from '../policy.service';
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
+  let mockPolicyService;
 
   beforeEach(async(() => {
+    mockPolicyService = jasmine.createSpyObj(['getLatestPolicy']);
+    mockPolicyService.getLatestPolicy.and.returnValue(Observable.of({}));
     TestBed.configureTestingModule({
-      declarations: [ SidebarComponent ]
+      imports: [ HttpClientTestingModule, RouterTestingModule ],
+      declarations: [ SidebarComponent ],
+      providers: [
+        { provide: PolicyService, useValue: mockPolicyService }
+      ]
     })
     .compileComponents();
   }));

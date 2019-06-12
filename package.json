@@ -38,8 +38,14 @@
       ".ttf",
       ".md",
       ".PNG",
+      ".tgz",
       ".xml"
     ],
-    "insert_license": true
+    "default_format": {
+      "eachLine": {
+        "prepend": "# "
+      }
+    },
+    "insert_license": false
   }
 }

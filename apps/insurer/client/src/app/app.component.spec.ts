@@ -11,14 +11,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { TestBed, async } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
+import { SidebarComponent } from './../app/sidebar/sidebar.component';
 import { AppComponent } from './app.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { PolicyService } from './policy.service';
+import 'rxjs/add/observable/of';
+import { Observable } from 'rxjs';
+
 describe('AppComponent', () => {
+  let mockPolicyService;
+
   beforeEach(async(() => {
+    mockPolicyService = jasmine.createSpyObj(['getLatestPolicy']);
+    mockPolicyService.getLatestPolicy.and.returnValue(Observable.of({}));
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       declarations: [
-        AppComponent
+        AppComponent,
+        SidebarComponent
       ],
+      providers: [
+        { provide: PolicyService, useValue: mockPolicyService }
+      ]
     }).compileComponents();
   }));
   it('should create the app', async(() => {
@@ -30,11 +45,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app.title).toEqual('app');
-  }));
-  it('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to app!');
   }));
 });
