@@ -22,11 +22,14 @@ REGULATOR_DIR=$APPS_DIR/regulator
 CONTRACT_DIR=$DIR/contract
 
 cd ${DIR}
+npm install
+npm run licchkadd
 
 echo "==> Running install & build"
 for dir in $COMMON_DIR $BUILDER_DIR_CLIENT $BUILDER_DIR_SERVER $INSURER_DIR $MANUFACTURER_DIR $REGULATOR_DIR $CONTRACT_DIR
 do
     cd ${dir}
+    echo "==> $dir"
     npm install
     npm run build
 done

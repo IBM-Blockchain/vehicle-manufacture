@@ -34,5 +34,6 @@ echo "==> Running tests"
 for dir in $COMMON_DIR $BUILDER_DIR_CLIENT $BUILDER_DIR_SERVER $INSURER_DIR $MANUFACTURER_DIR $REGULATOR_DIR $CONTRACT_DIR
 do
     cd ${dir}
+    echo "==> $dir"
     npm test 2>&1
 done
