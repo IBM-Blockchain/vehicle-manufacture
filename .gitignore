@@ -53,6 +53,8 @@ fabric-tools/**
 node_modules
 **/dist
 **/vehiclemanufacture_fabric/wallet/**
+**/vehiclemanufacture_fabric/connection.json
+**/vehiclemanufacture_fabric/local_connection.json
 !**/vehiclemanufacture_fabric/wallet/.gitkeep
 tmp
 
@@ -66,5 +68,3 @@ apps/manufacturer/config/.node-red-flow.json.backup
 vm_demo_logs_*
 
 **/checkpointers
-**/local_connection.json
-**/local_connection.tmp

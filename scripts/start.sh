@@ -37,7 +37,26 @@ mkdir $LOG_PATH
 exec > >(tee -i $LOG_PATH/start.log)
 exec 2>&1
 
-if [ ! -d "$BASEDIR/../contract/node_modules" ] || [ ! -d "$BASEDIR/../contract/dist" ] || [ ! -d "$BASEDIR/cli_tools/node_modules" ] || [ ! -d "$BASEDIR/cli_tools/dist" ]; then
+
+APPS_DIR=$BASEDIR/../apps
+
+REQUIRED_INSTALL_AND_BUILDS=("$BASEDIR/../contract" "$BASEDIR/cli_tools")
+REQUIRED_APPS_WITH_CONNECTIONS=("$APPS_DIR/manufacturer", "$APPS_DIR/insurer", "$APPS_DIR/regulator")
+
+MISSING=false
+for REQUIRED in "${REQUIRED_INSTALL_AND_BUILDS[@]}"; do
+    if [ ! -d "$REQUIRED/node_modules" ] || [ ! -d "$REUIRED/dist" ]; then
+        MISSING=true
+    fi
+done
+
+for REQUIRED in "${REQUIRED_APPS_WITH_CONNECTIONS[@]}"; do
+    if [ ! -f "$REQUIRED/vehiclemanufacture_fabric/connection.json" ]; then
+        MISSING=true
+    fi
+done
+
+if [ "$MISSING" = true ]; then
     echo "###########################################"
     echo "# INSTALL NOT COMPLETE. RUNNING INSTALLER #"
     echo "###########################################"
@@ -114,7 +133,7 @@ VDA_ADMIN_KEY=$BASEDIR/tmp/vda_key.pem
 PRINCE_ADMIN_CERT=$BASEDIR/tmp/prince_cert.pem
 PRINCE_ADMIN_KEY=$BASEDIR/tmp/prince_key.pem
 
-mkdir $BASEDIR/tmp
+mkdir -p $BASEDIR/tmp
 
 FABRIC_CA_CLIENT_HOME=/root/fabric-ca/clients/admin
 
@@ -145,8 +164,6 @@ mv $BASEDIR/tmp/key.pem $PRINCE_ADMIN_KEY
 echo "####################"
 echo "# IMPORTING ADMINS #"
 echo "####################"
-APPS_DIR=$BASEDIR/../apps
-
 FABRIC_CONFIG_NAME=vehiclemanufacture_fabric
 
 ARIUM_LOCAL_FABRIC=$APPS_DIR/manufacturer/$FABRIC_CONFIG_NAME

@@ -4,7 +4,7 @@
     "description": "The Vehicle Manufacture network",
     "version": "1.0",
     "client": {
-        "organization": "VDA",
+        "organization": "{{ORGANISATION}}",
         "connection": {
             "timeout": {
                 "peer": {
@@ -59,9 +59,9 @@
     },
     "orderers": {
         "orderer.example.com": {
-            "url": "grpcs://orderer.example.com:7050",
+            "url": "grpcs://{{ORDERER_URL}}:{{ORDERER_PORT}}",
             "tlsCACerts": {
-                "path": "/msp/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
+                "path": "{{MSP_DIR}}/ordererOrganizations/example.com/orderers/orderer.example.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "orderer.example.com"
@@ -70,10 +70,10 @@
     },
     "peers": {
         "peer0.arium.com": {
-            "url": "grpcs://peer0.arium.com:7051",
-            "eventUrl": "grpcs://peer0.arium.com:7053",
+            "url": "grpcs://{{ARIUM_PEER_URL}}:{{ARIUM_PEER_PORT}}",
+            "eventUrl": "grpcs://{{ARIUM_PEER_URL}}:{{ARIUM_PEER_EVENT_PORT}}",
             "tlsCACerts": {
-                "path": "/msp/peerOrganizations/arium.com/peers/peer0.arium.com/tls/ca.crt"
+                "path": "{{MSP_DIR}}/peerOrganizations/arium.com/peers/peer0.arium.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.arium.com",
@@ -81,10 +81,10 @@
             }
         },
         "peer0.vda.com": {
-            "url": "grpcs://peer0.vda.com:8051",
-            "eventUrl": "grpcs://peer0.vda.com:8053",
+            "url": "grpcs://{{VDA_PEER_URL}}:{{VDA_PEER_PORT}}",
+            "eventUrl": "grpcs://{{VDA_PEER_URL}}:{{VDA_PEER_EVENT_PORT}}",
             "tlsCACerts": {
-                "path": "/msp/peerOrganizations/vda.com/peers/peer0.vda.com/tls/ca.crt"
+                "path": "{{MSP_DIR}}/peerOrganizations/vda.com/peers/peer0.vda.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.vda.com",
@@ -92,10 +92,10 @@
             }
         },
         "peer0.prince-insurance.com": {
-            "url": "grpcs://peer0.prince-insurance.com:9051",
-            "eventUrl": "grpcs://peer0.prince-insurance.com:9053",
+            "url": "grpcs://{{PRINCE_PEER_URL}}:{{PRINCE_PEER_PORT}}",
+            "eventUrl": "grpcs://{{PRINCE_PEER_URL}}:{{PRINCE_PEER_EVENT_PORT}}",
             "tlsCACerts": {
-                "path": "/msp/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/tls/ca.crt"
+                "path": "{{MSP_DIR}}/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/tls/ca.crt"
             },
             "grpcOptions": {
                 "ssl-target-name-override": "peer0.prince-insurance.com",
@@ -105,39 +105,30 @@
     },
     "certificateAuthorities": {
         "tlsca.arium.com": {
-            "url": "https://tlsca.arium.com:7054",
+            "url": "https://{{ARIUM_CA_URL}}:{{ARIUM_CA_PORT}}",
             "caName": "ca-arium",
             "tlsOptions": {
-                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
-            },
-            "tlsCACerts": {
-                "path": "/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
+                "trustedRoots": ["{{MSP_DIR}}/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
             },
             "httpOptions": {
                 "verify": false
             }
         },
         "tlsca.vda.com": {
-            "url": "https://tlsca.vda.com:7054",
+            "url": "https://{{VDA_CA_URL}}:{{VDA_CA_PORT}}",
             "caName": "ca-vda",
             "tlsOptions": {
-                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
-            },
-            "tlsCACerts": {
-                "path": "/msp/peerOrganizations/vda.com/tlsca/tlsca.vda.com-cert.pem"
+                "trustedRoots": ["{{MSP_DIR}}/peerOrganizations/vda.com/tlsca/tlsca.vda.com-cert.pem"]
             },
             "httpOptions": {
                 "verify": false
             }
         },
         "tlsca.prince-insurance.com": {
-            "url": "https://tlsca.prince-insurance.com:7054",
+            "url": "https://{{PRINCE_CA_URL}}:{{PRINCE_CA_PORT}}",
             "caName": "ca-princeinsurance",
             "tlsOptions": {
-                "trustedRoots": ["/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"]
-            },
-            "tlsCACerts": {
-                "path": "/msp/peerOrganizations/arium.com/tlsca/tlsca.arium.com-cert.pem"
+                "trustedRoots": ["{{MSP_DIR}}/peerOrganizations/prince-insurance.com/tlsca/tlsca.prince-insurance.com-cert.pem"]
             },
             "httpOptions": {
                 "verify": false

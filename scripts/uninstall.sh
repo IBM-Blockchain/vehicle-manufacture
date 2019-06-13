@@ -33,13 +33,31 @@ if [ "$ALIVE_FABRIC_DOCKER_IMAGES" -ne 0 ] || [ "$ALIVE_APP_DOCKER_IMAGES" -ne 0
     source $BASEDIR/stop.sh
 fi
 
+echo '###############################'
+echo '# REMOVE CONNECTION PROFILES #'
+echo '##############################'
+TYPES=("DOCKER" "LOCAL")
+
+LOCAL_CONNECTION_NAME="local_connection.json"
+DOCKER_CONNECTION_NAME="connection.json"
+
+APPS_DIR="${BASEDIR}/../apps"
+
+for APP_NAME in "manufacturer" "insurer" "regulator"; do
+    for TYPE in "${TYPES[@]}"; do
+        OUTPUT_FOLDER="$APPS_DIR/${APP_NAME}/vehiclemanufacture_fabric"
+        OUTPUT_FILE_NAME="${TYPE}_CONNECTION_NAME"
+
+        rm -f $OUTPUT_FOLDER/${!OUTPUT_FILE_NAME}
+    done
+done
+
 echo '########################################'
 echo '# REMOVE NODE LEFTOVERS FROM CHAINCODE #'
 echo '########################################'
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 docker exec cli bash -c 'cd /etc/hyperledger/contract; rm -rf dist; rm -rf tmp; rm -rf node_modules; rm -f package-lock.json'
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes
-rm -rf $BASEDIR/**/local_connection.json
 
 echo '#####################'
 echo '# CLEANUP CLI_TOOLS #'
