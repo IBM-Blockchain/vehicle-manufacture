@@ -127,13 +127,13 @@ docker exec princeinsurance_cli peer chaincode query -o orderer.example.com:7050
 -C vehiclemanufacture -n vehicle-manufacture-chaincode \
 --tls true \
 --cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
--c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'
+-c '{"Args":["org.hyperledger.fabric:GetMetadata"]}' > /dev/null
 
 docker exec vda_cli peer chaincode query -o orderer.example.com:7050 \
 -C vehiclemanufacture -n vehicle-manufacture-chaincode \
 --tls true \
 --cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
--c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'
+-c '{"Args":["org.hyperledger.fabric:GetMetadata"]}' > /dev/null
 
 
 echo "####################"
