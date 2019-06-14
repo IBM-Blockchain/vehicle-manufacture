@@ -11,18 +11,19 @@ ME=`basename "$0"`
 if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
     if [[ "$TRAVIS_BRANCH" = "master" ]]; then
         echo "==> Building docker images"
-        ./../apps/build/docker_build.sh unstable
+        pwd
+        ./apps/build/docker_build.sh unstable
         docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
         echo "==> Pushing docker images"
         VERSION=unstable
 
-        docker push awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION
+        docker push awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION &
         CAR_PROCESS_ID=$!
-        docker push awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION
+        docker push awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION &
         MANUFACTURER_ID=$!
-        docker push awjh/vehicle-manufacture-iot-extension-insurer:$VERSION
+        docker push awjh/vehicle-manufacture-iot-extension-insurer:$VERSION &
         INSURER_ID=$!
-        docker push awjh/vehicle-manufacture-iot-extension-regulator:$VERSION
+        docker push awjh/vehicle-manufacture-iot-extension-regulator:$VERSION &
         REGULATOR_ID=$!
 
         wait $CAR_PROCESS_ID
