@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" data-name="Layer 1" version="1.1" viewBox="0 0 802.57 987.26">
+    <metadata>
+        <rdf:RDF>
+            <cc:Work rdf:about="">
+                <dc:format>
+                    image/svg+xml
+                </dc:format>
+                <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <defs>
+        <style>
+            .cls-1 {
+                fill:none;
+            }
+            .cls-2 {
+                fill:#fff;
+            }
+            .cls-3 {
+                clip-path:url(#b);
+            }
+            .cls-4 {
+                fill:#bebebe;
+            }
+            .cls-5 {
+                fill:#a4a4a4;
+            }
+            .cls-6 {
+                fill:#565656;
+            }
+            .cls-7 {
+                fill:#252525;
+            }
+            .cls-8 {
+                clip-path:url(#a);
+            }
+            .cls-9 {
+                fill:#f3f3f3;
+            }
+            .cls-10 {
+                fill:#9f031b;
+            }
+            .cls-11 {
+                fill:#f5515f;
+            }
+            .cls-12 {
+                fill:#3d3d3d;
+            }
+            .cls-13 {
+                fill:#dcd7d6;
+            }
+            .cls-14 {
+                fill:#c1bcbb;
+            }
+            .cls-15{
+                fill:#f7f3f1;
+            }
+        </style>
+        <clipPath id="b">
+            <rect width="802.43" height="987.28" x="-886.28" y="-.2" class="cls-1"/>
+        </clipPath>
+        <clipPath id="a">
+            <rect width="802.43" height="987.26" class="cls-2"/>
+        </clipPath>
+    </defs>
+    <title>
+        car2 copy
+    </title>
+    <rect width="802.43" height="987.26" class="cls-2"/>
+    <g class="cls-8" clip-path="url(#a)">
+        <rect width="802.43" height="987.26" class="cls-9"/>
+        <ellipse cx="678.46" cy="885.83" class="cls-4" rx="552.23" ry="42.83"/>
+        <path d="m183.35 261.47h98.51a24.69 24.69 0 0 1 24.69 24.69v33.92h-118.48a25.78 25.78 0 0 1 -25.78 -25.78v-11.77a21.06 21.06 0 0 1 21.06 -21.06z" class="cls-10"/>
+        <rect width="175.81" height="175.81" x="198.35" y="712.27" rx="36.2" ry="36.2"/>
+        <path d="M268.23,615.35H1300.57V426a86.53,86.53,0,0,0-85.65-67.62L1129.26,137.5a86.08,86.08,0,0,0-54.09-42.83H410.23a91.31,91.31,0,0,0-27.05,13.52c-2.91,2.14-16,12-27,31.56C342.41,164,309.4,242.87,270.48,351.63c-9.83,1.71-35.06,7.48-56.35,29.3a101.52,101.52,0,0,0-22.58,36V545.91a138.39,138.39,0,0,0,27.09,37.88A140.68,140.68,0,0,0,268.23,615.35Z" class="cls-11"/>
+        <path d="M304.29,353.88l76.64-198.35A63.52,63.52,0,0,1,417,124h653.68a61.46,61.46,0,0,1,31.55,22.54l85.65,211.88Z" class="cls-12"/>
+        <path d="M268.23,615.35a140.68,140.68,0,0,1-49.59-31.56,138.39,138.39,0,0,1-27.09-37.88V773.13a2869.52,2869.52,0,0,0,545.51,54.1,2870,2870,0,0,0,563.51-54.1V615.35Z" class="cls-10"/>
+        <path d="m250.2 457.57h987.26v126.22h-909a78.25 78.25 0 0 1 -78.25 -78.25v-48a0 0 0 0 1 -0.01 0.03z" class="cls-10"/>
+        <path d="m250.2 678.46h987.26a99.18 99.18 0 0 1 -99.18 99.18h-788.91a99.18 99.18 0 0 1 -99.18 -99.18z" class="cls-12"/>
+        <rect width="225.4" height="99.18" x="631.13" y="712.27" class="cls-13" rx="18.81" ry="18.81"/>
+        <path d="m304.29 705.51h90.16a49.59 49.59 0 0 1 49.55 49.59h-90.12a49.59 49.59 0 0 1 -49.59 -49.59z" class="cls-14"/>
+        <path d="m270.48 473.34h166.8v94.66h-93.21a73.59 73.59 0 0 1 -73.59 -73.59v-21.07z" class="cls-14"/>
+        <ellipse cx="357.21" cy="521.18" class="cls-15" rx="27.05" ry="34.58" transform="translate(-253.27 358.27) rotate(-40.63)"/>
+    </g>
+</svg>

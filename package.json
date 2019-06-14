@@ -1,27 +1,52 @@
 {
-  "version": "0.0.2",
-  "private": true,
-  "author": "Hyperledger Composer",
-  "license": "Apache-2.0",
-  "scripts": {
-    "start": "node info",
-    "preinstall": "npm install -g cordova && npm install -g bower",
-    "postinstall": "npm run pkgcheck && npm run bootstrap",
-    "bootstrap": "git submodule init && git submodule update && lerna bootstrap",
-    "test": "lerna run test",
-    "pkgcheck": "node ./scripts/pkgcheck.js",
-    "pkgstamp": "node ./scripts/pkgstamp.js",
-    "pkgbump": "node ./scripts/pkgbump.js && node ./scripts/pkgcheck.js --fix"
-  },
+  "name": "vehicle-manufacture-iot-extension",
+  "version": "1.0.0",
+  "description": "The lifecycle of a vehicle using Hyperledger Fabric",
+  "main": "index.js",
   "dependencies": {
-    "chalk": "^1.1.3",
-    "prettyjson": "^1.2.1"
+    "license-check-and-add": "^2.3.6"
   },
-  "devDependencies": {
-    "lerna": "^2.0.0-rc.4"
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "licchkadd": "license-check-and-add"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:hyperledger/composer-sample-applications"
+    "url": "git+https://github.com/awjh-ibm/vehicle-manufacture-iot-extension.git"
+  },
+  "author": "IBM",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/awjh-ibm/vehicle-manufacture-iot-extension/issues"
+  },
+  "homepage": "https://github.com/awjh-ibm/vehicle-manufacture-iot-extension#readme",
+  "license-check-and-add-config": {
+    "folder": ".",
+    "license": "header.txt",
+    "exact_paths_method": "INCLUDE",
+    "exact_paths": [
+      "apps",
+      "contract"
+    ],
+    "file_type_method": "EXCLUDE",
+    "file_types": [
+      ".html",
+      ".txt",
+      ".json",
+      ".less",
+      ".ttf",
+      ".md",
+      ".PNG",
+      ".tgz",
+      ".xml",
+      ".tmpl"
+    ],
+    "default_format": {
+      "eachLine": {
+        "prepend": "# "
+      }
+    },
+    "insert_license": false
   }
 }
