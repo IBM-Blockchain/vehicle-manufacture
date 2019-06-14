@@ -39,7 +39,8 @@
       ".md",
       ".PNG",
       ".tgz",
-      ".xml"
+      ".xml",
+      ".tmpl"
     ],
     "default_format": {
       "eachLine": {
