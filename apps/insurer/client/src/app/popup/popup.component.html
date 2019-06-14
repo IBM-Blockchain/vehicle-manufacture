@@ -54,7 +54,7 @@
         Colour: <span class="capitalise"> {{ vehicleDetails.colour }}</span>
       </div>
       <div id="pic">
-        <img id="car-pic" src="assets/images/{{ vehicleDetails.image }}" >
+        <img id="car-pic" src="assets/images/vehicles/{{vehicleDetails.makeId}}/{{vehicleDetails.modelType}}/{{vehicleDetails.colour?.split(' ').join('_').toLowerCase()}}" >
       </div>
     </div>
     <div class="footer" >

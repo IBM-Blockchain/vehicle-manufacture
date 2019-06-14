@@ -121,6 +121,21 @@ docker exec arium_cli peer chaincode instantiate -o orderer.example.com:7050 \
 --cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
 -c '{"Args":[]}' -P 'AND ("AriumMSP.member", "VDAMSP.member", "PrinceInsuranceMSP.member")'
 
+sleep 10
+
+docker exec princeinsurance_cli peer chaincode query -o orderer.example.com:7050 \
+-C vehiclemanufacture -n vehicle-manufacture-chaincode \
+--tls true \
+--cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
+-c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'
+
+docker exec vda_cli peer chaincode query -o orderer.example.com:7050 \
+-C vehiclemanufacture -n vehicle-manufacture-chaincode \
+--tls true \
+--cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
+-c '{"Args":["org.hyperledger.fabric:GetMetadata"]}'
+
+
 echo "####################"
 echo "# ENROLLING ADMINS #"
 echo "####################"

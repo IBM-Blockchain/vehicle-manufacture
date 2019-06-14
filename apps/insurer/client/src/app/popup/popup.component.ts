@@ -39,7 +39,6 @@ interface VehicleDetails {
   manufactured: number;
   modelType: string;
   colour: string;
-  image: string;
 }
 
 @Component({
@@ -80,7 +79,6 @@ export class PopupComponent implements OnInit {
       .subscribe((vehicle) => {
         this.vehicleDetails = vehicle.vehicleDetails as any;
         this.vehicleDetails.manufactured = vehicle.manufactured;
-        this.vehicleDetails.image = `${this.vehicleDetails.makeId}_${this.vehicleDetails.modelType}.svg`.toLowerCase();
       });
   }
 
