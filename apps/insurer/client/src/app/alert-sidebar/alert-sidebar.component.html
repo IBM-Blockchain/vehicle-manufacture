@@ -10,7 +10,7 @@
     Clear Alert Stream
   </button>
   <div id="alert-block-holder" >
-    <div *ngFor="let event of usageRecord">
+    <div *ngFor="let event of getEvents()">
       <div class="alert-block" [ngClass]="{'added-element': event.new}" >
         <div class="alert-header" >
         <img src="assets/images/loudspeaker.png" width="22px" height="14px" alt="loudspeaker icon" />Alert!

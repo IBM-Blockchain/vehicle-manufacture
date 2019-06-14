@@ -20,8 +20,10 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class AlertSidebarComponent implements OnInit {
 
-  @Input() usageRecord: Array<object> = [];
+  @Input() usageRecord: Array<any> = [];
   @Input() eventTypes: Array<string> = [];
+
+  public ignoreBefore: Date;
 
   constructor() {
   }
@@ -30,7 +32,17 @@ export class AlertSidebarComponent implements OnInit {
   }
 
   clear_stream() {
-    document.getElementById('alert-block-holder').innerHTML = "";
+    this.ignoreBefore = new Date();
+  }
+
+  getEvents() {
+    if (this.ignoreBefore) {
+      return this.usageRecord.filter((event) => {
+        return event.timestamp > this.ignoreBefore.getTime();
+      });
+    }
+
+    return this.usageRecord;
   }
 
   scrollTo(eventID) {
