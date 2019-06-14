@@ -38,4 +38,5 @@ do
     npm test 2>&1
 done
 
-./image-deploy.sh
+cd ${DIR}
+./.travis/image-deploy.sh
