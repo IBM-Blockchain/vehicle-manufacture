@@ -37,3 +37,6 @@ do
     echo "==> $dir"
     npm test 2>&1
 done
+
+cd ${DIR}
+./.travis/image-deploy.sh
