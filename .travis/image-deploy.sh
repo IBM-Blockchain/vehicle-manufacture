@@ -13,7 +13,7 @@ if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
         echo "==> Building docker images"
         pwd
         ./apps/build/docker_build.sh unstable
-        docker login -u="${DOCKER_USERNAME}" -p="${DOCKER_PASSWORD}"
+        echo "$DOCKER_PASSWORD" | docker login -u "${DOCKER_USERNAME}" --password-stdin
         echo "==> Pushing docker images"
         VERSION=unstable
 

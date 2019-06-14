@@ -51,35 +51,35 @@ show_spinner() {
     DELAY='0.75'
     while ps a | awk '{print $1}' | grep -q "${PID}"; do
         TEMP="${SPIN#?}"
-    printf " [%c]  " "${SPIN}"
-    spinstr=${TEMP}${SPIN%"${TEMP}"}
+    printf "[%c]  " "${SPIN}"
+    SPIN=${TEMP}${SPIN%"${TEMP}"}
     sleep ${DELAY}
-    printf "\b\b\b\b\b\b\b"
+    printf "\b\b\b\b\b\b"
     done
 }
 
 docker build -t awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION -f ./apps/car_builder/Dockerfile . --no-cache > $LOG_PATH/car-builder.log 2>&1 &
 CAR_PROCESS_ID=$!
-show_spinner $CAR_PROCESS_ID
-docker build -t awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION -f ./apps/manufacturer/Dockerfile . --no-cache > $LOG_PATH/manufacturer.log 2>&1 &&
+docker build -t awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION -f ./apps/manufacturer/Dockerfile . --no-cache > $LOG_PATH/manufacturer.log 2>&1 &
 MANUFACTURER_ID=$!
-show_spinner $MANUFACTURER_ID
 docker build -t awjh/vehicle-manufacture-iot-extension-insurer:$VERSION -f ./apps/insurer/Dockerfile . --no-cache > $LOG_PATH/insurer.log 2>&1 &
 INSURER_ID=$!
-show_spinner $INSURER_ID
 docker build -t awjh/vehicle-manufacture-iot-extension-regulator:$VERSION -f ./apps/regulator/Dockerfile . --no-cache > $LOG_PATH/regulator.log 2>&1 &
 REGULATOR_ID=$!
-show_spinner $REGULATOR_ID
 
+show_spinner $CAR_PROCESS_ID
 wait $CAR_PROCESS_ID
 CAR_EXIT=$?
 
+show_spinner $MANUFACTURER_ID
 wait $MANUFACTURER_ID
 MANUFACTURER_EXIT=$?
 
+show_spinner $INSURER_ID
 wait $INSURER_ID
 INSURER_EXIT=$?
 
+show_spinner $REGULATOR_ID
 wait $REGULATOR_ID
 REGULATOR_EXIT=$?
 
