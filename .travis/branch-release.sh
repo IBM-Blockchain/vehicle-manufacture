@@ -48,7 +48,7 @@ version_bump() {
 
 RELEASE_BRANCH="v$TRAVIS_TAG"
 
-git checkout -b "$RELEASE_BRANCH" origin/master
+git checkout -b "$RELEASE_BRANCH"
 version_set $TRAVIS_TAG
 update_env $TRAVIS_TAG
 git add .
