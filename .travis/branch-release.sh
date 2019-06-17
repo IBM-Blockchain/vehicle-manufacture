@@ -59,4 +59,4 @@ git checkout master
 version_bump $TRAVIS_TAG
 git add .
 git commit -s -m "Version bump $TRAVIS_TAG"
-git push origin "$RELEASE_BRANCH"
+git push origin master
