@@ -33,7 +33,7 @@ version_set() {
 }
 
 update_env() {
-    cd $DIR/scripts/apps
+    cd $DIR/scripts/apps/docker-compose
     ls -Rl
     cd $DIR
     sed -i '' -e 's/unstable/0.1.0/g' "./scripts/apps/docker-compose/.env"
