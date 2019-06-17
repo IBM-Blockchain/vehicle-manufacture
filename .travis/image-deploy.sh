@@ -72,4 +72,7 @@ if [ -z "$TRAVIS_TAG"]; then
 else
     build ${TRAVIS_TAG}
     deploy ${TRAVIS_TAG}
+
+    build latest
+    deploy latest
 fi

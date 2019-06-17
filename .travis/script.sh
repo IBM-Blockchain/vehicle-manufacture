@@ -39,4 +39,14 @@ do
 done
 
 cd ${DIR}
+
+if [ ! -z "$TRAVIS_TAG" ]; then
+  if [[ $TRAVIS_TAG =~ ([0-9]+\.){2}[0-9]+ ]]; then
+    ./.travis/branch-release.sh  
+  else
+    echo "INVALID TAG. SHOULD BE OF FORMAT x.x.x"
+    exit 1
+  fi
+fi
+
 ./.travis/image-deploy.sh
