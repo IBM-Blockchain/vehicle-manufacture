@@ -7,6 +7,8 @@ set -o pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 ME=`basename "$0"`
 
+cd $DIR
+
 APPS_DIR="$DIR/apps"
 
 CAR_CLIENT="$APPS_DIR/car_builder/client"
@@ -31,7 +33,9 @@ version_set() {
 }
 
 update_env() {
+    cd $DIR/scripts/apps
     ls -Rl
+    cd $DIR
     sed -i '' -e 's/unstable/0.1.0/g' "./scripts/apps/docker-compose/.env"
 }
 

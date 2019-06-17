@@ -49,4 +49,4 @@ if [ ! -z "$TRAVIS_TAG" ]; then
   fi
 fi
 
-./.travis/image-deploy.sh
+# ./.travis/image-deploy.sh
