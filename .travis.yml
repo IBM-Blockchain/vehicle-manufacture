@@ -20,3 +20,6 @@ env:
 branches:
   only:
     - master
+deploy:
+  on:
+    tags: true
