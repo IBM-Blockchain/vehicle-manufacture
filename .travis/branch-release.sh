@@ -50,8 +50,6 @@ version_bump() {
     version_set $NEW_VERSION
 }
 
-TRAVIS_TAG='0.1.1'
-
 RELEASE_BRANCH="v$TRAVIS_TAG"
 
 git remote add repo https://${GH_TOKEN}@github.com/awjh-ibm/vehicle-manufacture-iot-extension
@@ -66,5 +64,5 @@ git push repo "$RELEASE_BRANCH"
 git checkout master
 version_bump $TRAVIS_TAG
 git add .
-git commit -s -m "Version bump $TRAVIS_TAG"
+git commit -s -m "Version bump for release $TRAVIS_TAG"
 git push repo master
