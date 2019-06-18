@@ -54,15 +54,17 @@ TRAVIS_TAG='0.1.1'
 
 RELEASE_BRANCH="v$TRAVIS_TAG"
 
+git remote add repo https://${GH_TOKEN}@github.com/awjh-ibm/vehicle-manufacture-iot-extension
+
 git checkout -b "$RELEASE_BRANCH"
 version_set $TRAVIS_TAG
 update_env $TRAVIS_TAG
 git add .
 git commit -s -m "Release $TRAVIS_TAG"
-git push origin "$RELEASE_BRANCH"
+git push repo "$RELEASE_BRANCH"
 
 git checkout master
 version_bump $TRAVIS_TAG
 git add .
 git commit -s -m "Version bump $TRAVIS_TAG"
-git push origin master
+git push repo master
