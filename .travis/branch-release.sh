@@ -34,8 +34,9 @@ version_set() {
 
 update_env() {
     cd $DIR/scripts/apps/docker-compose
-    ls -Rl
+    ls -Rla
     cd $DIR
+    cat $DIR/scripts/apps/docker-compose/.env
     sed -i '' -e 's/unstable/0.1.0/g' "./scripts/apps/docker-compose/.env"
 }
 
@@ -50,6 +51,8 @@ version_bump() {
 
     version_set $NEW_VERSION
 }
+
+TRAVIS_TAG='0.1.1'
 
 RELEASE_BRANCH="v$TRAVIS_TAG"
 

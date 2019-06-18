@@ -40,6 +40,7 @@ done
 
 cd ${DIR}
 
+TRAVIS_TAG='0.1.1'
 if [ ! -z "$TRAVIS_TAG" ]; then
   if [[ $TRAVIS_TAG =~ ([0-9]+\.){2}[0-9]+ ]]; then
     ./.travis/branch-release.sh  
