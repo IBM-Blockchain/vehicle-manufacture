@@ -61,6 +61,7 @@ git add .
 git commit -s -m "Release $TRAVIS_TAG"
 git push repo "$RELEASE_BRANCH"
 
+git fetch repo
 git checkout master
 version_bump $TRAVIS_TAG
 git add .
