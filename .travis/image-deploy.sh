@@ -13,6 +13,16 @@ build() {
     ./apps/build/docker_build.sh ${VERSION}
 }
 
+tag() {
+    TAGGED="${1}"
+    TOTAG="${2}"
+
+    docker tag awjh/vehicle-manufacture-iot-extension-car-builder:$TAGGED awjh/vehicle-manufacture-iot-extension-car-builder:$TOTAG
+    docker tag awjh/vehicle-manufacture-iot-extension-manufacturer:$TAGGED awjh/vehicle-manufacture-iot-extension-manufacturer:$TOTAG
+    docker tag awjh/vehicle-manufacture-iot-extension-insurer:$TAGGED awjh/vehicle-manufacture-iot-extension-insurer:$TOTAG
+    docker tag awjh/vehicle-manufacture-iot-extension-regulator:$TAGGED awjh/vehicle-manufacture-iot-extension-regulator:$TOTAG
+}
+
 deploy() {
     echo "==> Logging in to Docker"
     echo "$DOCKER_PASSWORD" | docker login -u "${DOCKER_USERNAME}" --password-stdin
@@ -54,11 +64,9 @@ deploy() {
     echo "#########################"
     echo "# DOCKER PUSH FINISHED #"
     echo "#########################"
-
-    exit 0
 }
 
-if [ -z "$TRAVIS_TAG"]; then
+if [ -z "$TRAVIS_TAG" ]; then
     if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
         if [[ "$TRAVIS_BRANCH" = "master" ]]; then
             build unstable
@@ -71,8 +79,7 @@ if [ -z "$TRAVIS_TAG"]; then
     fi
 else
     build ${TRAVIS_TAG}
+    tag ${TRAVIS_TAG} latest
     deploy ${TRAVIS_TAG}
-
-    build latest
     deploy latest
 fi
