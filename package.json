@@ -27,7 +27,8 @@
     "exact_paths_method": "INCLUDE",
     "exact_paths": [
       "apps",
-      "contract"
+      "contract",
+      "scripts"
     ],
     "file_type_method": "EXCLUDE",
     "file_types": [
@@ -40,7 +41,9 @@
       ".PNG",
       ".tgz",
       ".xml",
-      ".tmpl"
+      ".tmpl",
+      ".yaml",
+      ""
     ],
     "default_format": {
       "eachLine": {
