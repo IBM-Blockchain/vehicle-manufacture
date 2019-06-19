@@ -1,18 +1,9 @@
 #!/bin/bash
 BASEDIR=$(dirname "$0")
 
-if [ $BASEDIR = '.' ]
-then
-    BASEDIR=$(pwd)
-elif [ ${BASEDIR:0:2} = './' ]
-then
-    BASEDIR=$(pwd)${BASEDIR:1}
-elif [ ${BASEDIR:0:1} = '/' ]
-then
-    BASEDIR=${BASEDIR}
-else
-    BASEDIR=$(pwd)/${BASEDIR}
-fi
+source $BASEDIR/utils.sh
+
+BASEDIR=$(get_full_path "$BASEDIR")
 
 NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 APPS_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
@@ -20,8 +11,7 @@ APPS_DOCKER_COMPOSE_DIR=$BASEDIR/apps/docker-compose
 echo "###########################"
 echo "# SET ENV VARS FOR DOCKER #"
 echo "###########################"
-export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
-export $(cat $APPS_DOCKER_COMPOSE_DIR/.env | xargs)
+set_docker_env $NETWORK_DOCKER_COMPOSE_DIR $APPS_DOCKER_COMPOSE_DIR
 
 ALIVE_FABRIC_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)
 ALIVE_APP_DOCKER_IMAGES=$(docker-compose --log-level ERROR -f $APPS_DOCKER_COMPOSE_DIR/docker-compose.yaml -p node ps -q | wc -l)

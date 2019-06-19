@@ -1,18 +1,12 @@
 #!/bin/bash
+
+set -e
+
 BASEDIR=$(dirname "$0")
 
-if [ $BASEDIR = '.' ]
-then
-    BASEDIR=$(pwd)
-elif [ ${BASEDIR:0:2} = './' ]
-then
-    BASEDIR=$(pwd)${BASEDIR:1}
-elif [ ${BASEDIR:0:1} = '/' ]
-then
-    BASEDIR=${BASEDIR}
-else
-    BASEDIR=$(pwd)/${BASEDIR}
-fi
+source $BASEDIR/utils.sh
+
+BASEDIR=$(get_full_path "$BASEDIR")
 
 NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 
@@ -20,7 +14,7 @@ NETWORK_DOCKER_COMPOSE_DIR=$BASEDIR/network/docker-compose
 # SETUP LOGGING #
 #################
 LOG_PATH=$BASEDIR/logs
-mkdir $LOG_PATH
+mkdir -p $LOG_PATH
 
 exec > >(tee -i $LOG_PATH/install.log)
 exec 2>&1
@@ -28,7 +22,7 @@ exec 2>&1
 echo "###########################"
 echo "# SET ENV VARS FOR DOCKER #"
 echo "###########################"
-export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
+set_docker_env $NETWORK_DOCKER_COMPOSE_DIR
 
 echo "####################################################"
 echo "# COPY AND TEMPLATE LOCAL AND APPS connection.json #"
@@ -96,14 +90,14 @@ mkdir -p $BASEDIR/tmp
 ##############
 touch $SHARED_CONNECTION_TMP
 cp $CONNECTION_TMPL_LOCATION $SHARED_CONNECTION_TMP
-sed -i '' -e 's#{{ORDERER_PORT}}#'${ORDERER_PORT}'#g' $SHARED_CONNECTION_TMP
+sed_inplace 's#{{ORDERER_PORT}}#'${ORDERER_PORT}'#g' $SHARED_CONNECTION_TMP
 
 for ORG in "${ORGS[@]}"; do
     PEER_PORT="${ORG}_PEER_PORT"
     PEER_EVENT_PORT="${ORG}_PEER_EVENT_PORT"
 
-    sed -i '' -e 's#{{'${PEER_PORT}'}}#'${!PEER_PORT}'#g' $SHARED_CONNECTION_TMP
-    sed -i '' -e 's#{{'${PEER_EVENT_PORT}'}}#'${!PEER_EVENT_PORT}'#g' $SHARED_CONNECTION_TMP
+    sed_inplace 's#{{'${PEER_PORT}'}}#'${!PEER_PORT}'#g' $SHARED_CONNECTION_TMP
+    sed_inplace 's#{{'${PEER_EVENT_PORT}'}}#'${!PEER_EVENT_PORT}'#g' $SHARED_CONNECTION_TMP
 done
 
 #####################
@@ -117,19 +111,19 @@ for TYPE in "${TYPES[@]}"; do
     cp $SHARED_CONNECTION_TMP $TMP_FILE
 
     ORDER_URL="ORDERER_${TYPE}_URL"
-    sed -i '' -e 's#{{ORDERER_URL}}#'${!ORDER_URL}'#g' $TMP_FILE
+    sed_inplace 's#{{ORDERER_URL}}#'${!ORDER_URL}'#g' $TMP_FILE
 
     MSP_DIR="${TYPE}_MSP"
-    sed -i '' -e 's#{{MSP_DIR}}#'${!MSP_DIR}'#g' $TMP_FILE
+    sed_inplace 's#{{MSP_DIR}}#'${!MSP_DIR}'#g' $TMP_FILE
 
     for ORG in "${ORGS[@]}"; do
         PEER_URL="${ORG}_PEER_${TYPE}_URL"
         CA_URL="${ORG}_CA_${TYPE}_URL"
         CA_PORT="${ORG}_CA_${TYPE}_PORT"
 
-        sed -i '' -e 's#{{'${ORG}'_PEER_URL}}#'${!PEER_URL}'#g' $TMP_FILE
-        sed -i '' -e 's#{{'${ORG}'_CA_URL}}#'${!CA_URL}'#g' $TMP_FILE
-        sed -i '' -e 's#{{'${ORG}'_CA_PORT}}#'${!CA_PORT}'#g' $TMP_FILE
+        sed_inplace 's#{{'${ORG}'_PEER_URL}}#'${!PEER_URL}'#g' $TMP_FILE
+        sed_inplace 's#{{'${ORG}'_CA_URL}}#'${!CA_URL}'#g' $TMP_FILE
+        sed_inplace 's#{{'${ORG}'_CA_PORT}}#'${!CA_PORT}'#g' $TMP_FILE
     done
 done
 
@@ -160,7 +154,10 @@ echo "#####################"
 
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml up -d
 
+set +e
 docker exec cli bash -c "apk add nodejs nodejs-npm python make g++"
+set -e
+
 docker exec cli bash -c 'cd /etc/hyperledger/contract; npm install; npm run build'
 
 docker-compose -f $NETWORK_DOCKER_COMPOSE_DIR/docker-compose-cli.yaml down --volumes

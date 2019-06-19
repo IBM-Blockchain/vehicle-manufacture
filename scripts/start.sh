@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 BASEDIR=$(dirname "$0")
 
 if [[ "$(uname)" -eq "Linux" ]] &&  type gnome-terminal > /dev/null ; then
@@ -15,24 +18,15 @@ if [[ "$(uname)" -eq "Linux" ]] &&  type gnome-terminal > /dev/null ; then
     exec bash\""
 fi
 
-if [ $BASEDIR = '.' ]
-then
-    BASEDIR=$(pwd)
-elif [ ${BASEDIR:0:2} = './' ]
-then
-    BASEDIR=$(pwd)${BASEDIR:1}
-elif [ ${BASEDIR:0:1} = '/' ]
-then
-    BASEDIR=${BASEDIR}
-else
-    BASEDIR=$(pwd)/${BASEDIR}
-fi
+source $BASEDIR/utils.sh
+
+BASEDIR=$(get_full_path "$BASEDIR")
 
 #################
 # SETUP LOGGING #
 #################
 LOG_PATH=$BASEDIR/logs
-mkdir $LOG_PATH
+mkdir -p $LOG_PATH
 
 exec > >(tee -i $LOG_PATH/start.log)
 exec 2>&1
@@ -41,11 +35,13 @@ exec 2>&1
 APPS_DIR=$BASEDIR/../apps
 
 REQUIRED_INSTALL_AND_BUILDS=("$BASEDIR/../contract" "$BASEDIR/cli_tools")
-REQUIRED_APPS_WITH_CONNECTIONS=("$APPS_DIR/manufacturer", "$APPS_DIR/insurer", "$APPS_DIR/regulator")
+REQUIRED_APPS_WITH_CONNECTIONS=("$APPS_DIR/manufacturer" "$APPS_DIR/insurer" "$APPS_DIR/regulator")
 
 MISSING=false
 for REQUIRED in "${REQUIRED_INSTALL_AND_BUILDS[@]}"; do
-    if [ ! -d "$REQUIRED/node_modules" ] || [ ! -d "$REUIRED/dist" ]; then
+    if [ ! -d "$REQUIRED/node_modules" ]; then
+        MISSING=true
+    elif [ ! -d "$REQUIRED/dist" ]; then
         MISSING=true
     fi
 done
@@ -71,8 +67,7 @@ CRYPTO_CONFIG=$BASEDIR/network/crypto-material/crypto-config
 echo "###########################"
 echo "# SET ENV VARS FOR DOCKER #"
 echo "###########################"
-export $(cat $NETWORK_DOCKER_COMPOSE_DIR/.env | xargs)
-export $(cat $APPS_DOCKER_COMPOSE_DIR/.env | xargs)
+set_docker_env $NETWORK_DOCKER_COMPOSE_DIR $APPS_DOCKER_COMPOSE_DIR
 
 echo "###################"
 echo "# GENERATE CRYPTO #"
@@ -99,11 +94,11 @@ docker exec arium_cli peer channel create -o orderer.example.com:7050 -c vehicle
     --outputBlock /etc/hyperledger/configtx/vehiclemanufacture.block \
     --tls true \
     --cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
-sleep 5
+wait_until 'docker exec arium_cli bash -c "[ -f /etc/hyperledger/configtx/vehiclemanufacture.block ] && exit 0 || exit 1"' 3 5
 
-docker exec arium_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
-docker exec vda_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
-docker exec princeinsurance_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem
+wait_until 'docker exec arium_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem' 3 5
+wait_until 'docker exec vda_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem' 3 5
+wait_until 'docker exec princeinsurance_cli peer channel join -b /etc/hyperledger/configtx/vehiclemanufacture.block --tls true --cafile /etc/hyperledger/config/crypto/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem' 3 5
 
 echo "#####################"
 echo "# CHAINCODE INSTALL #"
@@ -121,20 +116,20 @@ docker exec arium_cli peer chaincode instantiate -o orderer.example.com:7050 \
 --cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
 -c '{"Args":[]}' -P 'AND ("AriumMSP.member", "VDAMSP.member", "PrinceInsuranceMSP.member")'
 
-sleep 10
+wait_until 'docker ps -a | grep dev-peer0.arium > /dev/null' 3 10
 
-docker exec princeinsurance_cli peer chaincode query -o orderer.example.com:7050 \
+CHAINCODE_QUERY="peer chaincode query -o orderer.example.com:7050 \
 -C vehiclemanufacture -n vehicle-manufacture-chaincode \
 --tls true \
 --cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
--c '{"Args":["org.hyperledger.fabric:GetMetadata"]}' > /dev/null
+-c '{\"Args\":[\"org.hyperledger.fabric:GetMetadata\"]}' > /dev/null"
 
-docker exec vda_cli peer chaincode query -o orderer.example.com:7050 \
--C vehiclemanufacture -n vehicle-manufacture-chaincode \
---tls true \
---cafile /etc/hyperledger/config/crypto-config/ordererOrganizations/example.com/tlsca/tlsca.example.com-cert.pem \
--c '{"Args":["org.hyperledger.fabric:GetMetadata"]}' > /dev/null
+PRINCE_QUERY="docker exec princeinsurance_cli $CHAINCODE_QUERY"
+VDA_QUERY="docker exec vda_cli $CHAINCODE_QUERY"
 
+wait_until "$PRINCE_QUERY" 3 10
+
+wait_until "$VDA_QUERY" 3 10
 
 echo "####################"
 echo "# ENROLLING ADMINS #"
@@ -214,13 +209,8 @@ PRINCE_PORT=6004
 cd $BASEDIR
 for PORT in $CAR_BUILDER_PORT $ARIUM_PORT $VDA_PORT $PRINCE_PORT
 do
-    printf "WAITING FOR REST SERVER ON PORT $PORT"
-    until $(curl --output /dev/null --silent --head --fail http://localhost:$PORT);
-    do
-        printf '.'
-        sleep 2
-    done
-    printf '\n'
+    echo "WAITING FOR REST SERVER ON PORT $PORT"
+    wait_until "curl --output /dev/null --silent --head --fail http://localhost:$PORT" 30 2
 done
 
 echo "##################################"
@@ -243,14 +233,14 @@ do
 
     jq -c '.[]' $USER_LIST | while read row; do
         echo "ENROLLING $(echo $row | jq -r '.name' )"
-        echo $row | curl -H "Content-Type: application/json" -X POST -u admin:adminpw -d @- http://localhost:$PORT/api/users/enroll
+        wait_until "echo '$row' | curl -s -H \"Content-Type: application/json\" -X POST -u admin:adminpw -d @- http://localhost:$PORT/api/users/enroll" 5 3
     done
 
     echo "REGISTERING REGISTRAR"
     if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
-        curl -X POST -H "Content-Type: application/json" -d '{"originCode": "S", "manufacturerCode": "G"}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register
+        wait_until "curl -s -X POST -H \"Content-Type: application/json\" -d '{\"originCode\": \"S\", \"manufacturerCode\": \"G\"}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register > /dev/null" 5 3
     else
-        curl -X POST -H "Content-Type: application/json" -d '{}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register
+        wait_until "curl -s -X POST -H \"Content-Type: application/json\" -d '{}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register > /dev/null" 5 3
     fi
 
     for row in $(jq -r ".[] | .name" $USER_LIST); do # GET ALL OF TYPE PEOPLE FROM JSON
@@ -261,7 +251,7 @@ do
             ATTRS="["
 
             for attr in $(jq -r '[.[] | select(.name == "'"$row"'") | .attrs[] | select(.name | contains("vehicle_manufacture.role."))] | .[] | .name' $USER_LIST); do
-                ATTRS="$ATTRS\"$attr\","
+                ATTRS="$ATTRS\\\"$attr\\\","
             done
 
             if [ "$ATTRS" != "[" ]; then
@@ -269,11 +259,8 @@ do
             fi
 
             ATTRS="$ATTRS]"
-            echo "+++++++${row}+++++++"
-            echo $ATTRS
-            echo "++++++++++++++++++++"
 
-            curl -X POST -H "Content-Type: application/json" -d '{"name":"'"$row"'", "roles": '"$ATTRS"'}' -u registrar:registrarpw http://localhost:$PORT/api/users/task/register
+            wait_until "curl -s -X POST -H \"Content-Type: application/json\" -d '{\"name\":\"'\"$row\"'\", \"roles\": '\"$ATTRS\"'}' -u registrar:registrarpw http://localhost:$PORT/api/users/task/register > /dev/null" 5 3
         fi
     done
 done
