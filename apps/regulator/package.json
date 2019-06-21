@@ -1,7 +1,7 @@
 {
   "name": "iot-extension-vehicle-manufacture-vda",
   "private": true,
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Vehicle Manufacture - A regulators view",
   "main": "index.js",
   "scripts": {

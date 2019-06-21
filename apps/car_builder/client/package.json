@@ -54,7 +54,7 @@
     "zone.js": "^0.8.4",
     "typescript": "~2.2.1"
   },
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Vehicle Lifecycle - A mobile application for the customers view",
   "license": "Apache-2.0",
   "cordova": {
