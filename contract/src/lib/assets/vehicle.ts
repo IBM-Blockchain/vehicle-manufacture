@@ -17,8 +17,6 @@ import { newLogger } from 'fabric-shim';
 import { Manufacturer } from '../organizations/manufacturer';
 import { NotRequired } from '../utils/annotations';
 import { Asset } from './asset';
-import './usageEvents';
-import { UsageEvent } from './usageEvents';
 import { IVehicleDetails } from './vehicleDetails';
 const logger = newLogger('VEHICLE');
 

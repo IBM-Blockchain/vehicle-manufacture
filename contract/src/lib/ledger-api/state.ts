@@ -17,6 +17,7 @@ limitations under the License.
 import { Object as ContractObject, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import * as getParams from 'get-params';
+import 'reflect-metadata';
 
 const logger = newLogger('STATE');
 
@@ -41,11 +42,6 @@ export class State {
         return this.callConstructor(objClass, json);
     }
 
-    public static deserializeClass<T extends State>(data: string, objClass: IState<T>): T {
-        const json = JSON.parse(data);
-        return this.callConstructor<T>(objClass, json);
-    }
-
     public static makeKey(keyParts: string[]): string {
         return keyParts.join(':');
     }
@@ -56,22 +52,23 @@ export class State {
 
     private static callConstructor<T extends State>(objClass: IState<T>, json: object): T {
         if (!(objClass.prototype instanceof State)) {
-            throw new Error(`Cannot use ${objClass.prototype.name} as type State`);
+            throw new Error(`Cannot use ${objClass.name} as type State`);
         }
 
-        const paramNames = Reflect.getMetadata('contract:function', objClass.prototype, 'constructor') ||
+        const paramNames: string[] = Reflect.getMetadata('contract:function', objClass.prototype, 'constructor') ||
             getParams(objClass.prototype.constructor);
 
         const args = [];
         const missingFields = [];
 
-        if (!paramNames.every((name) => {
+        paramNames.forEach((name) => {
             let ignoreMissing = false;
 
             if (name.endsWith('?')) {
                 name = name.slice(0, -1);
                 ignoreMissing = true;
             }
+
             if (json.hasOwnProperty(name)) {
                 let arg = json[name];
 
@@ -82,16 +79,13 @@ export class State {
                 }
 
                 args.push(arg);
-                return true;
-            }
-
-            if (!ignoreMissing) {
+            } else if (!ignoreMissing) {
                 missingFields.push(name);
             }
+        });
 
-            return ignoreMissing;
-        })) {
-            throw new Error('Could not deserialize JSON. Missing required fields.' + JSON.stringify(missingFields));
+        if (missingFields.length !== 0) {
+            throw new Error('Could not deserialize JSON. Missing required fields. ' + JSON.stringify(missingFields));
         }
         const object = new (objClass)(...args);
 
@@ -111,10 +105,6 @@ export class State {
         return this.class;
     }
 
-    public getSubClass(): string {
-        return this.subClass;
-    }
-
     public getKey(): string {
         return this.key;
     }
@@ -130,7 +120,7 @@ export class State {
 
 // tslint:disable:max-classes-per-file
 @ContractObject()
-export class IHistoricState<T extends State> {
+export class HistoricState<T extends State> {
     public value: T;
 
     @Property()

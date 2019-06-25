@@ -16,22 +16,19 @@ import { Context } from 'fabric-contract-api';
 import { Order, Policy, UsageEvent, Vehicle } from '../assets';
 import { State } from '../ledger-api/state';
 import { AssetList, OrganizationList, ParticipantList } from '../lists';
-import { Insurer, Manufacturer, Organization, Regulator } from '../organizations';
-import { Participant, Registrar, Task } from '../participants';
+import { Insurer, Manufacturer, Regulator } from '../organizations';
+import { Registrar, Task } from '../participants';
 import { VehicleManufactureNetClientIdentity } from './client-identity';
 
 export class VehicleManufactureNetContext extends Context {
 
-    private ci: VehicleManufactureNetClientIdentity;
-    private organizationList: OrganizationList;
-    private participantList: ParticipantList;
-    private vehicleList: AssetList<Vehicle>;
-    private orderList: AssetList<Order>;
-    private policyList: AssetList<Policy>;
-    private usageList: AssetList<UsageEvent>;
-
-    private caller: Participant;
-    private callerOrg: Organization;
+    public readonly clientIdentity: VehicleManufactureNetClientIdentity;
+    public readonly organizationList: OrganizationList;
+    public readonly participantList: ParticipantList;
+    public readonly vehicleList: AssetList<Vehicle>;
+    public readonly orderList: AssetList<Order>;
+    public readonly policyList: AssetList<Policy>;
+    public readonly usageList: AssetList<UsageEvent>;
 
     constructor() {
         super();
@@ -50,35 +47,7 @@ export class VehicleManufactureNetContext extends Context {
         this.stub.setEvent(eventName, Buffer.from(JSON.stringify(json)));
     }
 
-    public setClientIdentity() { // horrible hack breaks default clientIdentity as overwrites the function
-        this.ci = new VehicleManufactureNetClientIdentity(this);
-    }
-
-    public getClientIdentity(): VehicleManufactureNetClientIdentity {
-        return this.ci;
-    }
-
-    public getOrganizationList(): OrganizationList {
-        return this.organizationList;
-    }
-
-    public getParticipantList(): ParticipantList {
-        return this.participantList;
-    }
-
-    public getVehicleList(): AssetList<Vehicle> {
-        return this.vehicleList;
-    }
-
-    public getOrderList(): AssetList<Order> {
-        return this.orderList;
-    }
-
-    public getPolicyList(): AssetList<Policy> {
-        return this.policyList;
-    }
-
-    public getUsageList(): AssetList<UsageEvent> {
-        return this.usageList;
+    public setClientIdentity() { // overwrites existing client identity function from super context
+        (this as any).clientIdentity = new VehicleManufactureNetClientIdentity(this);
     }
 }

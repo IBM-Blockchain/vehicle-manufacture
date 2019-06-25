@@ -19,7 +19,7 @@ import { PolicyService } from './policy.service';
 import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs';
 
-describe('AppComponent', () => {
+describe ('AppComponent', () => {
   let mockPolicyService;
 
   beforeEach(async(() => {
@@ -36,12 +36,12 @@ describe('AppComponent', () => {
       ]
     }).compileComponents();
   }));
-  it('should create the app', async(() => {
+  it ('should create the app', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
-  it(`should have as title 'app'`, async(() => {
+  it (`should have as title 'app'`, async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app.title).toEqual('app');

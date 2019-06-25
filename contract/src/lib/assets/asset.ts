@@ -48,6 +48,6 @@ export class Asset extends State {
             }
         });
 
-        return Buffer.from(State.serialize(toSerialize));
+        return State.serialize(toSerialize);
     }
 }

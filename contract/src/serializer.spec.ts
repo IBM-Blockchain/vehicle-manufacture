@@ -25,12 +25,12 @@ interface ISerializer {
     serialize: (result: any) => {};
 }
 
-describe('#Serializer', () => {
+describe ('#Serializer', () => {
     let serializer: ISerializer;
     let sandbox: sinon.SinonSandbox;
 
     before(() => {
-        sandbox = sinon.sandbox.create();
+        sandbox = sinon.createSandbox();
     });
 
     beforeEach(() => {
@@ -41,7 +41,7 @@ describe('#Serializer', () => {
         sandbox.restore();
     });
 
-    describe('toBuffer', () => {
+    describe ('toBuffer', () => {
         it ('should call serialize and then return the super to buffer', () => {
             const myBuffer = Buffer.from('some buffer');
 
@@ -53,9 +53,21 @@ describe('#Serializer', () => {
             serializeStub.should.have.been.calledOnceWithExactly('some original result');
             toBufferStub.should.have.been.calledOnceWithExactly('some serialized result', {}, 'some prefix');
         });
+
+        it ('should call seriakuze then return the super to buffer when schema null', () => {
+            const myBuffer = Buffer.from('some buffer');
+
+            const toBufferStub = sandbox.stub(FabricJSONSerializer.prototype, 'toBuffer').returns(myBuffer);
+            const serializeStub = sandbox.stub(serializer as any, 'serialize').returns('some serialized result');
+
+            serializer.toBuffer('some original result', undefined, 'some prefix').should.deep.equal(myBuffer);
+
+            serializeStub.should.have.been.calledOnceWithExactly('some original result');
+            toBufferStub.should.have.been.calledOnceWithExactly('some serialized result', {}, 'some prefix');
+        });
     });
 
-    describe('serialize', () => {
+    describe ('serialize', () => {
         it ('should return null when no result', () => {
             should.equal((serializer as any).serialize(null), null);
         });

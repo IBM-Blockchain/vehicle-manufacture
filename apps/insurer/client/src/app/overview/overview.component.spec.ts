@@ -29,7 +29,7 @@ class MockPopupComponent {
   @Output() actioned;
 }
 
-describe('OverviewComponent', () => {
+describe ('OverviewComponent', () => {
   let component: OverviewComponent;
   let fixture: ComponentFixture<OverviewComponent>;
   let mockVehicleService;
@@ -58,7 +58,7 @@ describe('OverviewComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it ('should create', () => {
     expect(component).toBeTruthy();
   });
 });

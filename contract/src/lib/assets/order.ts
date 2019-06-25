@@ -15,11 +15,8 @@ limitations under the License.
 import { Object, Property } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
 import 'reflect-metadata';
-import { IHistoricState } from '../ledger-api/state';
-import { Participant } from '../participants/participant';
+import { HistoricState } from '../ledger-api/state';
 import { NotRequired } from '../utils/annotations';
-import { Organization } from './../organizations/organization';
-import { Regulator } from './../organizations/regulator';
 import { Asset } from './asset';
 import { IOptions } from './options';
 import './vehicleDetails';
@@ -119,7 +116,7 @@ export class Order extends Asset {
 
 // tslint:disable:max-classes-per-file
 @Object()
-export class HistoricOrder extends IHistoricState<Order> {
+export class HistoricOrder extends HistoricState<Order> {
 
     @Property()
     public value: Order;

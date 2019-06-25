@@ -42,10 +42,10 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         const id = this.getAttributeValue(ID_FIELD);
 
         try {
-            const participant = await this.ctx.getParticipantList().get(id);
+            const participant = await this.ctx.participantList.get(id);
 
             return {
-                organization: await this.ctx.getOrganizationList().get(participant.orgId),
+                organization: await this.ctx.organizationList.get(participant.orgId),
                 participant,
             };
         } catch (err) {

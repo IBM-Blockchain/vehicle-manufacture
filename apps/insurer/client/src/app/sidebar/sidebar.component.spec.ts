@@ -19,7 +19,7 @@ import { SidebarComponent } from './sidebar.component';
 import { Observable } from 'rxjs';
 import { PolicyService } from '../policy.service';
 
-describe('SidebarComponent', () => {
+describe ('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
   let mockPolicyService;
@@ -43,7 +43,7 @@ describe('SidebarComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it ('should create', () => {
     expect(component).toBeTruthy();
   });
 });

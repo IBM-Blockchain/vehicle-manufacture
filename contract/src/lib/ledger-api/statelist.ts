@@ -15,15 +15,15 @@ limitations under the License.
 'use strict';
 import { Context } from 'fabric-contract-api';
 import { newLogger } from 'fabric-shim';
-import { IHistoricState, IState, State } from './state';
+import { HistoricState, IState, State } from './state';
 
 const logger = newLogger('STATELIST');
 
 export class StateList<T extends State> {
 
+    public readonly name: string;
+    public readonly supportedClasses: Map<string, IState<T>>;
     private ctx: Context;
-    private name: string;
-    private supportedClasses: Map<string, IState<T>>;
 
     constructor(ctx: Context, listName: string) {
         this.ctx = ctx;
@@ -31,19 +31,16 @@ export class StateList<T extends State> {
         this.supportedClasses = new Map();
     }
 
-    public getCtx(): Context {
-        return this.ctx;
-    }
+    public async add(state: T): Promise<void> {
+        const stateKey = state.getKey();
 
-    public async add(state: T) {
-        const key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
+        if (await this.exists(stateKey)) {
+            throw new Error(`Cannot add state. State already exists for key ${stateKey}`);
+        }
+
         const data = state.serialize();
 
-        const buff = await this.ctx.stub.getState(key);
-
-        if (buff.length > 0) {
-            throw new Error('Cannot create new state. State already exists for key ' + key);
-        }
+        const key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
 
         await this.ctx.stub.putState(key, data);
     }
@@ -53,25 +50,25 @@ export class StateList<T extends State> {
         const data = await this.ctx.stub.getState(ledgerKey);
 
         if (data.length === 0) {
-            throw new Error(`Cannot get state. No state exists for key ${key} ${this.name}`);
+            throw new Error(`Cannot get state. No state exists for key ${key}`);
         }
         const state = State.deserialize(data, this.supportedClasses) as T;
 
         return state;
     }
 
-    public async getHistory(key: string): Promise<Array<IHistoricState<T>>> {
+    public async getHistory(key: string): Promise<Array<HistoricState<T>>> {
         const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
         const keyHistory = await this.ctx.stub.getHistoryForKey(ledgerKey);
 
-        const history: Array<IHistoricState<T>> = [];
+        const history: Array<HistoricState<T>> = [];
 
         let value = (await keyHistory.next()).value;
 
         while (value) {
             const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses);
 
-            const historicState: IHistoricState<T> = new IHistoricState(
+            const historicState: HistoricState<T> = new HistoricState(
                 (value.getTimestamp().getSeconds() as any).toInt(), value.getTxId(), state as T,
             );
 
@@ -92,39 +89,38 @@ export class StateList<T extends State> {
         const data = await this.ctx.stub.getStateByPartialCompositeKey(this.name, []);
         let counter = 0;
 
-        while (true) {
+        let value = (await data.next()).value;
+
+        while (value) {
             const next = await data.next();
+            value = next.value;
 
-            if (next.value) {
-                counter++;
-            }
-
-            if (next.done) {
-                break;
-            }
+            counter++;
         }
 
         return counter;
     }
 
-    public async update(state: any) {
-        if (!(state instanceof State)) {
-            throw new Error(`Cannot use ${state.constructor.name} as type State`);
+    public async update(state: T): Promise<void> {
+        const stateKey = state.getKey();
+
+        if (!(await this.exists(stateKey))) {
+            throw new Error(`Cannot update state. No state exists for key ${stateKey}`);
         }
 
         const key = this.ctx.stub.createCompositeKey(this.name, state.getSplitKey());
+
         const data = state.serialize();
-
-        const buff = await this.ctx.stub.getState(key);
-
-        if (buff.length === 0) {
-            throw new Error(`Cannot update state. No state exists for key ${key}`);
-        }
 
         await this.ctx.stub.putState(key, data);
     }
 
-    public async exists(key: string) {
+    public delete(key: string): Promise<void> {
+        const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
+        return this.ctx.stub.deleteState(ledgerKey);
+    }
+
+    public async exists(key: string): Promise<boolean> {
         try {
             await this.get(key);
             return true;
@@ -133,8 +129,7 @@ export class StateList<T extends State> {
         }
     }
 
-    public async query(query: any) {
-        const {stub} = this.ctx;
+    public async query(query: any): Promise<T[]> {
         if (!query.selector) {
             query.selector = {};
         }
@@ -142,28 +137,21 @@ export class StateList<T extends State> {
             $regex: `.*${this.name}.*`,
         };
 
-        const iterator = await stub.getQueryResult(JSON.stringify(query));
+        const iterator = await this.ctx.stub.getQueryResult(JSON.stringify(query));
+
         let value = (await iterator.next()).value;
 
         const states: T[] = [];
 
         while (value) {
             const state = State.deserialize((value.getValue() as any).toBuffer(), this.supportedClasses) as T;
-            logger.info(JSON.stringify(state));
+
             states.push(state);
+
             const next = await iterator.next();
             value = next.value;
         }
         return states;
-    }
-
-    public delete(key: string) {
-        const ledgerKey = this.ctx.stub.createCompositeKey(this.name, State.splitKey(key));
-        return this.ctx.stub.deleteState(ledgerKey);
-    }
-
-    public getName(): string {
-        return this.name;
     }
 
     public use(...stateClasses: Array<IState<T>>) {
@@ -174,5 +162,4 @@ export class StateList<T extends State> {
             this.supportedClasses.set(stateClass.getClass(), stateClass);
         }
     }
-
 }

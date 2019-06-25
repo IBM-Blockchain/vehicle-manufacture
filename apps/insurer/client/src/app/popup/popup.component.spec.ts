@@ -19,7 +19,7 @@ import 'rxjs/add/observable/of';
 import { Observable } from 'rxjs';
 import { VehicleService } from '../vehicle.service';
 
-describe('PopupComponent', () => {
+describe ('PopupComponent', () => {
   let component: PopupComponent;
   let fixture: ComponentFixture<PopupComponent>;
   let mockVehicleService;
@@ -44,7 +44,7 @@ describe('PopupComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it ('should create', () => {
     expect(component).toBeTruthy();
   });
 });

@@ -13,10 +13,7 @@ limitations under the License.
 */
 
 import { Object, Property } from 'fabric-contract-api';
-import { newLogger } from 'fabric-shim';
 import { Organization } from './organization';
-
-const logger = newLogger('MANUFACTURER');
 
 @Object()
 export class Manufacturer extends Organization {

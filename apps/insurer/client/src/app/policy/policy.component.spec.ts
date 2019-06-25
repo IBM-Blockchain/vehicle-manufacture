@@ -21,7 +21,7 @@ import { Observable } from 'rxjs';
 import { PolicyService } from '../policy.service';
 import { VehicleService } from '../vehicle.service';
 
-describe('PolicyComponent', () => {
+describe ('PolicyComponent', () => {
   let component: PolicyComponent;
   let fixture: ComponentFixture<PolicyComponent>;
   let mockPolicyService;
@@ -60,7 +60,7 @@ describe('PolicyComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it ('should create', () => {
     expect(component).toBeTruthy();
   });
 });

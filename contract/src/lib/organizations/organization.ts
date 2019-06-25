@@ -23,16 +23,16 @@ export class Organization extends State {
     }
 
     @Property('id', 'string')
-    public id: string;
+    public readonly id: string;
 
     @Property('name', 'string')
-    public name: string;
+    public readonly name: string;
 
     @Property('originCode', 'string')
-    public originCode: string;
+    public readonly originCode: string;
 
     @Property('manufacturerCode', 'string')
-    public manufacturerCode: string;
+    public readonly manufacturerCode: string;
 
     constructor(
         id: string,
@@ -42,9 +42,5 @@ export class Organization extends State {
         super(Organization.generateClass(orgType), [id]);
         this.id = id;
         this.name = name;
-    }
-
-    public getName() {
-        return this.name;
     }
 }

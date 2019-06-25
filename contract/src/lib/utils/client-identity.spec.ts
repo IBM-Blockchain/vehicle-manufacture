@@ -28,7 +28,7 @@ const REGISTRAR_ROLE_FIELD = 'vehicle_manufacture.role.participant.create';
 const ID_FIELD = 'vehicle_manufacture.username';
 const ORG_TYPE_FIELD = 'vehicle_manufacture.org_type';
 
-describe('#ClientIdentity', () => {
+describe ('#ClientIdentity', () => {
     let mockContext: sinon.SinonStubbedInstance<VehicleManufactureNetContext>;
 
     let VehicleManufactureNetClientIdentity;
@@ -72,7 +72,7 @@ describe('#ClientIdentity', () => {
         mockery.disable();
     });
 
-    describe('constructor', () => {
+    describe ('constructor', () => {
         let superConstructorSpy: sinon.SinonSpy;
 
         beforeEach(() => {
@@ -101,11 +101,11 @@ describe('#ClientIdentity', () => {
         });
     });
 
-    describe('loadParticipant', () => {
+    describe ('loadParticipant', () => {
         it ('should catch error from get participant list', async () => {
             const getStub = sinon.stub().rejects(new Error('sad error'));
 
-            mockContext.getParticipantList.returns({get: getStub});
+            (mockContext as any).participantList = {get: getStub};
 
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 
@@ -125,8 +125,8 @@ describe('#ClientIdentity', () => {
             const getParticipantStub = sinon.stub().resolves(mockParticipant);
             const getOrgStub = sinon.stub().rejects(new Error('sad error'));
 
-            mockContext.getParticipantList.returns({get: getParticipantStub});
-            mockContext.getOrganizationList.returns({get: getOrgStub});
+            (mockContext as any).participantList = {get: getParticipantStub};
+            (mockContext as any).organizationList = {get: getOrgStub};
 
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 
@@ -151,8 +151,8 @@ describe('#ClientIdentity', () => {
             const getParticipantStub = sinon.stub().resolves(mockParticipant);
             const getOrgStub = sinon.stub().resolves(mockOrg);
 
-            mockContext.getParticipantList.returns({get: getParticipantStub});
-            mockContext.getOrganizationList.returns({get: getOrgStub});
+            (mockContext as any).participantList = {get: getParticipantStub};
+            (mockContext as any).organizationList = {get: getOrgStub};
 
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 
@@ -163,7 +163,7 @@ describe('#ClientIdentity', () => {
         });
     });
 
-    describe('newParticipantInstance', () => {
+    describe ('newParticipantInstance', () => {
         it ('should create a new registrar', () => {
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 
@@ -204,7 +204,7 @@ describe('#ClientIdentity', () => {
         });
     });
 
-    describe('newOrganizationInstance', () => {
+    describe ('newOrganizationInstance', () => {
         it ('should throw an error by default', () => {
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 

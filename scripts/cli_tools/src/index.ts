@@ -21,7 +21,7 @@ const results = require('yargs')
     .wrap(null)
     .alias('v', 'version')
     .version(version)
-    .describe('v', 'show version information')
+    .describe ('v', 'show version information')
     .argv;
 
 if (typeof(results.thePromise) !== 'undefined') {

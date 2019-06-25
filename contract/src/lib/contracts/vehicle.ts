@@ -37,7 +37,7 @@ export class VehicleContract extends Contract {
     public async placeOrder(
         ctx: VehicleManufactureNetContext, ordererId: string, vehicleDetails: IVehicleDetails, options: IOptions,
     ): Promise<Order> {
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.ORDER_CREATE)) {
             throw new Error(`Only callers with role ${Roles.ORDER_CREATE} can place orders`);
@@ -45,7 +45,7 @@ export class VehicleContract extends Contract {
             throw new Error('Callers may only create orders in their organisation');
         }
 
-        const numOrders = await ctx.getOrderList().count();
+        const numOrders = await ctx.orderList.count();
 
         const id = generateId(ctx.stub.getTxID(), 'ORDER_' + numOrders);
 
@@ -54,7 +54,7 @@ export class VehicleContract extends Contract {
             (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000,
         );
 
-        await ctx.getOrderList().add(order);
+        await ctx.orderList.add(order);
 
         ctx.setEvent('PLACE_ORDER', order);
 
@@ -64,7 +64,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Order[]')
     public async getOrders(ctx: VehicleManufactureNetContext): Promise<Order[]> {
-        const { participant, organization } = await ctx.getClientIdentity().loadParticipant();
+        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
         if (!participant.hasRole(Roles.ORDER_READ)) {
             throw new Error(`Only callers with role ${Roles.ORDER_READ} can read orders`);
         }
@@ -74,19 +74,19 @@ export class VehicleContract extends Contract {
             query = { selector: { vehicleDetails: { makeId: organization.id } } };
         }
 
-        return await ctx.getOrderList().query(query);
+        return await ctx.orderList.query(query);
     }
 
     @Transaction(false)
     @Returns('Order')
     public async getOrder(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant, organization } = await ctx.getClientIdentity().loadParticipant();
+        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.ORDER_READ)) {
             throw new Error(`Only callers with role ${Roles.ORDER_READ} can read orders`);
         }
 
-        const order = await ctx.getOrderList().get(orderId);
+        const order = await ctx.orderList.get(orderId);
 
         if (organization instanceof Manufacturer && !order.madeByOrg(participant.orgId)) {
             throw new Error(
@@ -104,7 +104,7 @@ export class VehicleContract extends Contract {
     ): Promise<HistoricOrder[]> {
         await this.getOrder(ctx, orderId); // will error if no order, or user cannot access
 
-        const history = await ctx.getOrderList().getHistory(orderId);
+        const history = await ctx.orderList.getHistory(orderId);
 
         return history;
     }
@@ -112,20 +112,20 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async scheduleOrderForManufacture(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.ORDER_UPDATE)) {
             throw new Error(`Only callers with role ${Roles.ORDER_UPDATE} can schedule orders for manufacture`);
         }
 
-        const order = await ctx.getOrderList().get(orderId);
+        const order = await ctx.orderList.get(orderId);
 
         if (!order.madeByOrg(participant.orgId)) {
             throw new Error('Callers may only schedule an order in their organisation for manufacture');
         }
 
         order.orderStatus = OrderStatus.SCHEDULED_FOR_MANUFACTURE;
-        await ctx.getOrderList().update(order);
+        await ctx.orderList.update(order);
 
         ctx.setEvent('UPDATE_ORDER', order);
         return order;
@@ -138,7 +138,7 @@ export class VehicleContract extends Contract {
         orderId: string,
         vin: string,
     ): Promise<Order> {
-        const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
+        const {participant, organization} = await ctx.clientIdentity.loadParticipant();
 
         if (
             !participant.hasRole(Roles.ORDER_UPDATE) ||
@@ -149,7 +149,7 @@ export class VehicleContract extends Contract {
             );
         }
 
-        const order = await ctx.getOrderList().get(orderId);
+        const order = await ctx.orderList.get(orderId);
 
         if (!order.madeByOrg(participant.orgId)) {
             throw new Error('Callers may only register a vehicle for an order in their organisation');
@@ -163,7 +163,7 @@ export class VehicleContract extends Contract {
 
         order.orderStatus = OrderStatus.VIN_ASSIGNED;
         order.vin = vin;
-        await ctx.getOrderList().update(order);
+        await ctx.orderList.update(order);
 
         const vehicle = new Vehicle(
             vin,
@@ -172,7 +172,7 @@ export class VehicleContract extends Contract {
             (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000,
         );
 
-        await ctx.getVehicleList().add(vehicle);
+        await ctx.vehicleList.add(vehicle);
 
         ctx.setEvent('UPDATE_ORDER', order);
 
@@ -182,7 +182,7 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async assignOwnershipForOrder(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (
             !participant.hasRole(Roles.ORDER_UPDATE) ||
@@ -193,18 +193,18 @@ export class VehicleContract extends Contract {
             );
         }
 
-        const order = await ctx.getOrderList().get(orderId);
+        const order = await ctx.orderList.get(orderId);
 
         if (!order.madeByOrg(participant.orgId)) {
             throw new Error('Callers may only assign an owner for a vehicle of an order in their organisation');
         }
 
         order.orderStatus = OrderStatus.OWNER_ASSIGNED;
-        await ctx.getOrderList().update(order);
+        await ctx.orderList.update(order);
 
-        const vehicle = await ctx.getVehicleList().get(order.vin);
+        const vehicle = await ctx.vehicleList.get(order.vin);
         vehicle.ownerId = order.ordererId;
-        await ctx.getVehicleList().update(vehicle);
+        await ctx.vehicleList.update(vehicle);
 
         ctx.setEvent('UPDATE_ORDER', order);
 
@@ -214,25 +214,25 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async deliverOrder(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.ORDER_UPDATE)) {
             throw new Error(`Only callers with role ${Roles.ORDER_UPDATE} can deliver orders`);
         }
 
-        const order = await ctx.getOrderList().get(orderId);
+        const order = await ctx.orderList.get(orderId);
 
         if (!order.madeByOrg(participant.orgId)) {
             throw new Error('Callers may only deliver an order in their organisation');
         }
 
         order.orderStatus = OrderStatus.DELIVERED;
-        await ctx.getOrderList().update(order);
+        await ctx.orderList.update(order);
 
-        const vehicle = await ctx.getVehicleList().get(order.vin);
+        const vehicle = await ctx.vehicleList.get(order.vin);
         vehicle.ownerId = order.ordererId;
         vehicle.vehicleStatus = VehicleStatus.ACTIVE;
-        await ctx.getVehicleList().update(vehicle);
+        await ctx.vehicleList.update(vehicle);
 
         ctx.setEvent('UPDATE_ORDER', order);
 
@@ -242,7 +242,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Vehicle[]')
     public async getVehicles(ctx: VehicleManufactureNetContext): Promise<Vehicle[]> {
-        const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
+        const {participant, organization} = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.VEHICLE_READ)) {
             throw new Error(`Only callers with role ${Roles.VEHICLE_READ} can get vehicles`);
@@ -255,7 +255,7 @@ export class VehicleContract extends Contract {
             query = { selector: { id: { $in: (await this.getPolicies(ctx)).map((policy) => policy.vin ) } } };
         }
 
-        const vehicles = await ctx.getVehicleList().query(query);
+        const vehicles = await ctx.vehicleList.query(query);
 
         return vehicles;
     }
@@ -263,13 +263,13 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Vehicle')
     public async getVehicle(ctx: VehicleManufactureNetContext, vin: string): Promise<Vehicle> {
-        const { participant, organization } = await ctx.getClientIdentity().loadParticipant();
+        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.VEHICLE_READ)) {
             throw new Error(`Only callers with role ${Roles.VEHICLE_READ} can get vehicles`);
         }
 
-        const vehicle = await ctx.getVehicleList().get(vin);
+        const vehicle = await ctx.vehicleList.get(vin);
 
         if (organization instanceof Manufacturer && !vehicle.madeByOrg(participant.orgId)) {
             throw new Error('Manufacturers may only get a vehicle produced by their organisation');
@@ -288,26 +288,26 @@ export class VehicleContract extends Contract {
     public async createPolicy(
         ctx: VehicleManufactureNetContext, vin: string, holderId: string, policyType: PolicyType, endDate: number,
     ): Promise<Policy> {
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.POLICY_CREATE)) {
             throw new Error(`Only callers with role ${Roles.POLICY_CREATE} can create policies`);
         }
 
-        const vehicle = await ctx.getVehicleList().get(vin);
+        const vehicle = await ctx.vehicleList.get(vin);
 
         if (vehicle.vehicleStatus !== VehicleStatus.ACTIVE) {
             throw new Error('Cannot insure vehicle which is not active');
         }
 
-        const numPolicies = await ctx.getPolicyList().count();
+        const numPolicies = await ctx.policyList.count();
 
         const id = generateId(ctx.stub.getTxID(), 'POLICY_' + numPolicies);
         const startDate = (ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000;
 
         const policy = new Policy(id, vin, participant.orgId, holderId, policyType, startDate, endDate);
 
-        await ctx.getPolicyList().add(policy);
+        await ctx.policyList.add(policy);
 
         ctx.setEvent('CREATE_POLICY', policy);
 
@@ -317,7 +317,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Policy[]')
     public async getPolicies(ctx: VehicleManufactureNetContext) {
-        const { participant, organization } = await ctx.getClientIdentity().loadParticipant();
+        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.POLICY_READ)) {
             throw new Error(`Only callers with role ${Roles.POLICY_READ} can read policies`);
@@ -328,7 +328,7 @@ export class VehicleContract extends Contract {
             query = { selector: { insurerId: organization.id } };
         }
 
-        const policies = await ctx.getPolicyList().query(query);
+        const policies = await ctx.policyList.query(query);
 
         return policies;
     }
@@ -336,13 +336,13 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Policy')
     public async getPolicy(ctx: VehicleManufactureNetContext, policyId: string): Promise<Policy> {
-        const {participant, organization} = await ctx.getClientIdentity().loadParticipant();
+        const {participant, organization} = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.POLICY_READ)) {
             throw new Error(`Only callers with role ${Roles.POLICY_READ} can read policies`);
         }
 
-        const policy = await ctx.getPolicyList().get(policyId);
+        const policy = await ctx.policyList.get(policyId);
 
         if (organization instanceof Insurer && policy.insurerId !== organization.id) {
             throw new Error('Only insurers who insure the policy can view it');
@@ -364,7 +364,7 @@ export class VehicleContract extends Contract {
         pitch: number,
         roll: number,
     ): Promise<UsageEvent> {
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.USAGE_EVENT_CREATE)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_CREATE} can add usage events`);
@@ -381,7 +381,7 @@ export class VehicleContract extends Contract {
             timestamp, vin,
         );
 
-        await ctx.getUsageList().add(usageEvent);
+        await ctx.usageList.add(usageEvent);
 
         ctx.setEvent('ADD_USAGE_EVENT', usageEvent);
 
@@ -391,7 +391,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('UsageEvent[]')
     public async getUsageEvents(ctx: VehicleManufactureNetContext): Promise<UsageEvent[]> {
-        const { participant} = await ctx.getClientIdentity().loadParticipant();
+        const { participant} = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.USAGE_EVENT_READ)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_READ} can get usage events`);
@@ -410,13 +410,13 @@ export class VehicleContract extends Contract {
     public async getVehicleEvents(ctx: VehicleManufactureNetContext, vin: string): Promise<UsageEvent[]> {
         await this.getVehicle(ctx, vin);
 
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.USAGE_EVENT_READ)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_READ} can get usage events`);
         }
 
-        const usageEvents = await ctx.getUsageList().query({selector: {vin}});
+        const usageEvents = await ctx.usageList.query({selector: {vin}});
 
         return usageEvents;
     }
@@ -427,13 +427,13 @@ export class VehicleContract extends Contract {
         const policy = await this.getPolicy(ctx, policyId);
         await this.getVehicle(ctx, policy.vin);
 
-        const { participant } = await ctx.getClientIdentity().loadParticipant();
+        const { participant } = await ctx.clientIdentity.loadParticipant();
 
         if (!participant.hasRole(Roles.USAGE_EVENT_READ)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_READ} can get usage events`);
         }
 
-        const usageEvents = await ctx.getUsageList().query({
+        const usageEvents = await ctx.usageList.query({
             selector: {vin: policy.vin, timestamp: {$gte: policy.startDate, $lt: policy.endDate }},
         });
 
