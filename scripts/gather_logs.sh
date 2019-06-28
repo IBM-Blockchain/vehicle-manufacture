@@ -73,6 +73,12 @@ for container in $(docker-compose -f $BASEDIR/apps/docker-compose/docker-compose
     docker logs $container &> "$APP_OUTPUT_DIR/$container.log"
 done
 
+echo '######################'
+echo '# GATHERING MISC LOGS #'
+echo '######################'
+docker ps -a > "$APP_OUTPUT_DIR/misc.logs"
+docker images >> "$APP_OUTPUT_DIR/misc.logs"
+
 echo '###############'
 echo '# MAKING ZIP #'
 echo '##############'
