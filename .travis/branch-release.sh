@@ -52,7 +52,7 @@ version_bump() {
 
 RELEASE_BRANCH="v$TRAVIS_TAG"
 
-git remote add repo https://${GH_TOKEN}@github.com/awjh-ibm/vehicle-manufacture-iot-extension
+git remote add repo https://${GH_TOKEN}@github.com/ibm-blockchain/vehicle-manufacture-iot-extension
 
 git checkout -b "$RELEASE_BRANCH"
 version_set $TRAVIS_TAG
