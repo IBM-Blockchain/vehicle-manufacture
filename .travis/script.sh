@@ -36,13 +36,14 @@ do
     cd ${dir}
     echo "==> $dir"
     npm test 2>&1
+    npm run test:functional --if-present 2>&1
 done
 
 cd ${DIR}
 
 if [ ! -z "$TRAVIS_TAG" ]; then
   if [[ $TRAVIS_TAG =~ ([0-9]+\.){2}[0-9]+ ]]; then
-    ./.travis/branch-release.sh  
+    ./.travis/branch-release.sh
   else
     echo "INVALID TAG. SHOULD BE OF FORMAT x.x.x"
     exit 1
