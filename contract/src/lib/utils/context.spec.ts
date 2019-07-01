@@ -22,7 +22,7 @@ import { IState, State } from '../ledger-api/state';
 import { StateList } from '../ledger-api/statelist';
 import { AssetList, OrganizationList, ParticipantList } from '../lists';
 import { Insurer, Manufacturer, Regulator } from '../organizations';
-import { Registrar, Task } from '../participants';
+import { Task } from '../participants';
 
 chai.should();
 chai.use(sinonChai);
@@ -79,7 +79,7 @@ describe ('#Context', () => {
             testSupportedClasses(context.organizationList, [Manufacturer, Insurer, Regulator]);
 
             context.participantList.should.be.instanceof(ParticipantList);
-            testSupportedClasses(context.participantList, [Registrar, Task]);
+            testSupportedClasses(context.participantList, [Task]);
 
             context.vehicleList.should.be.instanceof(AssetList);
             testSupportedClasses(context.vehicleList, [Vehicle]);

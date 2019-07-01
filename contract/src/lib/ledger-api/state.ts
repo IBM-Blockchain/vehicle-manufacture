@@ -15,11 +15,8 @@ limitations under the License.
 'use strict';
 
 import { Object as ContractObject, Property } from 'fabric-contract-api';
-import { newLogger } from 'fabric-shim';
 import * as getParams from 'get-params';
 import 'reflect-metadata';
-
-const logger = newLogger('STATE');
 
 export interface IState<T> {
     new (...args: any[]): T;

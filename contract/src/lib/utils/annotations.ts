@@ -11,11 +11,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { newLogger } from 'fabric-shim';
 import * as getParams from 'get-params';
 import 'reflect-metadata';
-
-const logger = newLogger('ANNOTATIONS');
 
 export function NotRequired(target: any, propertyKey: string, descriptor: number) {
     if (typeof propertyKey === 'undefined') {

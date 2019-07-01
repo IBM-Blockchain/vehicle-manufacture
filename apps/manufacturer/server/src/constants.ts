@@ -12,5 +12,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './task';
-export * from './participant';
+import { CHAINCODE_NAME, CHANNEL_NAME, DEFAULT_LOCAL_CONNECTION_PATH, DEFAULT_LOCAL_WALLET_PATH } from 'common';
+
+export const SERVER_CONFIG = {
+    channelName: CHANNEL_NAME,
+    connectionProfilePath: DEFAULT_LOCAL_CONNECTION_PATH,
+    contractName: CHAINCODE_NAME,
+    org: 'Arium',
+    walletPath: DEFAULT_LOCAL_WALLET_PATH,
+};

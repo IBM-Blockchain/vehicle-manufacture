@@ -14,10 +14,7 @@ limitations under the License.
 
 'use strict';
 import { Context } from 'fabric-contract-api';
-import { newLogger } from 'fabric-shim';
 import { HistoricState, IState, State } from './state';
-
-const logger = newLogger('STATELIST');
 
 export class StateList<T extends State> {
 
@@ -101,10 +98,10 @@ export class StateList<T extends State> {
         return counter;
     }
 
-    public async update(state: T): Promise<void> {
+    public async update(state: T, force: boolean = false): Promise<void> {
         const stateKey = state.getKey();
 
-        if (!(await this.exists(stateKey))) {
+        if (!(await this.exists(stateKey)) && !force) {
             throw new Error(`Cannot update state. No state exists for key ${stateKey}`);
         }
 

@@ -12,19 +12,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Object } from 'fabric-contract-api';
-import { Roles } from '../../constants';
-import { Participant } from './participant';
+import { Contract } from 'fabric-contract-api';
+import { NetworkName } from '../../constants';
+import { VehicleManufactureNetContext } from '../utils/context';
 
-@Object()
-export class Registrar extends Participant {
-    public static getClass() {
-        return Participant.generateClass(Registrar.name);
+export class BaseContract extends Contract {
+    constructor(contractName: string) {
+        super(NetworkName + '.' + contractName);
     }
 
-    constructor(
-        id: string, orgId: string,
-    ) {
-        super(id, [Roles.PARTICIPANT_CREATE], orgId, Registrar.name);
+    public createContext() {
+        return new VehicleManufactureNetContext();
+    }
+
+    public async beforeTransaction(ctx: VehicleManufactureNetContext) {
+        await ctx.clientIdentity.init();
     }
 }

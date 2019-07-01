@@ -12,25 +12,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { ClientIdentity, newLogger } from 'fabric-shim';
+import { ClientIdentity } from 'fabric-shim';
 import { RolesPrefix } from '../../constants';
 import { Insurer } from '../organizations/insurer';
 import { Manufacturer } from '../organizations/manufacturer';
 import { Organization } from '../organizations/organization';
 import { Regulator } from '../organizations/regulator';
 import { Participant } from '../participants/participant';
-import { Registrar } from '../participants/registrar';
 import { Task } from '../participants/task';
 import { VehicleManufactureNetContext } from './context';
-const logger = newLogger('CLIENTIDENTITY');
 
-const REGISTRAR_ROLE_FIELD = 'vehicle_manufacture.role.participant.create';
 const ID_FIELD = 'vehicle_manufacture.username';
+const ORG_NAME_FIELD = 'vehicle_manufacture.company';
 const ORG_TYPE_FIELD = 'vehicle_manufacture.org_type';
 
 export class VehicleManufactureNetClientIdentity extends ClientIdentity {
     private ctx: VehicleManufactureNetContext;
     private attrs: object;
+    private _participant: Participant;
+    private _organization: Organization;
 
     constructor(ctx: VehicleManufactureNetContext) {
         super(ctx.stub);
@@ -38,45 +38,41 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
         this.ctx = ctx;
     }
 
-    public async loadParticipant(): Promise<{participant: Participant, organization: Organization}> {
-        const id = this.getAttributeValue(ID_FIELD);
+    public async init(): Promise<void> {
+        const participantId = this.getAttributeValue(ID_FIELD);
 
-        try {
-            const participant = await this.ctx.participantList.get(id);
-
-            return {
-                organization: await this.ctx.organizationList.get(participant.orgId),
-                participant,
-            };
-        } catch (err) {
-            throw new Error(`Unable to load participant for client ${id} ERROR: ${err.message}`);
-        }
-    }
-
-    public newParticipantInstance(): Participant {
-        const id = this.getAttributeValue(ID_FIELD);
-        const orgId = id.split('@')[1];
-
-        if (this.assertAttributeValue(REGISTRAR_ROLE_FIELD, 'y')) {
-            return new Registrar(id, orgId);
+        if (await this.ctx.participantList.exists(participantId)) {
+            this._participant = await this.ctx.participantList.get(participantId);
+            this._organization = await this.ctx.organizationList.get(this._participant.orgId);
         } else {
+            const orgId = participantId.split('@')[1];
             const roles = [];
 
+            // tslint:disable-next-line: forin
             for (const attr in this.attrs) {
-                if (attr.startsWith(RolesPrefix) && this.attrs[attr].value === 'y') {
+                console.log(attr.startsWith(RolesPrefix), attr, this.attrs[attr]);
+                if (attr.startsWith(RolesPrefix) && this.attrs[attr] === 'y') {
                     roles.push(attr.split(RolesPrefix)[1]);
                 }
             }
 
-            return new Task(id, roles, orgId);
+            console.log('CREATING NEW USER', roles);
+
+            this._participant = new Task(participantId, roles, orgId);
+
+            if (await this.ctx.organizationList.exists(this._participant.orgId)) {
+                this._organization = await this.ctx.organizationList.get(this._participant.orgId);
+            } else {
+                this._organization = this.newOrganizationInstance(this.getAttributeValue(ORG_NAME_FIELD));
+            }
         }
     }
 
-    public newOrganizationInstance(orgName: string, additionalInfo: any): Organization {
+    public newOrganizationInstance(orgName: string): Organization {
         const orgType = this.getAttributeValue(ORG_TYPE_FIELD);
         switch (orgType) {
             case 'manufacturer':
-                return new Manufacturer(orgName, orgName, additionalInfo[0], additionalInfo[1]);
+                return new Manufacturer(orgName, orgName, null, null);
             case 'insurer':
                 return new Insurer(orgName, orgName);
             case 'regulator':
@@ -84,5 +80,13 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
             default:
                 throw new Error('Invalid organization type: ' + orgType);
         }
+    }
+
+    public get participant() {
+        return this._participant;
+    }
+
+    public get organization() {
+        return this._organization;
     }
 }

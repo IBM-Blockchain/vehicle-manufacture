@@ -15,10 +15,10 @@ import * as chai from 'chai';
 import * as chaiAsPromied from 'chai-as-promised';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { Roles, RolesPrefix } from '../../constants';
+import { Roles } from '../../constants';
 import { OrganizationList, ParticipantList } from '../lists';
-import { Organization } from '../organizations';
-import { Participant, Task } from '../participants';
+import { Manufacturer, Organization } from '../organizations';
+import { Participant } from '../participants';
 import { VehicleManufactureNetClientIdentity } from '../utils/client-identity';
 import { VehicleManufactureNetContext } from '../utils/context';
 import { ParticipantsContract } from './participants';
@@ -35,6 +35,9 @@ describe ('#ParticipantContract', () => {
     let organizationList;
     let participantList;
 
+    let participant: sinon.SinonStubbedInstance<Participant>;
+    let organization: sinon.SinonStubbedInstance<Organization>;
+
     beforeEach(() => {
         sandbox = sinon.createSandbox();
 
@@ -44,118 +47,50 @@ describe ('#ParticipantContract', () => {
         organizationList = sinon.createStubInstance(OrganizationList);
         participantList = sinon.createStubInstance(ParticipantList);
 
+        organization = sinon.createStubInstance(Organization);
+        participant = sinon.createStubInstance(Participant);
+        participant.hasRole.returns(true);
+
+        (clientIdentity as any)._participant = participant;
+        (clientIdentity as any)._organization = organization;
+
         (ctx as any).organizationList = organizationList;
         (ctx as any).participantList = participantList;
-        (ctx as any).clientIdentity = clientIdentity;
+        (ctx as any)._clientIdentity = clientIdentity;
     });
 
     afterEach(() => {
         sandbox.restore();
     });
 
-    describe ('createContext', ()  => {
-        it ('should create a VehicleManufacturerNetContext instance', () => {
-            const newCtx = contract.createContext();
-            newCtx.should.be.instanceof(VehicleManufactureNetContext);
-        });
-    });
+    describe ('provideManufacturerDetails', () => {
+        it ('should throw an error if the participant does not have role', async () => {
+            participant.hasRole.returns(true).withArgs(Roles.ORGANIZATION_UPDATE).returns(false);
 
-    describe ('getOrganizations', async () => {
-        it ('should return everything from the organization list', async () => {
-            const stubOrgs = [new Organization('1', 'org1', 'regulator')];
-            organizationList.getAll.resolves(stubOrgs);
-            const orgs = await contract.getOrganizations(ctx as any);
-            orgs.should.equal(stubOrgs);
-        });
-    });
-
-    describe ('registerRegistrar', () => {
-        it ('should throw if the attribute Roles.PARTICIPANT_CREATE is not "y"', async () => {
-            stubAttribute(ctx, RolesPrefix + Roles.PARTICIPANT_CREATE, 'n');
-            await contract.registerRegistrar(ctx as any, 'UK', 'LG')
-                .should.be
-                .rejectedWith(
-                    `Only callers with role ${RolesPrefix + Roles.PARTICIPANT_CREATE} can register as registrar`,
+            await contract.provideManufacturerDetails(ctx as any, 'some origin', 'some manufacturer')
+                .should.be.rejectedWith(
+                    `Only callers with role ${Roles.ORGANIZATION_UPDATE} can update their organization`,
                 );
         });
 
-        it ('should throw if an invalid participant type is given', async () => {
-            stubAttribute(ctx, RolesPrefix + Roles.PARTICIPANT_CREATE, 'y');
-            stubAttribute(ctx, 'vehicle_manufacture.company', 'IBM');
-            stubAttribute(ctx, 'vehicle_manufacture.org_type', 'IT');
-            await contract.registerRegistrar(ctx as any, 'UK', 'LG')
-                .should.be
-                .rejectedWith(
-                    `Participant type does not exist: IT`,
+        it ('should throw an error when organization is not a manufacturer', async () => {
+            await contract.provideManufacturerDetails(ctx as any, 'some origin', 'some manufacturer')
+                .should.be.rejectedWith(
+                    'Only callers from organisations of type Manufacturer can provide manufacturer details',
                 );
         });
 
-        for (const orgType of ['regulator', 'insurer', 'manufacturer']) {
-            it (`should register the participant if they are a '${orgType}'`, async () => {
-                stubAttribute(ctx, RolesPrefix + Roles.PARTICIPANT_CREATE, 'y');
-                stubAttribute(ctx, 'vehicle_manufacture.company', orgType);
-                stubAttribute(ctx, 'vehicle_manufacture.org_type', orgType);
-                clientIdentity.newParticipantInstance.returns('newParticipant');
-                const participant = await contract.registerRegistrar(ctx as any, 'UK', 'LG');
-                sinon.assert.calledWith(participantList.add, 'newParticipant');
-                participant.should.equal('newParticipant');
-            });
-        }
-    });
+        it ('should update the organization ', async () => {
+            organization = sinon.createStubInstance(Manufacturer);
+            (organization as any).id = 'some org id';
+            (clientIdentity as any)._organization = organization;
 
-    describe ('registerTask', () => {
-        let participant;
-        let organization;
+            await contract.provideManufacturerDetails(ctx as any, 'some origin', 'some manufacturer');
 
-        beforeEach(() => {
-            organization = sinon.createStubInstance(Organization);
-            organization.id = 'ORG1';
-            organization.name = 'VDA';
-            participant = sinon.createStubInstance(Participant);
-            clientIdentity.loadParticipant.returns({organization, participant});
-        });
-
-        it ('should throw if participant doens\'t have role Roles.PARTICIPANT_CREATE', async () => {
-            participant.hasRole.withArgs(Roles.PARTICIPANT_CREATE).returns(false);
-            await contract.registerTask(ctx as any, 'TASK_1', [`${RolesPrefix}ROLE1`])
-                .should.be
-                .rejectedWith(`Only callers with role ${Roles.PARTICIPANT_CREATE} can register a task user`);
-        });
-
-        it ('should create add a Task participant to the participant list', async () => {
-            participant.hasRole.withArgs(Roles.PARTICIPANT_CREATE).returns(true);
-            const task = new Task('TASK_1@VDA', [`ROLE1`], 'ORG1');
-            const storedTask = await contract.registerTask(ctx as any, 'TASK_1', [`${RolesPrefix}ROLE1`]);
-            sinon.assert.calledWith(participantList.add, task);
-            storedTask.should.deep.equal(task);
-        });
-    });
-
-    describe ('registerOrganization', () => {
-        it ('should register an organization', async () => {
-            organizationList.exists.resolves(false);
-            clientIdentity.newOrganizationInstance.returns('organization');
-            await (contract as any).registerOrganization(ctx as any, 'VDA', 'additionalInfo1', 'additionalInfo2');
-            sinon.assert.calledWith(
-                clientIdentity.newOrganizationInstance,
-                'VDA',
-                ['additionalInfo1', 'additionalInfo2'],
-            );
-            sinon.assert.calledWith(organizationList.exists, 'VDA');
-            sinon.assert.calledWith(organizationList.add, 'organization');
-        });
-
-        it ('should not register an organization', async () => {
-            organizationList.exists.resolves(true);
-            await (contract as any).registerOrganization(ctx as any, 'VDA', 'additionalInfo1', 'additionalInfo2');
-            sinon.assert.notCalled(organizationList.add);
+            ctx.organizationList.update.should.have.been.calledOnceWithExactly(organization, true);
+            (organization as sinon.SinonStubbedInstance<Manufacturer>).originCode.should.deep.equal('some origin');
+            (organization as sinon.SinonStubbedInstance<Manufacturer>).manufacturerCode
+                .should.deep.equal('some manufacturer');
         });
     });
 });
-
-function stubAttribute(ctx, attr, value) {
-    ctx.clientIdentity
-        .getAttributeValue
-        .withArgs(attr)
-        .returns(value);
-}

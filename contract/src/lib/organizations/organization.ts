@@ -22,17 +22,11 @@ export class Organization extends State {
         return NetworkName + '.organizations.' + orgType;
     }
 
-    @Property('id', 'string')
+    @Property()
     public readonly id: string;
 
-    @Property('name', 'string')
+    @Property()
     public readonly name: string;
-
-    @Property('originCode', 'string')
-    public readonly originCode: string;
-
-    @Property('manufacturerCode', 'string')
-    public readonly manufacturerCode: string;
 
     constructor(
         id: string,

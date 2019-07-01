@@ -13,7 +13,6 @@ limitations under the License.
 */
 
 import { Object, Property } from 'fabric-contract-api';
-import { newLogger } from 'fabric-shim';
 import 'reflect-metadata';
 import { HistoricState } from '../ledger-api/state';
 import { NotRequired } from '../utils/annotations';
@@ -21,8 +20,6 @@ import { Asset } from './asset';
 import { IOptions } from './options';
 import './vehicleDetails';
 import { IVehicleDetails } from './vehicleDetails';
-
-const logger = newLogger('ORDER');
 
 export enum OrderStatus {
     PLACED = 0,

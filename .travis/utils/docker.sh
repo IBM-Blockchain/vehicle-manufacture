@@ -1,17 +1,12 @@
 #!/bin/bash
 
-# Exit on first error, print all commands.
-set -ev
-set -o pipefail
-
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
-ME=`basename "$0"`
-
 build() {
     VERSION="${1}"
     echo "==> Building docker images"
     ./apps/build/docker_build.sh ${VERSION}
 }
+
+export -f build
 
 tag() {
     TAGGED="${1}"
@@ -22,6 +17,8 @@ tag() {
     docker tag awjh/vehicle-manufacture-iot-extension-insurer:$TAGGED awjh/vehicle-manufacture-iot-extension-insurer:$TOTAG
     docker tag awjh/vehicle-manufacture-iot-extension-regulator:$TAGGED awjh/vehicle-manufacture-iot-extension-regulator:$TOTAG
 }
+
+export -f tag
 
 deploy() {
     echo "==> Logging in to Docker"
@@ -66,20 +63,4 @@ deploy() {
     echo "#########################"
 }
 
-if [ -z "$TRAVIS_TAG" ]; then
-    if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then
-        if [[ "$TRAVIS_BRANCH" = "master" ]]; then
-            build unstable
-            deploy unstable
-        else
-            echo "==> Skipping deploy. Not merging into master"
-        fi
-    else
-        echo "==> Skipping deploy. Is a pull request"
-    fi
-else
-    build ${TRAVIS_TAG}
-    tag ${TRAVIS_TAG} latest
-    deploy ${TRAVIS_TAG}
-    deploy latest
-fi
+export -f deploy

@@ -11,11 +11,6 @@
                 "value": "vehicle_manufacture.*"
             },
             {
-                "name": "vehicle_manufacture.role.participant.create",
-                "value": "y",
-                "ecert": true
-            },
-            {
                 "name": "vehicle_manufacture.company",
                 "value": "PrinceInsurance",
                 "ecert": true

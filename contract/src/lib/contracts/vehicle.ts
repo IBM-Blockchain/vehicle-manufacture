@@ -12,24 +12,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
-import { newLogger } from 'fabric-shim';
-import { NetworkName, Roles } from '../../constants';
+import { Param, Returns, Transaction } from 'fabric-contract-api';
+import { Roles } from '../../constants';
 import { EventType, HistoricOrder, IVehicleDetails, Order, OrderStatus, Policy, PolicyType, UsageEvent, Vehicle, VehicleStatus } from '../assets'; // tslint:disable-line:max-line-length
 import { IOptions } from '../assets/options';
 import { Insurer, Manufacturer } from '../organizations';
 import { VehicleManufactureNetContext } from '../utils/context';
 import { generateId } from '../utils/functions';
+import { BaseContract } from './base';
 
-const logger = newLogger('VEHICLE');
-
-export class VehicleContract extends Contract {
+export class VehicleContract extends BaseContract {
     constructor() {
-        super(NetworkName + '.vehicles');
-    }
-
-    public createContext() {
-        return new VehicleManufactureNetContext();
+        super('vehicles');
     }
 
     @Transaction()
@@ -37,7 +31,7 @@ export class VehicleContract extends Contract {
     public async placeOrder(
         ctx: VehicleManufactureNetContext, ordererId: string, vehicleDetails: IVehicleDetails, options: IOptions,
     ): Promise<Order> {
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.ORDER_CREATE)) {
             throw new Error(`Only callers with role ${Roles.ORDER_CREATE} can place orders`);
@@ -64,7 +58,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Order[]')
     public async getOrders(ctx: VehicleManufactureNetContext): Promise<Order[]> {
-        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
+        const { participant, organization } = ctx.clientIdentity;
         if (!participant.hasRole(Roles.ORDER_READ)) {
             throw new Error(`Only callers with role ${Roles.ORDER_READ} can read orders`);
         }
@@ -80,7 +74,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Order')
     public async getOrder(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
+        const { participant, organization } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.ORDER_READ)) {
             throw new Error(`Only callers with role ${Roles.ORDER_READ} can read orders`);
@@ -112,7 +106,7 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async scheduleOrderForManufacture(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.ORDER_UPDATE)) {
             throw new Error(`Only callers with role ${Roles.ORDER_UPDATE} can schedule orders for manufacture`);
@@ -138,7 +132,7 @@ export class VehicleContract extends Contract {
         orderId: string,
         vin: string,
     ): Promise<Order> {
-        const {participant, organization} = await ctx.clientIdentity.loadParticipant();
+        const {participant, organization} = ctx.clientIdentity;
 
         if (
             !participant.hasRole(Roles.ORDER_UPDATE) ||
@@ -146,6 +140,10 @@ export class VehicleContract extends Contract {
         ) {
             throw new Error(
                 `Only callers with roles ${Roles.ORDER_UPDATE} and ${Roles.VEHICLE_CREATE} can register vehicles for orders` // tslint:disable-line
+            );
+        } else if (!(organization as Manufacturer).originCode || !(organization as Manufacturer).manufacturerCode) {
+            throw new Error(
+                'Manufacturer\'s origin and manufacturer code must be set before vehicles can be registered',
             );
         }
 
@@ -157,7 +155,7 @@ export class VehicleContract extends Contract {
 
         const year = new Date((ctx.stub.getTxTimestamp().getSeconds() as any).toInt() * 1000).getFullYear();
 
-        if (!Vehicle.validateVin(vin, organization, year)) {
+        if (!Vehicle.validateVin(vin, organization as Manufacturer, year)) {
             throw new Error('Invalid VIN supplied');
         }
 
@@ -182,7 +180,7 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async assignOwnershipForOrder(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (
             !participant.hasRole(Roles.ORDER_UPDATE) ||
@@ -214,7 +212,7 @@ export class VehicleContract extends Contract {
     @Transaction()
     @Returns('Order')
     public async deliverOrder(ctx: VehicleManufactureNetContext, orderId: string): Promise<Order> {
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.ORDER_UPDATE)) {
             throw new Error(`Only callers with role ${Roles.ORDER_UPDATE} can deliver orders`);
@@ -242,7 +240,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Vehicle[]')
     public async getVehicles(ctx: VehicleManufactureNetContext): Promise<Vehicle[]> {
-        const {participant, organization} = await ctx.clientIdentity.loadParticipant();
+        const {participant, organization} = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.VEHICLE_READ)) {
             throw new Error(`Only callers with role ${Roles.VEHICLE_READ} can get vehicles`);
@@ -263,7 +261,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Vehicle')
     public async getVehicle(ctx: VehicleManufactureNetContext, vin: string): Promise<Vehicle> {
-        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
+        const { participant, organization } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.VEHICLE_READ)) {
             throw new Error(`Only callers with role ${Roles.VEHICLE_READ} can get vehicles`);
@@ -288,7 +286,7 @@ export class VehicleContract extends Contract {
     public async createPolicy(
         ctx: VehicleManufactureNetContext, vin: string, holderId: string, policyType: PolicyType, endDate: number,
     ): Promise<Policy> {
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.POLICY_CREATE)) {
             throw new Error(`Only callers with role ${Roles.POLICY_CREATE} can create policies`);
@@ -317,7 +315,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Policy[]')
     public async getPolicies(ctx: VehicleManufactureNetContext) {
-        const { participant, organization } = await ctx.clientIdentity.loadParticipant();
+        const { participant, organization } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.POLICY_READ)) {
             throw new Error(`Only callers with role ${Roles.POLICY_READ} can read policies`);
@@ -336,7 +334,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('Policy')
     public async getPolicy(ctx: VehicleManufactureNetContext, policyId: string): Promise<Policy> {
-        const {participant, organization} = await ctx.clientIdentity.loadParticipant();
+        const {participant, organization} = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.POLICY_READ)) {
             throw new Error(`Only callers with role ${Roles.POLICY_READ} can read policies`);
@@ -364,7 +362,7 @@ export class VehicleContract extends Contract {
         pitch: number,
         roll: number,
     ): Promise<UsageEvent> {
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.USAGE_EVENT_CREATE)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_CREATE} can add usage events`);
@@ -391,7 +389,7 @@ export class VehicleContract extends Contract {
     @Transaction(false)
     @Returns('UsageEvent[]')
     public async getUsageEvents(ctx: VehicleManufactureNetContext): Promise<UsageEvent[]> {
-        const { participant} = await ctx.clientIdentity.loadParticipant();
+        const { participant} = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.USAGE_EVENT_READ)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_READ} can get usage events`);
@@ -410,7 +408,7 @@ export class VehicleContract extends Contract {
     public async getVehicleEvents(ctx: VehicleManufactureNetContext, vin: string): Promise<UsageEvent[]> {
         await this.getVehicle(ctx, vin);
 
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.USAGE_EVENT_READ)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_READ} can get usage events`);
@@ -427,7 +425,7 @@ export class VehicleContract extends Contract {
         const policy = await this.getPolicy(ctx, policyId);
         await this.getVehicle(ctx, policy.vin);
 
-        const { participant } = await ctx.clientIdentity.loadParticipant();
+        const { participant } = ctx.clientIdentity;
 
         if (!participant.hasRole(Roles.USAGE_EVENT_READ)) {
             throw new Error(`Only callers with role ${Roles.USAGE_EVENT_READ} can get usage events`);

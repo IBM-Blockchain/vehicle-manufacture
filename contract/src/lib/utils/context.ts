@@ -17,23 +17,23 @@ import { Order, Policy, UsageEvent, Vehicle } from '../assets';
 import { State } from '../ledger-api/state';
 import { AssetList, OrganizationList, ParticipantList } from '../lists';
 import { Insurer, Manufacturer, Regulator } from '../organizations';
-import { Registrar, Task } from '../participants';
+import { Task } from '../participants';
 import { VehicleManufactureNetClientIdentity } from './client-identity';
 
 export class VehicleManufactureNetContext extends Context {
 
-    public readonly clientIdentity: VehicleManufactureNetClientIdentity;
     public readonly organizationList: OrganizationList;
     public readonly participantList: ParticipantList;
     public readonly vehicleList: AssetList<Vehicle>;
     public readonly orderList: AssetList<Order>;
     public readonly policyList: AssetList<Policy>;
     public readonly usageList: AssetList<UsageEvent>;
+    private _clientIdentity: VehicleManufactureNetClientIdentity;
 
     constructor() {
         super();
         this.organizationList = new OrganizationList(this, 'organizations', [Manufacturer, Insurer, Regulator]);
-        this.participantList = new ParticipantList(this, 'participant', [Registrar, Task]);
+        this.participantList = new ParticipantList(this, 'participant', [Task]);
         this.vehicleList = new AssetList(this, 'vehicles', [Vehicle]);
         this.orderList = new AssetList(this, 'orders', [Order]);
         this.policyList = new AssetList(this, 'policies', [Policy]);
@@ -48,6 +48,10 @@ export class VehicleManufactureNetContext extends Context {
     }
 
     public setClientIdentity() { // overwrites existing client identity function from super context
-        (this as any).clientIdentity = new VehicleManufactureNetClientIdentity(this);
+        this._clientIdentity = new VehicleManufactureNetClientIdentity(this);
+    }
+
+    public get clientIdentity() {
+        return this._clientIdentity;
     }
 }

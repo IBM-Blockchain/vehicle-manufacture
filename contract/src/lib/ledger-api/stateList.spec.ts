@@ -241,6 +241,20 @@ describe ('#StateList', () => {
             (mockContext.stub as sinon.SinonStubbedInstance<ChaincodeStub>).putState
                 .should.have.been.calledOnceWithExactly('some key', 'some serialized value');
         });
+
+        it ('should put to the world state by force', async () => {
+            const existsStub = sandbox.stub(stateList, 'exists').resolves(false);
+
+            await stateList.update(mockState, true);
+
+            mockState.getSplitKey.should.have.been.calledOnceWithExactly();
+            (mockContext.stub as sinon.SinonStubbedInstance<ChaincodeStub>).createCompositeKey
+                .should.have.been.calledOnceWithExactly('some list name', ['some', 'split', 'key']);
+            mockState.serialize.should.have.been.calledOnceWithExactly();
+            existsStub.should.have.been.calledOnceWithExactly('state key');
+            (mockContext.stub as sinon.SinonStubbedInstance<ChaincodeStub>).putState
+                .should.have.been.calledOnceWithExactly('some key', 'some serialized value');
+        });
     });
 
     describe ('delete', () => {

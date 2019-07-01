@@ -12,5 +12,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export * from './task';
-export * from './participant';
+import { CONTRACT_NAMES, FabricProxy } from 'common';
+import { SERVER_CONFIG } from './constants';
+
+async function main() {
+    const fabricProxy = new FabricProxy(SERVER_CONFIG);
+
+    try {
+        await fabricProxy.submitTransaction(
+            'registrar', CONTRACT_NAMES.participant + ':provideManufacturerDetails', 'S', 'G',
+        );
+        console.log('Successfully provided manufacturer details');
+    } catch (err) {
+        console.error('ERROR PROVIDING MANUFACTURER DETAILS', err);
+    }
+}
+
+main();

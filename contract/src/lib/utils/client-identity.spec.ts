@@ -16,15 +16,16 @@ import * as chaiAsPromised from 'chai-as-promised';
 import * as mockery from 'mockery';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { OrganizationList, ParticipantList } from '../lists';
 import { Insurer, Manufacturer, Regulator } from '../organizations';
-import { Registrar, Task } from '../participants';
+import { Task } from '../participants';
 import { VehicleManufactureNetContext } from './context';
 
 chai.should();
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
 
-const REGISTRAR_ROLE_FIELD = 'vehicle_manufacture.role.participant.create';
+const ORG_NAME_FIELD = 'vehicle_manufacture.company';
 const ID_FIELD = 'vehicle_manufacture.username';
 const ORG_TYPE_FIELD = 'vehicle_manufacture.org_type';
 
@@ -42,7 +43,6 @@ describe ('#ClientIdentity', () => {
 
     const MockFabricShim = {
         ClientIdentity: MockClientIdentity,
-        newLogger: () => {}, // tslint:disable-line:no-empty
     };
 
     before(() => {
@@ -55,7 +55,6 @@ describe ('#ClientIdentity', () => {
     });
 
     beforeEach(() => {
-
         mockery.registerMock('fabric-shim', MockFabricShim);
         VehicleManufactureNetClientIdentity = requireVehicleManufactureNetClientIdentity();
 
@@ -101,106 +100,103 @@ describe ('#ClientIdentity', () => {
         });
     });
 
-    describe ('loadParticipant', () => {
-        it ('should catch error from get participant list', async () => {
-            const getStub = sinon.stub().rejects(new Error('sad error'));
+    describe ('init', () => {
 
-            (mockContext as any).participantList = {get: getStub};
+        const mockOrg = {
+            prop: 'some val',
+        };
+
+        let participantList: sinon.SinonStubbedInstance<ParticipantList>;
+        let organizationList: sinon.SinonStubbedInstance<OrganizationList>;
+
+        beforeEach(() => {
+            participantList = sinon.createStubInstance(ParticipantList);
+            organizationList = sinon.createStubInstance(OrganizationList);
+
+            (mockContext as any).participantList = participantList;
+            (mockContext as any).organizationList = organizationList;
+        });
+
+        it ('should set the participant and organization from world state', async () => {
+            const mockParticipant = {
+                orgId: 'some org id',
+            };
+
+            participantList.get.returns(mockParticipant);
+            organizationList.get.returns(mockOrg);
+
+            participantList.exists.returns(false).withArgs('some id').returns(true);
 
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 
             const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue').returns('some id');
 
-            await ci.loadParticipant().should.be.rejectedWith(/sad error/);
+            await ci.init();
 
             getAttributeValueStub.should.have.been.calledOnceWithExactly(ID_FIELD);
-            getStub.should.have.been.calledOnceWithExactly('some id');
+            ci.participant.should.deep.equal(mockParticipant);
+            ci.organization.should.deep.equal(mockOrg);
         });
 
-        it ('should catch error from get organization list', async () => {
-            const mockParticipant = {
-                orgId: 'some org id',
-            };
+        it ('should create a new task but not org when org exists', async () => {
+            participantList.exists.returns(true).withArgs('id@org').returns(false);
+            organizationList.exists.returns(false).withArgs('org').returns(true);
 
-            const getParticipantStub = sinon.stub().resolves(mockParticipant);
-            const getOrgStub = sinon.stub().rejects(new Error('sad error'));
-
-            (mockContext as any).participantList = {get: getParticipantStub};
-            (mockContext as any).organizationList = {get: getOrgStub};
-
-            const ci = new VehicleManufactureNetClientIdentity(mockContext);
-
-            const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue').returns('some id');
-
-            await ci.loadParticipant().should.be.rejectedWith(/sad error/);
-
-            getAttributeValueStub.should.have.been.calledOnceWithExactly(ID_FIELD);
-            getParticipantStub.should.have.been.calledOnceWithExactly('some id');
-            getOrgStub.should.have.been.calledOnceWithExactly('some org id');
-        });
-
-        it ('should return the participant and organization', async () => {
-            const mockParticipant = {
-                orgId: 'some org id',
-            };
-
-            const mockOrg = {
-                prop: 'some val',
-            };
-
-            const getParticipantStub = sinon.stub().resolves(mockParticipant);
-            const getOrgStub = sinon.stub().resolves(mockOrg);
-
-            (mockContext as any).participantList = {get: getParticipantStub};
-            (mockContext as any).organizationList = {get: getOrgStub};
-
-            const ci = new VehicleManufactureNetClientIdentity(mockContext);
-
-            (await ci.loadParticipant()).should.deep.equal({
-                organization: mockOrg,
-                participant: mockParticipant,
-            });
-        });
-    });
-
-    describe ('newParticipantInstance', () => {
-        it ('should create a new registrar', () => {
-            const ci = new VehicleManufactureNetClientIdentity(mockContext);
-
-            const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue').returns('id@someorg');
-            const assertAttributeValue = sinon.stub(ci, 'assertAttributeValue').returns(true);
-
-            ci.newParticipantInstance().should.deep.equal(new Registrar('id@someorg', 'someorg'));
-            getAttributeValueStub.should.have.been.calledOnceWithExactly(ID_FIELD);
-            assertAttributeValue.should.have.been.calledOnceWithExactly(REGISTRAR_ROLE_FIELD, 'y');
-        });
-
-        it ('should create a new task', async () => {
             const ci = new VehicleManufactureNetClientIdentity(mockContext);
 
             ci.attrs = {
-                'hf.Registrar.Roles': {
-                    value: 'client',
-                },
-                'vehicle_manufacture.role.participant.create': {
-                    value: 'y',
-                },
-                'vehicle_manufacture.role.participant.delete': {
-                    value: 'n',
-                },
-                'vehicle_manufacture.role.participant.read': {
-                    value: 'y',
-                },
+                'hf.Registrar.Roles': 'client',
+                'vehicle_manufacture.role.participant.create': 'y',
+                'vehicle_manufacture.role.participant.delete': 'n',
+                'vehicle_manufacture.role.participant.read': 'y',
             };
 
-            const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue').returns('id@someorg');
-            const assertAttributeValue = sinon.stub(ci, 'assertAttributeValue').returns(false);
+            organizationList.get.withArgs('org').returns(mockOrg);
 
-            ci.newParticipantInstance().should.deep.equal(
-                new Task('id@someorg', ['participant.create', 'participant.read'], 'someorg'),
-            );
+            const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue').returns('id@org');
+
+            await ci.init();
+
             getAttributeValueStub.should.have.been.calledOnceWithExactly(ID_FIELD);
-            assertAttributeValue.should.have.been.calledOnceWithExactly(REGISTRAR_ROLE_FIELD, 'y');
+
+            (ci as any)._participant.should.deep.equal(
+                new Task('id@org', ['participant.create', 'participant.read'], 'org'),
+            );
+            (ci as any)._organization.should.deep.equal(mockOrg);
+        });
+
+        it ('should create a new task and org when org does not exist', async () => {
+            participantList.exists.returns(true).withArgs('id@org').returns(false);
+            organizationList.exists.returns(true).withArgs('org').returns(false);
+
+            const ci = new VehicleManufactureNetClientIdentity(mockContext);
+
+            ci.attrs = {
+                'hf.Registrar.Roles': 'client',
+                'vehicle_manufacture.role.participant.create': 'y',
+                'vehicle_manufacture.role.participant.delete': 'n',
+                'vehicle_manufacture.role.participant.read': 'y',
+            };
+
+            const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue');
+            getAttributeValueStub.withArgs(ID_FIELD).returns('id@org');
+            getAttributeValueStub.withArgs(ORG_NAME_FIELD).returns('some org');
+
+            const newOrganizationInstanceStub = sinon.stub(ci, 'newOrganizationInstance').returns(mockOrg);
+
+            await ci.init();
+
+            getAttributeValueStub.callCount.should.deep.equal(2);
+            getAttributeValueStub.should.have.been.calledWithExactly(ID_FIELD);
+            getAttributeValueStub.should.have.been.calledWithExactly(ORG_NAME_FIELD);
+            newOrganizationInstanceStub.should.have.been.calledOnceWithExactly('some org');
+
+            (ci as any)._participant.should.deep.equal(
+                new Task('id@org', ['participant.create', 'participant.read'], 'org'),
+            );
+            // tslint:disable-next-line: no-unused-expression
+            organizationList.get.should.not.have.been.called;
+            (ci as any)._organization.should.deep.equal(mockOrg);
         });
     });
 
@@ -222,8 +218,8 @@ describe ('#ClientIdentity', () => {
 
             const getAttributeValueStub = sinon.stub(ci, 'getAttributeValue').returns('manufacturer');
 
-            ci.newOrganizationInstance('some org', ['info 1', 'info 2']).should.deep.equal(
-                new Manufacturer('some org', 'some org', 'info 1', 'info 2'),
+            ci.newOrganizationInstance('some org').should.deep.equal(
+                new Manufacturer('some org', 'some org', null, null),
             );
 
             getAttributeValueStub.should.have.been.calledOnceWithExactly(ORG_TYPE_FIELD);

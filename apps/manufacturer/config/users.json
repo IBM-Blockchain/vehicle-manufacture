@@ -11,7 +11,7 @@
                 "value": "vehicle_manufacture.*"
             },
             {
-                "name": "vehicle_manufacture.role.participant.create",
+                "name": "vehicle_manufacture.role.organization.update",
                 "value": "y",
                 "ecert": true
             },

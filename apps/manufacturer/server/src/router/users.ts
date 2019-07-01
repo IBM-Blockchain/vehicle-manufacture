@@ -12,7 +12,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { Response } from 'express';
-import { ContractRouter, Enroll, FabricProxy, IRequest, Utils, CONTRACT_NAMES } from 'common';
+import { ContractRouter, Enroll, FabricProxy, IRequest, CONTRACT_NAMES } from 'common';
 
 export class ParticipantContractRouter extends ContractRouter {
     public static basePath = 'users';
@@ -31,14 +31,6 @@ export class ParticipantContractRouter extends ContractRouter {
                 res.status(400);
                 res.send('Error registering user. ' + err.message);
             }
-        });
-
-        this.router.post('/:participantType/register', async (req: IRequest, res: Response) => {
-            return (
-                await this.transactionToCall(
-                    'register' + Utils.upperFirstChar(req.params.participantType),
-                )
-            )(req, res);
         });
     }
 }

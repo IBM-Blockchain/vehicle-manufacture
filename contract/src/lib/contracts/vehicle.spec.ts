@@ -80,9 +80,10 @@ describe ('#VehicleContract', () => {
         organization = sinon.createStubInstance(Organization);
         participant = sinon.createStubInstance(Participant);
 
-        clientIdentity.loadParticipant.returns({organization, participant});
+        (clientIdentity as any)._participant = participant;
+        (clientIdentity as any)._organization = organization;
 
-        (ctx as any).clientIdentity = clientIdentity;
+        (ctx as any)._clientIdentity = clientIdentity;
         (ctx as any).participantList = participantList;
         (ctx as any).vehicleList = vehicleList;
         (ctx as any).policyList = policyList;
@@ -98,13 +99,6 @@ describe ('#VehicleContract', () => {
     after(() => {
         mockery.deregisterAll();
         mockery.disable();
-    });
-
-    describe ('createContext', ()  => {
-        it ('should create a VehicleManufacturerNetContext instance', () => {
-            const newCtx = contract.createContext();
-            newCtx.should.be.instanceof(VehicleManufactureNetContext);
-        });
     });
 
     describe ('placeOrder', () => {
@@ -184,7 +178,7 @@ describe ('#VehicleContract', () => {
 
             organization = sinon.createStubInstance(Manufacturer);
             (organization as any).id = 'some org id';
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeOrder = sinon.createStubInstance(Order);
 
@@ -226,7 +220,7 @@ describe ('#VehicleContract', () => {
             (participant as any).orgId = 'some org';
 
             organization = sinon.createStubInstance(Manufacturer);
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeOrder = sinon.createStubInstance(Order);
             fakeOrder.madeByOrg.returns(true).withArgs('some org').returns(false);
@@ -243,7 +237,7 @@ describe ('#VehicleContract', () => {
             (participant as any).orgId = 'some org';
 
             organization = sinon.createStubInstance(Manufacturer);
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeOrder = sinon.createStubInstance(Order);
             fakeOrder.madeByOrg.returns(false).withArgs('some org').returns(true);
@@ -324,6 +318,12 @@ describe ('#VehicleContract', () => {
     });
 
     describe ('registerVehicleForOrder', () => {
+
+        beforeEach(() => {
+            (organization as sinon.SinonStubbedInstance<Manufacturer>).originCode = 'some origin code';
+            (organization as sinon.SinonStubbedInstance<Manufacturer>).manufacturerCode = 'some manufacturer code';
+        });
+
         it ('should error when the caller is not allowed to update orders', async () => {
             participant.hasRole.returns(true).withArgs(Roles.ORDER_UPDATE).returns(false);
 
@@ -337,6 +337,29 @@ describe ('#VehicleContract', () => {
 
             await contract.registerVehicleForOrder(ctx as any, 'some order id', 'some vin').should.be.rejectedWith(
                 `Only callers with roles ${Roles.ORDER_UPDATE} and ${Roles.VEHICLE_CREATE} can register vehicles for orders`, // tslint:disable-line
+            );
+        });
+
+        it ('should error when manufacturer manufacturer code not set', async () => {
+            participant.hasRole.returns(false).withArgs(Roles.ORDER_UPDATE).returns(true)
+            .withArgs(Roles.VEHICLE_CREATE).returns(true);
+
+            delete (organization as sinon.SinonStubbedInstance<Manufacturer>).originCode;
+            delete (organization as sinon.SinonStubbedInstance<Manufacturer>).manufacturerCode;
+
+            await contract.registerVehicleForOrder(ctx as any, 'some order id', 'some vin').should.be.rejectedWith(
+                'Manufacturer\'s origin and manufacturer code must be set before vehicles can be registered',
+            );
+        });
+
+        it ('should error when manufacturer origin code not set', async () => {
+            participant.hasRole.returns(false).withArgs(Roles.ORDER_UPDATE).returns(true)
+            .withArgs(Roles.VEHICLE_CREATE).returns(true);
+
+            delete (organization as sinon.SinonStubbedInstance<Manufacturer>).originCode;
+
+            await contract.registerVehicleForOrder(ctx as any, 'some order id', 'some vin').should.be.rejectedWith(
+                'Manufacturer\'s origin and manufacturer code must be set before vehicles can be registered',
             );
         });
 
@@ -550,7 +573,7 @@ describe ('#VehicleContract', () => {
             participant.hasRole.returns(false).withArgs(Roles.VEHICLE_READ).returns(true);
 
             organization = sinon.createStubInstance(Manufacturer);
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeVehicle = sinon.createStubInstance(Vehicle);
 
@@ -567,7 +590,7 @@ describe ('#VehicleContract', () => {
             participant.hasRole.returns(false).withArgs(Roles.VEHICLE_READ).returns(true);
 
             organization = sinon.createStubInstance(Insurer);
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeVehicle = sinon.createStubInstance(Vehicle);
 
@@ -611,7 +634,7 @@ describe ('#VehicleContract', () => {
             (participant as any).orgId = 'some org';
 
             organization = sinon.createStubInstance(Manufacturer);
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeVehicle = sinon.createStubInstance(Vehicle);
             fakeVehicle.madeByOrg.returns(true).withArgs('some org').returns(false);
@@ -628,7 +651,7 @@ describe ('#VehicleContract', () => {
             (participant as any).orgId = 'some org';
 
             organization = sinon.createStubInstance(Manufacturer);
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakeVehicle = sinon.createStubInstance(Vehicle);
             fakeVehicle.madeByOrg.returns(false).withArgs('some org').returns(true);
@@ -731,7 +754,7 @@ describe ('#VehicleContract', () => {
 
             organization = sinon.createStubInstance(Insurer);
             (organization as any).id = 'some org id';
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakePolicy = sinon.createStubInstance(Policy);
 
@@ -773,7 +796,7 @@ describe ('#VehicleContract', () => {
 
             organization = sinon.createStubInstance(Insurer);
             (organization as any).id = 'some org';
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakePolicy = sinon.createStubInstance(Policy);
             (fakePolicy as any).insurerId = 'some other org';
@@ -790,7 +813,7 @@ describe ('#VehicleContract', () => {
 
             organization = sinon.createStubInstance(Insurer);
             (organization as any).id = 'some org';
-            clientIdentity.loadParticipant.returns({organization, participant});
+            (clientIdentity as any)._organization = organization;
 
             const fakePolicy = sinon.createStubInstance(Policy);
             (fakePolicy as any).insurerId = 'some org';

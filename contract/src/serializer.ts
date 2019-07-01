@@ -12,9 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import * as FabricJSONSerializer from 'fabric-contract-api/lib/jsontransactionserializer';
-import { newLogger } from 'fabric-shim';
-
-const logger = newLogger('SERIALIZER');
 
 // SERIALIZER SPECIFIC TO THIS DEMO - NOT A GENERIC SOLUTION
 export class JSONSerializer extends FabricJSONSerializer {

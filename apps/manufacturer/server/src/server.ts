@@ -11,12 +11,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { CHAINCODE_NAME, CHANNEL_NAME, Config, DEFAULT_LOCAL_CONNECTION_PATH, DEFAULT_LOCAL_WALLET_PATH } from 'common';
+import { Config } from 'common';
 import * as express from 'express';
 import * as http from 'http';
 import * as RED from 'node-red';
 import * as path from 'path';
 import { setup } from './app';
+import { SERVER_CONFIG } from './constants';
 
 async function createServer() {
     const port = (await Config.readConfig()).manufacturer.port;
@@ -36,13 +37,7 @@ async function createServer() {
     app.use(nodeRedSettings.httpAdminRoot, RED.httpAdmin);
     app.use(nodeRedSettings.httpNodeRoot, RED.httpNode);
 
-    await setup(app, {
-        channelName: CHANNEL_NAME,
-        connectionProfilePath: DEFAULT_LOCAL_CONNECTION_PATH,
-        contractName: CHAINCODE_NAME,
-        org: 'Arium',
-        walletPath: DEFAULT_LOCAL_WALLET_PATH,
-    });
+    await setup(app, SERVER_CONFIG);
 
     server.listen(port, () => {
         console.log(`Server started on port ${port}`);

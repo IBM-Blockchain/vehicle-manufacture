@@ -16,7 +16,6 @@ import { CONTRACT_NAMES } from '../constants';
 import { Enroll } from '../enroll';
 import FabricProxy from '../fabricproxy';
 import { IRequest } from '../interfaces';
-import Utils from '../utils';
 import { ContractRouter } from './utils/contractRouter';
 
 export class ParticipantContractRouter extends ContractRouter {
@@ -43,20 +42,6 @@ export class ParticipantContractRouter extends ContractRouter {
                 res.status(400);
                 res.send('Error registering user. ' + err.message);
             }
-        });
-
-        this.router.post('/:participantType/register', async (req: IRequest, res: Response) => {
-            if (req.params.participantType === 'registrar') {
-                req.body.manufacturerCode = '';
-                req.body.originCode = '';
-            }
-
-            return (
-                await this.transactionToCall(
-                    'register' + Utils.upperFirstChar(req.params.participantType),
-                    false,
-                )
-            )(req, res);
         });
     }
 }

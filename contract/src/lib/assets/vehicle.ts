@@ -13,12 +13,10 @@ limitations under the License.
 */
 
 import { Object, Property } from 'fabric-contract-api';
-import { newLogger } from 'fabric-shim';
 import { Manufacturer } from '../organizations/manufacturer';
 import { NotRequired } from '../utils/annotations';
 import { Asset } from './asset';
 import { IVehicleDetails } from './vehicleDetails';
-const logger = newLogger('VEHICLE');
 
 export enum VehicleStatus {
     ACTIVE = 0,

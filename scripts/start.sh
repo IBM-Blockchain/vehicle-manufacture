@@ -226,7 +226,7 @@ do
 done
 
 echo "##################################"
-echo "# REGISTER EVERYONE IN CHAINCODE #"
+echo "# ENROLLING EVERYONE FOR NETWORK #"
 echo "##################################"
 
 VDA_REGISTER="$VDA_PORT|regulator|$VDA_USERS"
@@ -247,35 +247,13 @@ do
         echo "ENROLLING $(echo $row | jq -r '.name' )"
         wait_until "echo '$row' | curl -s -H \"Content-Type: application/json\" -X POST -u admin:adminpw -d @- http://localhost:$PORT/api/users/enroll" 5 3
     done
-
-    echo "REGISTERING REGISTRAR"
-    if [ "$TYPE" == "manufacturer" ]; then # Special case for manufacturer
-        wait_until "curl -s -X POST -H \"Content-Type: application/json\" -d '{\"originCode\": \"S\", \"manufacturerCode\": \"G\"}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register > /dev/null" 5 3
-    else
-        wait_until "curl -s -X POST -H \"Content-Type: application/json\" -d '{}' -u registrar:registrarpw http://localhost:$PORT/api/users/registrar/register > /dev/null" 5 3
-    fi
-
-    for row in $(jq -r ".[] | .name" $USER_LIST); do # GET ALL OF TYPE PEOPLE FROM JSON
-        if [ "$row" != "registrar" ]; then
-
-            echo "REGISTERING USER $row"
-
-            ATTRS="["
-
-            for attr in $(jq -r '[.[] | select(.name == "'"$row"'") | .attrs[] | select(.name | contains("vehicle_manufacture.role."))] | .[] | .name' $USER_LIST); do
-                ATTRS="$ATTRS\\\"$attr\\\","
-            done
-
-            if [ "$ATTRS" != "[" ]; then
-                ATTRS=${ATTRS%?}
-            fi
-
-            ATTRS="$ATTRS]"
-
-            wait_until "curl -s -X POST -H \"Content-Type: application/json\" -d '{\"name\":\"'\"$row\"'\", \"roles\": '\"$ATTRS\"'}' -u registrar:registrarpw http://localhost:$PORT/api/users/task/register > /dev/null" 5 3
-        fi
-    done
 done
+
+echo "###################################"
+echo "# SETTING MANUFACTURER PROPERTIES #"
+echo "###################################"
+
+docker exec arium_app node server/dist/setup.js
 
 echo "#####################"
 echo "# STARTING BROWSERS #"

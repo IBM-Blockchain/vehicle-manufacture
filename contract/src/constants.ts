@@ -21,7 +21,7 @@ export const Roles = {
     ORDER_CREATE: 'order.create',
     ORDER_READ: 'order.read',
     ORDER_UPDATE: 'order.update',
-    PARTICIPANT_CREATE: 'participant.create',
+    ORGANIZATION_UPDATE: 'organization.update',
     POLICY_CREATE: 'policy.create',
     POLICY_READ: 'policy.read',
     POLICY_UPDATE: 'policy.update',

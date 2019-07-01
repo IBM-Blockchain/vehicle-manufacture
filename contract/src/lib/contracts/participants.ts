@@ -12,89 +12,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-import { Contract, Param, Returns, Transaction } from 'fabric-contract-api';
-import { NetworkName, Roles, RolesPrefix } from '../../constants';
-import { Registrar } from '../participants/registrar';
-import { Task } from '../participants/task';
+import { Transaction } from 'fabric-contract-api';
+import { Roles } from '../../constants';
+import { Manufacturer } from '../organizations';
 import { VehicleManufactureNetContext } from '../utils/context';
+import { BaseContract } from './base';
 
-export class ParticipantsContract extends Contract {
+export class ParticipantsContract extends BaseContract {
     constructor() {
-        super(NetworkName + '.participants');
-    }
-
-    public createContext() {
-        return new VehicleManufactureNetContext();
+        super('participants');
     }
 
     @Transaction()
-    public async getOrganizations(ctx: VehicleManufactureNetContext) {
-        return await ctx.organizationList.getAll();
-    }
-
-    @Transaction()
-    @Returns('Registrar')
-    public async registerRegistrar(
-        ctx: VehicleManufactureNetContext, originCode?: string, manufacturerCode?: string,
-    ): Promise<Registrar> {
-        if (ctx.clientIdentity.getAttributeValue(RolesPrefix + Roles.PARTICIPANT_CREATE) !== 'y') {
-            throw new Error(
-                `Only callers with role ${RolesPrefix + Roles.PARTICIPANT_CREATE} can register as registrar`,
-            );
-        }
-
-        const orgName = ctx.clientIdentity.getAttributeValue('vehicle_manufacture.company');
-        const orgType = ctx.clientIdentity.getAttributeValue('vehicle_manufacture.org_type');
-
-        await this.registerOrganization(ctx, orgName, originCode, manufacturerCode);
-        const participant = ctx.clientIdentity.newParticipantInstance();
-
-        switch (orgType) {
-            case 'regulator':
-            case 'insurer':
-            case 'manufacturer':
-                await ctx.participantList.add(participant);
-                break;
-            default:
-                throw new Error(`Participant type does not exist: ${orgType}`);
-        }
-
-        return participant;
-    }
-
-    @Transaction()
-    @Param('roles', 'string[]')
-    @Returns('Task')
-    public async registerTask(ctx: VehicleManufactureNetContext, name: string, roles: string[]): Promise<Task> {
-        const {organization, participant} = await ctx.clientIdentity.loadParticipant();
-
-        if (!participant.hasRole(Roles.PARTICIPANT_CREATE)) {
-            throw new Error(`Only callers with role ${Roles.PARTICIPANT_CREATE} can register a task user`);
-        }
-        roles = roles.map((role) => {
-            role = role.split('"').join('');
-            return role;
-        }).filter((role) => {
-            return role.startsWith(RolesPrefix);
-        }).map((role) => {
-            return role.split(RolesPrefix)[1];
-        });
-
-        const person = new Task(
-            `${name}@${organization.name}`, roles, organization.id,
-        );
-
-        await ctx.participantList.add(person);
-
-        return person;
-    }
-
-    private async registerOrganization(
-        ctx: VehicleManufactureNetContext, orgName: string, ...additionalInfo: any
+    public async provideManufacturerDetails(
+        ctx: VehicleManufactureNetContext, originCode: string, manufacturerCode: string,
     ) {
-        const organization = ctx.clientIdentity.newOrganizationInstance(orgName, additionalInfo);
-        if (!(await ctx.organizationList.exists(orgName))) {
-            await ctx.organizationList.add(organization);
+        const { participant, organization } = ctx.clientIdentity;
+
+        if (!participant.hasRole(Roles.ORGANIZATION_UPDATE)) {
+            throw new Error(`Only callers with role ${Roles.ORGANIZATION_UPDATE} can update their organization`);
+        } else if (!(organization instanceof Manufacturer)) {
+            throw new Error('Only callers from organisations of type Manufacturer can provide manufacturer details');
         }
+
+        organization.originCode = originCode;
+        organization.manufacturerCode = manufacturerCode;
+
+        await ctx.organizationList.update(organization, true);
     }
 }
