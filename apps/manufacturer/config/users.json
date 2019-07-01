@@ -1,0 +1,140 @@
+[
+    {
+        "name": "registrar",
+        "attrs": [
+            {
+                "name": "hf.Registrar.Roles",
+                "value": "client"
+            },
+            {
+                "name": "hf.Registrar.Attributes",
+                "value": "vehicle_manufacture.*"
+            },
+            {
+                "name": "vehicle_manufacture.role.organization.update",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "Arium",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "manufacturer",
+                "ecert": true
+            }
+        ]
+    },
+    {
+        "name": "telematics",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role.vehicle.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.usage_event.create",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "Arium",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "manufacturer",
+                "ecert": true
+            }
+        ]
+    },
+    {
+        "name": "production",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role.order.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.order.update",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.vehicle.create",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.vehicle.update",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "Arium",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "manufacturer",
+                "ecert": true
+            }
+        ]
+    },
+    {
+        "name": "orders",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role.order.create",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.order.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "Arium",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "manufacturer",
+                "ecert": true
+            }
+        ]
+    },
+    {
+        "name": "reports",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role.vehicle.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.usage_event.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "Arium",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "manufacturer",
+                "ecert": true
+            }
+        ]
+    }
+]

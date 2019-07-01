@@ -1,0 +1,261 @@
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+version: '2'
+
+services:
+
+  tlsca.arium.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: ca0
+    container_name: tlsca.arium.com
+
+  tlsca.vda.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: ca1
+    container_name: tlsca.vda.com
+
+  tlsca.prince-insurance.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: ca2
+    container_name: tlsca.prince-insurance.com
+
+  orderer.example.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: orderer
+    container_name: orderer.example.com
+
+  peer0.arium.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: peer
+    container_name: peer0.arium.com
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.arium.com
+      - CORE_PEER_ADDRESS=peer0.arium.com:7051
+      - CORE_PEER_LISTENADDRESS=peer0.arium.com:7051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.arium.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.arium.com:7051
+      - CORE_PEER_LOCALMSPID=AriumMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.arium.com:5984
+
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg1/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg1/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg1/tls/ca.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
+    ports:
+      - 7051:7051
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peer
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+        - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/users/:/etc/hyperledger/users
+    depends_on:
+      - orderer.example.com
+      - couchdb.arium.com
+
+  couchdb.arium.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: couchdb
+    container_name: couchdb.arium.com
+    ports:
+      - 5984:5984
+    environment:
+      DB_URL: http://localhost:5984/member_db
+
+  peer0.vda.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: peer
+    container_name: peer0.vda.com
+
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.vda.com
+      - CORE_PEER_ADDRESS=peer0.vda.com:8051
+      - CORE_PEER_LISTENADDRESS=peer0.vda.com:8051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.vda.com:8051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.vda.com:8051
+      - CORE_PEER_LOCALMSPID=VDAMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.vda.com:5984
+
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg2/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg2/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg2/tls/ca.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
+    ports:
+      - 8051:8051
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com:/etc/hyperledger/peer
+        - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+        - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+        - ../crypto-material/crypto-config/peerOrganizations/vda.com/users/:/etc/hyperledger/users
+    depends_on:
+      - orderer.example.com
+      - couchdb.vda.com
+
+  couchdb.vda.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: couchdb
+    container_name: couchdb.vda.com
+    ports:
+      - 6984:5984
+    environment:
+      DB_URL: http://localhost:5984/member_db
+
+  peer0.prince-insurance.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: peer
+    container_name: peer0.prince-insurance.com
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=peer0.prince-insurance.com
+      - CORE_PEER_ADDRESS=peer0.prince-insurance.com:9051
+      - CORE_PEER_LISTENADDRESS=peer0.prince-insurance.com:9051
+      - CORE_PEER_GOSSIP_ENDPOINT=peer0.prince-insurance.com:9051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.prince-insurance.com:9051
+      - CORE_PEER_LOCALMSPID=PrinceInsuranceMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/peer/msp
+
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb.prince-insurance.com:5984
+
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg3/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg3/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg3/tls/ca.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
+    ports:
+      - 9051:9051
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/users/:/etc/hyperledger/users
+    depends_on:
+      - orderer.example.com
+      - couchdb.prince-insurance.com
+
+  couchdb.prince-insurance.com:
+    extends:
+        file: docker-compose-base.yaml
+        service: couchdb
+    container_name: couchdb.prince-insurance.com
+    ports:
+      - 7984:5984
+    environment:
+      DB_URL: http://localhost:5984/member_db
+
+  arium_cli:
+    extends:
+      file: docker-compose-base.yaml
+      service: clibase
+    container_name: arium_cli
+
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.arium.com:7051
+      - CORE_PEER_LOCALMSPID=AriumMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/config/crypto-config/peerOrganizations/arium.com/users/Admin@arium.com/msp
+
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg1/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg1/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg1/tls/ca.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@arium.com/tls/client.crt
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/users/:/etc/hyperledger/users
+    depends_on:
+      - peer0.arium.com
+      
+  vda_cli:
+    extends:
+      file: docker-compose-base.yaml
+      service: clibase
+    container_name: vda_cli
+
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.vda.com:8051
+      - CORE_PEER_LOCALMSPID=VDAMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/config/crypto-config/peerOrganizations/vda.com/users/Admin@vda.com/msp
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg2/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg2/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg2/tls/ca.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@vda.com/tls/client.crt
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/users/:/etc/hyperledger/users
+    depends_on:
+      - peer0.vda.com
+
+  princeinsurance_cli:
+    extends:
+      file: docker-compose-base.yaml
+      service: clibase
+    container_name: princeinsurance_cli
+
+    environment:
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.prince-insurance.com:9051
+      - CORE_PEER_LOCALMSPID=PrinceInsuranceMSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/config/crypto-config/peerOrganizations/prince-insurance.com/users/Admin@prince-insurance.com/msp
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/peerOrg3/tls/server.key
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/peerOrg3/tls/server.crt
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/peerOrg3/tls/ca.crt
+      - CORE_TLS_CLIENT_KEY_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.key
+      - CORE_TLS_CLIENT_CERT_PATH=/etc/hyperledger/users/Admin@prince-insurance.com/tls/client.crt
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peer
+      - ../crypto-material/crypto-config/peerOrganizations/arium.com/peers/peer0.arium.com/:/etc/hyperledger/peerOrg1
+      - ../crypto-material/crypto-config/peerOrganizations/vda.com/peers/peer0.vda.com/:/etc/hyperledger/peerOrg2
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/peers/peer0.prince-insurance.com/:/etc/hyperledger/peerOrg3
+      - ../crypto-material/crypto-config/peerOrganizations/prince-insurance.com/users/:/etc/hyperledger/users
+    depends_on:
+      - peer0.prince-insurance.com

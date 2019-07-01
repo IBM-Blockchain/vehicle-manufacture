@@ -46,5 +46,27 @@ fabric-tools/**
 # Ignore DS_Store
 .DS_Store
 
+# Ignore vscode artificats
+.vscode
+
 # Ignore install folders
-/packages/vehicle-lifecycle/composer-data-latest
+node_modules
+**/dist
+**/vehiclemanufacture_fabric/wallet/**
+**/vehiclemanufacture_fabric/connection.json
+**/vehiclemanufacture_fabric/local_connection.json
+!**/vehiclemanufacture_fabric/wallet/.gitkeep
+tmp
+
+scripts/network/crypto-material/*.block
+scripts/network/crypto-material/*.tx
+scripts/network/crypto-material/crypto-config
+scripts/network/crypto-material/core.yaml
+
+apps/manufacturer/config/.node-red-flow.json.backup
+
+vm_demo_logs_*
+
+**/checkpointers
+
+package-lock.json

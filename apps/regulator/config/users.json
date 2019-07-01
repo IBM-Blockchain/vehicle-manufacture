@@ -1,0 +1,60 @@
+[
+    {
+        "name": "registrar",
+        "attrs": [
+            {
+                "name": "hf.Registrar.Roles",
+                "value": "client"
+            },
+            {
+                "name": "hf.Registrar.Attributes",
+                "value": "vehicle_manufacture.*"
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "VDA",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "regulator",
+                "ecert": true
+            }
+        ]
+    },
+    {
+        "name": "audit",
+        "attrs": [
+            {
+                "name": "vehicle_manufacture.role.vehicle.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.usage_event.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.policy.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.role.order.read",
+                "value": "y",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.company",
+                "value": "VDA",
+                "ecert": true
+            },
+            {
+                "name": "vehicle_manufacture.org_type",
+                "value": "regulator",
+                "ecert": true
+            }
+        ]
+    }
+]
