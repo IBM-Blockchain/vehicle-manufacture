@@ -45,17 +45,27 @@ cd $BASEDIR/../..
 
 
 show_spinner() {
-    PID="${1}"
-    SPIN='\|/-'
-    TEMP=""
-    DELAY='0.75'
-    while ps a | awk '{print $1}' | grep -q "${PID}"; do
-        TEMP="${SPIN#?}"
-    printf "[%c]  " "${SPIN}"
-    SPIN=${TEMP}${SPIN%"${TEMP}"}
-    sleep ${DELAY}
-    printf "\b\b\b\b\b\b"
-    done
+    if [ -z "${TRAVIS_JOB_ID}" ]; then
+        PID="${1}"
+        SPIN='\|/-'
+        TEMP=""
+        DELAY='0.75'
+        while ps a | awk '{print $1}' | grep -q "${PID}"; do
+            TEMP="${SPIN#?}"
+            printf "[%c]  " "${SPIN}"
+            SPIN=${TEMP}${SPIN%"${TEMP}"}
+            sleep ${DELAY}
+            printf "\b\b\b\b\b\b"
+        done
+    else
+        TEMP=""
+        DELAY='0.75'
+        while ps a | awk '{print $1}' | grep -q "${PID}"; do
+            TEMP="."
+            printf "%c" "$TEMP"
+            sleep ${DELAY}
+        done
+    fi
 }
 
 docker build -t awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION -f ./apps/car_builder/Dockerfile . --no-cache > $LOG_PATH/car-builder.log 2>&1 &
