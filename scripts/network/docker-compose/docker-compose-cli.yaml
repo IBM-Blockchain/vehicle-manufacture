@@ -32,6 +32,7 @@ services:
       - /var/run/:/host/var/run/
       - ../crypto-material:/etc/hyperledger/config/
       - ../../../contract:/etc/hyperledger/contract/
+      - ../../../apps/common:/etc/hyperledger/apps/common
       - ../../../apps/manufacturer/vehiclemanufacture_fabric:/etc/apps/manufacturer/vehiclemanufacture_fabric
       - ../../../apps/insurer/vehiclemanufacture_fabric:/etc/apps/insurer/vehiclemanufacture_fabric
       - ../../../apps/regulator/vehiclemanufacture_fabric:/etc/apps/regulator/vehiclemanufacture_fabric
