@@ -56,14 +56,14 @@ export class VehicleManufactureNetClientIdentity extends ClientIdentity {
                 }
             }
 
-            console.log('CREATING NEW USER', roles);
-
             this._participant = new Task(participantId, roles, orgId);
+            this.ctx.participantList.add(this._participant);
 
             if (await this.ctx.organizationList.exists(this._participant.orgId)) {
                 this._organization = await this.ctx.organizationList.get(this._participant.orgId);
             } else {
                 this._organization = this.newOrganizationInstance(this.getAttributeValue(ORG_NAME_FIELD));
+                this.ctx.organizationList.add(this._organization);
             }
         }
     }
