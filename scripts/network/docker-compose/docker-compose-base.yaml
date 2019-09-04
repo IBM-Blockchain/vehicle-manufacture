@@ -154,9 +154,7 @@ services:
     command: /bin/bash
     volumes:
       - /var/run/:/host/var/run/
-      - ../../../contract:/etc/hyperledger/contract
       - ../crypto-material/:/etc/hyperledger/configtx/
-      - ../crypto-material:/etc/hyperledger/config
 
   couchdb:
     container_name: couchdb
