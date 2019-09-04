@@ -153,10 +153,8 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
     command: /bin/bash
     volumes:
-      - /var/run/:/host/var/run/
-      - ../../../contract:/etc/hyperledger/contract
-      - ../crypto-material/:/etc/hyperledger/configtx/
-      - ../crypto-material:/etc/hyperledger/config
+      - /var/run/:/host/var/run
+      - ../crypto-material/:/etc/hyperledger/configtx
 
   couchdb:
     container_name: couchdb
