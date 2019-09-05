@@ -15,8 +15,8 @@ limitations under the License.
 'use strict';
 
 import { Object as ContractObject, Property } from 'fabric-contract-api';
-import * as getParams from 'get-params';
 import 'reflect-metadata';
+import { ReflectParams } from 'reflect-params';
 
 export interface IState<T> {
     new (...args: any[]): T;
@@ -53,7 +53,7 @@ export class State {
         }
 
         const paramNames: string[] = Reflect.getMetadata('contract:function', objClass.prototype, 'constructor') ||
-            getParams(objClass.prototype.constructor);
+            ReflectParams(objClass.prototype.constructor);
 
         const args = [];
         const missingFields = [];
