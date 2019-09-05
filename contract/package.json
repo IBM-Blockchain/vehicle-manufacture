@@ -72,9 +72,9 @@
     "asn1js": "^2.0.22",
     "fabric-contract-api": "1.4.1",
     "fabric-shim": "1.4.1",
-    "get-params": "^0.1.2",
     "pkijs": "^2.1.76",
     "reflect-metadata": "^0.1.13",
+    "reflect-params": "1.0.1",
     "uuid": "^3.3.2"
   }
 }

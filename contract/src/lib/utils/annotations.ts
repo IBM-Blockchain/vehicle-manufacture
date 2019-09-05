@@ -11,8 +11,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import * as getParams from 'get-params';
 import 'reflect-metadata';
+import { ReflectParams } from 'reflect-params';
 
 export function NotRequired(target: any, propertyKey: string, descriptor: number) {
     if (typeof propertyKey === 'undefined') {
@@ -21,7 +21,7 @@ export function NotRequired(target: any, propertyKey: string, descriptor: number
     }
 
     const existingParams = Reflect.getMetadata('contract:function', target, propertyKey) ||
-        getParams(target[propertyKey]);
+        ReflectParams(target[propertyKey]);
 
     existingParams[descriptor] = (existingParams[descriptor] as string).endsWith('?') ?
         existingParams[descriptor] : existingParams[descriptor] + '?';
