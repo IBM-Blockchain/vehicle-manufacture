@@ -1,0 +1,28 @@
+{
+    "schema": "https://github.com/awjh/license-check-and-add/blob/master/config-schema.json",
+    "license": "header.txt",
+    "ignore": [
+        ".git",
+        ".travis",
+        "**/coverage/*",
+        "**/logs/*",
+        "**/*.html",
+        "**/*.txt",
+        "**/*.json",
+        "**/*.less",
+        "**/*.ttf",
+        "**/*.md",
+        "**/.env",
+        "**/*.PNG",
+        "**/*.svg",
+        "**/*.xml",
+        "**/*.tmpl",
+        "**/*.yaml",
+        "**/*.yml"
+    ],
+    "defaultFormat": {
+        "eachLine": {
+            "prepend": "# "
+        }
+    }
+}
