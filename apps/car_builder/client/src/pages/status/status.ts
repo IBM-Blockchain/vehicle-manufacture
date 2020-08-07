@@ -67,7 +67,7 @@ export class StatusPage {
       if (ready) {
         this.config = this.configProvider.getConfig();
         
-        // this.setupListener(this.config.restServer+'/orders/events/updated', this.handleOrderUpdate.bind(this));
+        this.setupListener(this.config.restServer+'/orders/events/updated', this.handleOrderUpdate.bind(this));
 
         this.ready = true;
       }
