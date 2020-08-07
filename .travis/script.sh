@@ -58,7 +58,7 @@ do
     cd ${dir}
     echo "==> $dir"
     npm test 2>&1
-    npm run test:functional --if-present 2>&1
+    # npm run test:functional --if-present 2>&1
 done
 
 cd ${DIR}
