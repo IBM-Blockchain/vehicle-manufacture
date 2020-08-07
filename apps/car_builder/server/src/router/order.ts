@@ -13,7 +13,7 @@ limitations under the License.
 */
 import { BaseRouter, Config } from 'common';
 import * as EventSource from 'eventsource';
-import { post } from 'request-promise-native';
+import { post, get } from 'request-promise-native';
 
 export class OrderRouter extends BaseRouter {
     public static basePath = 'orders';
@@ -36,6 +36,23 @@ export class OrderRouter extends BaseRouter {
 
             try {
                 const data = await post(manufacturerUrl + '/orders', options);
+                res.send(data);
+            } catch (err) {
+                res.status(500);
+                res.send(err.message);
+            }
+        });
+
+        this.router.get('/:orderId/history', async (req, res) => {
+            const options = {
+                headers: {
+                    Authorization: 'Basic ' + Buffer.from('carbuilder:carbuilderpw').toString('base64'),
+                },
+                json: true,
+            };
+
+            try {
+                const data = await get(manufacturerUrl + '/orders/' + req.params.orderId + '/history', options);
                 res.send(data);
             } catch (err) {
                 res.status(500);

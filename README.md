@@ -13,7 +13,7 @@ This demo has been tested to work on Ubuntu and MacOS.
 
 ## Setting up the demo
 
-Clone this git repository and then use the scripts in the `scripts` folder to install and start the demo. There are two scripts for setting up the demo and two for tearing it down. First run `./scipts/install.sh` from the top level folder of the repository. This will install the smart contract's and CLI tool's node_modules. Ideally you should only have to run this command once. Next run `./scripts/start.sh`. This will bring up a Hyperledger Fabric network, register and enroll the identities and start the 4 applications used in this demo. Once the installer has finished running the applications will be available at the following locations:
+Clone this git repository and then use the scripts in the `scripts` folder to install and start the demo. There are two scripts for setting up the demo and two for tearing it down. First run `./scripts/install.sh` from the top level folder of the repository. This will install the smart contract's and CLI tool's node_modules. Ideally you should only have to run this command once. Next run `./scripts/start.sh`. This will bring up a Hyperledger Fabric network, register and enroll the identities and start the 4 applications used in this demo. Once the installer has finished running the applications will be available at the following locations:
 
 - Car builder - http://localhost:6001
 - Manufacturer - http://localhost:6002

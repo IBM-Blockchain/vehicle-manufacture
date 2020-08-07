@@ -12,7 +12,7 @@ if [ "${ABORT_BUILD}" = "true" ]; then
   exit ${ABORT_CODE}
 fi
 
-npm install -g @alrra/travis-scripts cordova
+npm install -g @alrra/travis-scripts cordova@8.0.0
 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo dpkg -i google-chrome*.deb
