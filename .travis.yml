@@ -20,6 +20,8 @@ branches:
   only:
   - master
   - "/([0-9]+\\.){2}[0-9]+/"
+after_failure:
+  - docker logs car_builder_app
 env:
   global:
   - secure: mkkRym3ovcUyV8UIYOOYAzu/c6vsS+6GFlBexI49yUTzNsu+MUkmmdFWiX/ZtRKqFA+l5kT9yAlyp0yt1GSEVlkNRGR/TvnFbtzj393RAY1V5LMcWKSKBctiRnDQRDjGESEk/+Iq1VHkwT6bslH3qZEtfQRNRFW65kRl43pJZdk4YmMsAd7WFZkm+Ugsvzs8JzKMshyUoYhdNsfEbZPCGIwowKKbg6oxiGBoFbZfqe4vooU878t+WG5ReThvAWYhBcDvVQ8BUGeC7LRypEZm+bezF+cGA6vxNO4Js9WzuVugrvSSDvZaAmHDUosKGGGtEgLiYtdLLQV0D+CoTgJ4CNrQIpARKdssq+qiC10FvYXgW5kpocEVdm2S5s4OPAlgcpaEavIAFCV7+AcqJTQO8+oSozCxblEVCYapsZ6NnpHjt0G/CXkmqPRPaGtntdfsbmJoc+dx2d0a/Q7tm8gIf8kT8R1/m87piZ1xTir2i4BP9R+XniiiXO2qPgiauJnB+AsuVh7j9rg9SKK9on5ksNolQVWGwse3LleeeZHZ/k5wq/HPkVUCQzlR10e8V/HJs+Po9BZuDhlfKPrvD1S4MeD+iC0XR69I2W8sB8IbymX+jXg/ZGZK8R20+lq7OOShDHBJJMJsmBtyVGWDmjr6cI10Lk01nCiHDLsLU6SArWA=
