@@ -17,7 +17,10 @@ limitations under the License.
   <div class="header-background"></div>
 
   <ion-card class="order-header">
-    <h3>Order</h3>
+    <h3 id="order-status">
+      <span>Order</span>
+      <span id="last-updated" (click)="getOrderHistory()" >Last updated {{lastUpdated | date:'dd/MM/yyyy hh:mm:ss'}} <span id="refresh" >&#8635;</span></span>
+    </h3>
     <h2><strong>Arium</strong> {{car.name}}</h2>
 
     <h5>#{{ order.id }}</h5>

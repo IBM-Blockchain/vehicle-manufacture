@@ -28,6 +28,7 @@ import { Http, RequestOptions, Headers } from '@angular/http';
   templateUrl: 'status.html',
 })
 export class StatusPage {
+  lastUpdated: Date;
   car: Object;
   order: any;
   ready: Boolean = false;
@@ -45,8 +46,10 @@ export class StatusPage {
 
     this.stage = [this.order.placed + ''];
 
+    this.lastUpdated = new Date();
+
     this.relativeDate = function(input: number, start: number) {
-      console.log(start, input);
+      console.log(input, start);
 
       if (input) {
         var diff = input - start;
@@ -64,7 +67,7 @@ export class StatusPage {
       if (ready) {
         this.config = this.configProvider.getConfig();
         
-        this.setupListener(this.config.restServer+'/orders/events/updated', this.handleOrderUpdate.bind(this));
+        // this.setupListener(this.config.restServer+'/orders/events/updated', this.handleOrderUpdate.bind(this));
 
         this.ready = true;
       }
@@ -96,6 +99,8 @@ export class StatusPage {
   }
 
   handleOrderUpdate(update: any, listener: any) {
+    console.log(update);
+
     if (update.id === this.order.id) {
       let i = update.orderStatus;
       this.stage[i] = this.relativeDate(update.timestamp, this.stage[0]);
@@ -103,7 +108,7 @@ export class StatusPage {
         this.order.vin = update.vin;
       }
 
-      if (update.orderStatus === 4) {
+      if (update.orderStatus === 4 && listener) {
         listener.close()
       }
     }
@@ -115,6 +120,33 @@ export class StatusPage {
 
       listener.close();
     }
+  }
+
+  async getOrderHistory() {
+    this.lastUpdated = new Date();
+
+    const headers = new Headers();
+      headers.append('Authorization', 'Basic ' + btoa(this.config.user + ':' + this.config.user + 'pw'));
+      headers.append('Content-Type', 'application/json');
+      const reqOpts = new RequestOptions({});
+      reqOpts.headers = headers;
+
+      try {
+        const orderHistory = await this.http.get(this.config.restServer + '/orders/' + this.order.id + '/history', reqOpts).toPromise();
+
+        for (const update of orderHistory.json().splice(1)) {
+          const formattedUpdate = {
+            id: update.value.id,
+            timestamp: update.timestamp * 1000,
+            orderStatus: update.value.orderStatus,
+            vin: update.value.vin
+          };
+
+          this.handleOrderUpdate(formattedUpdate, null);
+        }
+      } catch (err) {
+        console.log(err);
+      }
   }
 
   async insure() {

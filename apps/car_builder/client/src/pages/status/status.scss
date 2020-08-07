@@ -53,6 +53,23 @@ page-status {
       opacity: 1;
     }
 
+    #order-status {
+      flex-direction: row;
+
+      span:first-child {
+        flex: 1;
+      }
+
+      #last-updated {
+        line-height: 1em;
+        cursor: pointer;
+
+        #refresh {
+          font-size: 1.5em;
+        }
+      }
+    }
+
     .progress-selected {
       font-family: "OpenSans";
       font-style: italic;
