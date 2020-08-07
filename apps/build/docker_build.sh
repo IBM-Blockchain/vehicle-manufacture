@@ -60,30 +60,30 @@ show_spinner() {
 
 docker build -t awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION -f ./apps/car_builder/Dockerfile . --no-cache > $LOG_PATH/car-builder.log 2>&1 &
 CAR_PROCESS_ID=$!
-# docker build -t awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION -f ./apps/manufacturer/Dockerfile . --no-cache > $LOG_PATH/manufacturer.log 2>&1 &
-# MANUFACTURER_ID=$!
-# docker build -t awjh/vehicle-manufacture-iot-extension-insurer:$VERSION -f ./apps/insurer/Dockerfile . --no-cache > $LOG_PATH/insurer.log 2>&1 &
-# INSURER_ID=$!
-# docker build -t awjh/vehicle-manufacture-iot-extension-regulator:$VERSION -f ./apps/regulator/Dockerfile . --no-cache > $LOG_PATH/regulator.log 2>&1 &
-# REGULATOR_ID=$!
+docker build -t awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION -f ./apps/manufacturer/Dockerfile . --no-cache > $LOG_PATH/manufacturer.log 2>&1 &
+MANUFACTURER_ID=$!
+docker build -t awjh/vehicle-manufacture-iot-extension-insurer:$VERSION -f ./apps/insurer/Dockerfile . --no-cache > $LOG_PATH/insurer.log 2>&1 &
+INSURER_ID=$!
+docker build -t awjh/vehicle-manufacture-iot-extension-regulator:$VERSION -f ./apps/regulator/Dockerfile . --no-cache > $LOG_PATH/regulator.log 2>&1 &
+REGULATOR_ID=$!
 
 show_spinner $CAR_PROCESS_ID
 wait $CAR_PROCESS_ID
 CAR_EXIT=$?
 
-# show_spinner $MANUFACTURER_ID
-# wait $MANUFACTURER_ID
-# MANUFACTURER_EXIT=$?
+show_spinner $MANUFACTURER_ID
+wait $MANUFACTURER_ID
+MANUFACTURER_EXIT=$?
 
-# show_spinner $INSURER_ID
-# wait $INSURER_ID
-# INSURER_EXIT=$?
+show_spinner $INSURER_ID
+wait $INSURER_ID
+INSURER_EXIT=$?
 
-# show_spinner $REGULATOR_ID
-# wait $REGULATOR_ID
-# REGULATOR_EXIT=$?
+show_spinner $REGULATOR_ID
+wait $REGULATOR_ID
+REGULATOR_EXIT=$?
 
-if [ "$CAR_EXIT" != 0 ] # || [ "$MANUFACTURER_EXIT" != 0 ] || [ "$INSURER_EXIT" != 0 ] || [ $REGULATOR_EXIT != 0 ]
+if [ "$CAR_EXIT" != 0 ] || [ "$MANUFACTURER_EXIT" != 0 ] || [ "$INSURER_EXIT" != 0 ] || [ $REGULATOR_EXIT != 0 ]
 then
     echo "Failed to build docker images. Build processes exited with:"
     echo "Car Builder: $CAR_EXIT"
