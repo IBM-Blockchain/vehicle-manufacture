@@ -1,6 +1,6 @@
 {
   "name": "common",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Common code shared between participating orgs",
   "main": "dist/index.js",
   "scripts": {

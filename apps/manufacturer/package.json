@@ -1,7 +1,7 @@
 {
   "name": "iot-extension-vehicle-manufacture-manufacturer",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Vehicle Manufacture - A manufacturers view",
   "main": "index.js",
   "scripts": {
