@@ -99,9 +99,8 @@ export class StatusPage {
   }
 
   handleOrderUpdate(update: any, listener: any) {
-    console.log(update);
-
     if (update.id === this.order.id) {
+      this.lastUpdated = new Date();
       let i = update.orderStatus;
       this.stage[i] = this.relativeDate(update.timestamp, this.stage[0]);
       if (update.orderStatus === 2) {
