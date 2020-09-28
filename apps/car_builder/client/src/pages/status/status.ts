@@ -83,6 +83,7 @@ export class StatusPage {
 
     listener.onerror = (evt) => {
         console.log('ERROR', evt);
+        this.setupListener(url, callback);
     }
 
     listener.onclose = (evt) => {

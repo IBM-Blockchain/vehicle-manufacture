@@ -173,6 +173,7 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
     usageEventSource.onclose = (evt) => {
       console.error('Usage event listener closed');
+      this.setupListener(url, onMessage);
     };
 
     usageEventSource.onmessage = (evt) => {

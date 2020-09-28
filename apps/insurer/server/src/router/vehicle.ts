@@ -52,23 +52,7 @@ export class VehicleRouter extends ContractRouter {
             const eventType = vin + '-TELEMETRY';
             this.initEventSourceListener(req, res, this.connections, eventType);
             if (!this.telemetryListeners.has(vin)) {
-                const telemetryAdded = new EventSource(`${manufacturerUrl}/vehicles/${vin}/telemetry`);
-                this.telemetryListeners.set(vin, telemetryAdded);
-
-                telemetryAdded.onopen = (evt) => {
-                    console.log('OPEN', evt);
-                };
-
-                telemetryAdded.onerror = (evt) => {
-                    console.log('ERROR', evt);
-                };
-
-                telemetryAdded.onmessage = (evt) => {
-                    this.publishEvent({
-                        event_name: eventType,
-                        payload: Buffer.from(evt.data),
-                    });
-                };
+                this.setupListener(manufacturerUrl, vin);
             }
         });
 
@@ -77,5 +61,30 @@ export class VehicleRouter extends ContractRouter {
         await this.fabricProxy.addContractListener('admin', 'addUsageEvent', EventNames.ADD_USAGE_EVENT, (err, event) => {
             this.publishEvent(event);
         }, {filtered: false, replay: true});
+    }
+
+    private setupListener(manufacturerUrl: string, vin: string) {
+        const telemetryAdded = new EventSource(`${manufacturerUrl}/vehicles/${vin}/telemetry`);
+        this.telemetryListeners.set(vin, telemetryAdded);
+
+        telemetryAdded.onopen = (evt) => {
+            console.log('OPEN', evt);
+        };
+
+        telemetryAdded.onerror = (evt) => {
+            console.log('ERROR', evt);
+            this.setupListener(manufacturerUrl, vin);
+        };
+
+        telemetryAdded.onclose = (evt) => {
+            this.setupListener(manufacturerUrl, vin);
+        };
+
+        telemetryAdded.onmessage = (evt) => {
+            this.publishEvent({
+                event_name: eventType,
+                payload: Buffer.from(evt.data),
+            });
+        };
     }
 }

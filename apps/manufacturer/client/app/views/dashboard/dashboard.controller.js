@@ -96,6 +96,7 @@ angular.module('bc-manufacturer')
 
       orderUpdates.onerror = (evt) => {
           console.log('ERROR', evt);
+          setupPlaceOrderListener();
       }
 
       orderUpdates.onclose = (evt) => {

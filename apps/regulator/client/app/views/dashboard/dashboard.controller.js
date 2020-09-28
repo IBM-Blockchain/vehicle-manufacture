@@ -43,6 +43,7 @@ angular.module('bc-vda')
 
       blockUpdates.onerror = (evt) => {
         console.log('ERROR', evt);
+        setupBlockListener();
       }
 
       blockUpdates.onclose = (evt) => {

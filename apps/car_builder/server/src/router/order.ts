@@ -62,23 +62,32 @@ export class OrderRouter extends BaseRouter {
 
         this.router.get('/events/updated', (req, res) => {
             this.initEventSourceListener(req, res, this.connections, 'UPDATE_ORDER');
-        });
-
-        const orderUpdated = new EventSource(manufacturerUrl + '/orders/events/updated');
-
-        orderUpdated.onopen = (evt) => {
-            console.log('OPEN', evt);
-        };
-
-        orderUpdated.onerror = (evt) => {
-            console.log('ERROR', evt);
-        };
-
-        orderUpdated.onmessage = (evt) => {
-            this.publishEvent({
-                event_name: 'UPDATE_ORDER',
-                payload: Buffer.from(evt.data),
-            });
-        };
+        });  
+        
+        setupListener(manufacturerUrl);
     }
+}
+
+function setupListener(manufacturerUrl: string) {
+    const orderUpdated = new EventSource(manufacturerUrl + '/orders/events/updated');
+
+    orderUpdated.onopen = (evt) => {
+        console.log('OPEN', evt);
+    };
+
+    orderUpdated.onerror = (evt) => {
+        console.log('ERROR', evt);
+        setupListener(manufacturerUrl);
+    };
+
+    orderUpdated.onclose = (evt) => {
+        setupListener(manufacturerUrl);
+    };
+
+    orderUpdated.onmessage = (evt) => {
+        this.publishEvent({
+            event_name: 'UPDATE_ORDER',
+            payload: Buffer.from(evt.data),
+        });
+    };
 }

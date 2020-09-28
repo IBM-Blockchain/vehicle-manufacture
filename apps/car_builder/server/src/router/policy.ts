@@ -47,7 +47,12 @@ export class PolicyRouter extends BaseRouter {
             this.initEventSourceListener(req, res, this.connections, 'POLICY_CREATED');
         });
 
-        const policyCreated = new EventSource(insurerUrl + '/policies/events/created');
+        setupListener(insurerUrl);
+    }
+}
+
+function setupListener(insurerUrl: string) {
+    const policyCreated = new EventSource(insurerUrl + '/policies/events/created');
 
         policyCreated.onopen = (evt) => {
             console.log('OPEN', evt);
@@ -55,6 +60,11 @@ export class PolicyRouter extends BaseRouter {
 
         policyCreated.onerror = (evt) => {
             console.log('ERROR', evt);
+            setupListener(insurerUrl);
+        };
+
+        policyCreated.onclose = (evt) => {
+            setupListener(insurerUrl);
         };
 
         policyCreated.onmessage = (evt) => {
@@ -63,5 +73,4 @@ export class PolicyRouter extends BaseRouter {
                 payload: Buffer.from(evt.data),
             });
         };
-    }
 }
