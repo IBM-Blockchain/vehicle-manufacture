@@ -11,9 +11,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy } from '@angular/core';
 import { PolicyService } from '../policy.service';
 import { PolicyRequest } from '../popup/popup.component';
+import { EventListener } from '../utils';
 import { VehicleService } from '../vehicle.service';
 
 const EventTypes = [ 'ACTIVATED', 'CRASHED', 'OVERHEATED', 'OIL_FREEZING', 'ENGINE_FAILURE'];
@@ -29,11 +30,13 @@ interface UsageEvent {
   templateUrl: './overview.component.html',
   styleUrls: ['./overview.component.css']
 })
-export class OverviewComponent implements OnInit {
+export class OverviewComponent implements OnInit, OnDestroy {
 
   public placeholder = '-';
 
   public num_policies = 0;
+
+  private num_retries: Map<string, number>;
 
   private alerts: UsageEvent[] = [];
   date:number;
@@ -41,6 +44,8 @@ export class OverviewComponent implements OnInit {
 
   public policiesLoaded = false;
   public usageLoaded = false;
+
+  private listeners: Map<string, EventListener> = new Map();
 
   get request_stack() {
     return this.policyService.requestStack || [];
@@ -52,6 +57,7 @@ export class OverviewComponent implements OnInit {
 
     this.url = '/api';
     this.date = Date.now();
+    this.num_retries = new Map<string, number>();
   }
 
   ngOnInit() {
@@ -68,42 +74,25 @@ export class OverviewComponent implements OnInit {
         this.usageLoaded = true;
       });
 
-    this.setupListener(`${this.url}/vehicles/usage/events/added`, (event: any) => {
-      this.alerts.unshift({
-        id: event.id,
-        timestamp: event.timestamp,
-        eventType: EventTypes[event.eventType]
-      });
-    });
+    const usageEventListener = new EventListener(`${this.url}/vehicles/usage/events/added`, this.handleUsageEvent);
+    usageEventListener.setup();
+    this.listeners.set('usageEvents', usageEventListener);
 
-    this.setupListener(`${this.url}/policies/events/created`, (event: any) => {
-      this.num_policies++;
-    });
+    const policyCreateListener = new EventListener(`${this.url}/policies/events/created`, this.handlePolicyCreateEvent);
+    policyCreateListener.setup();
+    this.listeners.set('policyCreate', policyCreateListener);
 
-    this.setupListener(`${this.url}/policies/events/requested`, (request: PolicyRequest) => {
-      this.policyService.requestStack.push(request);
-    });
+    const policyRequestListener = new EventListener(`${this.url}/policies/events/requested`, this.handlePolicyRequestEvent);
+    policyRequestListener.setup();
+    this.listeners.set('policyRequest', policyRequestListener);
   }
 
-  setupListener(url: string, onMessage: (msg: any) => void) {
-    const usageEventSource = new (window as any).EventSource(url);
-    usageEventSource.onopen = (evt) => {
-      console.log('OPEN', evt);
-    };
-
-    usageEventSource.onerror = (evt) => {
-        console.log('ERROR', evt);
-        this.setupListener(url, onMessage);
-    };
-
-    usageEventSource.onclose = (evt) => {
-      console.error('Usage event listener closed');
-    };
-
-    usageEventSource.onmessage = (evt) => {
-      const event = JSON.parse(evt.data);
-      this.zone.run(() => onMessage(event));
-    };
+  ngOnDestroy() {
+    this.listeners.forEach((listener) => {
+      if (listener) {
+        listener.forceClose();
+      }
+    });
   }
 
   provideInsurance({approve, requestId}: {approve: boolean, requestId: string}) {
@@ -111,5 +100,21 @@ export class OverviewComponent implements OnInit {
       .subscribe(() => {
 
       });
+  }
+
+  handleUsageEvent(event: any) {
+    this.alerts.unshift({
+      id: event.id,
+      timestamp: event.timestamp,
+      eventType: EventTypes[event.eventType]
+    });
+  }
+
+  handlePolicyCreateEvent(event: any) {
+      this.num_policies++;
+  }
+
+  handlePolicyRequestEvent(request: PolicyRequest) {
+    this.policyService.requestStack.push(request);
   }
 }

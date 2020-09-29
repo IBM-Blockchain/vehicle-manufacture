@@ -68,29 +68,44 @@ angular.module('bc-manufacturer')
 
             $scope.$apply();
 
-            setupPlaceOrderListener();
+            setupUsageEventListener();
 
         } catch (err) {
             console.log(err);
         }
     }
 
-    function setupPlaceOrderListener() {
-        const orderUpdates = new EventSource(baseUrl + '/vehicles/usage/events/added');
+    let connectRetries = 0;
 
-        orderUpdates.onopen = (evt) => {
+    function setupUsageEventListener() {
+        const usageEvents = new EventSource(baseUrl + '/vehicles/usage/events/added');
+
+        usageEvents.onopen = (evt) => {
             console.log('OPEN', evt);
+            connectionRetries = 0;
         }
 
-        orderUpdates.onerror = (evt) => {
+        usageEvents.onerror = (evt) => {
             console.log('ERROR', evt);
+
+            connectRetries++;
+
+            if (connectRetries < 600) {
+                console.log('RETRYING CONNECTION', connectRetries);
+
+                setTimeout(() => {
+                    setupUsageEventListener();
+                }, 100);
+            } else {
+                console.log('CONNECTION TIMED OUT');
+            }
         }
 
-        orderUpdates.onclose = (evt) => {
-            setupPlaceOrderListener();
+        usageEvents.onclose = (evt) => {
+            setupUsageEventListener();
         }
 
-        orderUpdates.onmessage = async (evt) => {
+        usageEvents.onmessage = async (evt) => {
             const data = JSON.parse(evt.data);
 
             if (data.eventType === 2) {

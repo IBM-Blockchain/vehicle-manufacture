@@ -37,6 +37,7 @@ export class StatusPage {
   config: any;
   baseStatus: string = 'Insure me';
   insureStatus: string = this.baseStatus;
+  private connectRetries: number = 0;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private geolocation: Geolocation, private configProvider: ConfigProvider, private ref: ChangeDetectorRef, private http: Http) {
     this.ready = false;
@@ -79,10 +80,24 @@ export class StatusPage {
 
     listener.onopen = (evt) => {
       console.log('OPEN', evt);
+
+      this.connectRetries = 0;
     }
 
     listener.onerror = (evt) => {
         console.log('ERROR', evt);
+
+        this.connectRetries++;
+
+        if (this.connectRetries < 600) {
+          console.log('RETRYING CONNECTION', this.connectRetries);
+
+          setTimeout(() => {
+            this.setupListener(url, callback);
+          }, 100);
+        } else {
+          console.log('CONNECTION TIMED OUT');
+        }
     }
 
     listener.onclose = (evt) => {

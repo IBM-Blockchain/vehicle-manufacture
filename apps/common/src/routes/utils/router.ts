@@ -17,6 +17,8 @@ import FabricProxy from '../../fabricproxy';
 import { IEvent } from '../../interfaces/events';
 import { IRequest } from '../../interfaces/expressextensions';
 
+const timeout = 600;
+
 interface IConnectionList {
     [key: string]: {
         [key: string]: {
@@ -38,10 +40,13 @@ export class BaseRouter {
     protected connections: IConnectionList;
     protected subRouters: ISubRouter[];
 
+    private eventSourceRetries: Map<string, number>;
+
     constructor() {
         this.router = ExpressRouter();
         this.connections = {};
         this.subRouters = [];
+        this.eventSourceRetries = new Map();
     }
 
     public addSubRouter(subRouter: ISubRouter) {
@@ -95,5 +100,47 @@ export class BaseRouter {
         req.on('close', () => {
             delete connections[eventName][uuid];
         });
+    }
+
+    protected setupEventListener(url: string, callback: (evt: MessageEvent) => void) {
+        if (!this.eventSourceRetries.has(url)) {
+            this.eventSourceRetries.set(url, 0);
+        }
+
+        const es = new EventSource(url);
+
+        es.onopen = (evt) => {
+            console.log('OPEN', evt);
+            this.eventSourceRetries.set(url, 0);
+        };
+
+        es.onerror = (evt) => {
+            console.log('ERROR', evt);
+
+            let connectionRetries = this.eventSourceRetries.get(url);
+            this.eventSourceRetries.set(url, ++connectionRetries);
+
+            if (connectionRetries < timeout) {
+                console.log('RETRYING CONNECTION', connectionRetries);
+
+                setTimeout(() => {
+                  this.setupEventListener(url, callback);
+                }, 100);
+            } else {
+                console.log('CONNECTION TIMED OUT');
+            }
+        };
+
+        es.onmessage = (evt) => {
+            callback(evt);
+        };
+    }
+
+    protected eventSourceTimedOut(url: string): boolean {
+        if (!this.eventSourceRetries.has(url)) {
+            throw new Error('Event source not created');
+        }
+
+        return !(this.eventSourceRetries.get(url) < timeout);
     }
 }

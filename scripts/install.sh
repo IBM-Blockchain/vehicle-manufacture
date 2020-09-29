@@ -38,6 +38,13 @@ set_docker_env $NETWORK_DOCKER_COMPOSE_DIR
 
 bash $BASEDIR/generate-config.sh
 
+echo "#############"
+echo "# TAG CCENV #"
+echo "#############"
+
+docker pull hyperledger/fabric-ccenv$FABRIC_IMG_TAG
+docker tag hyperledger/fabric-ccenv$FABRIC_IMG_TAG hyperledger/fabric-ccenv:latest
+
 echo "#####################"
 echo "# CHAINCODE INSTALL #"
 echo "#####################"

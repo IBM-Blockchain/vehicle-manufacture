@@ -39,10 +39,31 @@ else
 fi
 
 LOG_PATH=$BASEDIR/logs
+rm -r $LOG_PATH
 mkdir -p $LOG_PATH
 
 cd $BASEDIR/../..
 
+BUILDING_CAR_BUILDER=false
+BUILDING_MANUFACTURER=false
+BUILDING_INSURER=false
+BUILDING_REGULATOR=false
+
+if [ -z "$2" ]
+then
+    BUILDING_CAR_BUILDER=true
+    BUILDING_MANUFACTURER=true
+    BUILDING_INSURER=true
+    BUILDING_REGULATOR=true
+elif [ "$2" = "--car-builder" ]; then
+    BUILDING_CAR_BUILDER=true
+elif [ "$2" = "--manufacture" ]; then
+    BUILDING_MANUFACTURER=true
+elif [ "$2" = "--insurer" ]; then
+    BUILDING_INSURER=true
+elif [ "$2" = "--regulator" ]; then
+    BUILDING_REGULATOR=true
+fi
 
 show_spinner() {
     PID="${1}"
@@ -58,38 +79,77 @@ show_spinner() {
     done
 }
 
-docker build -t awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION -f ./apps/car_builder/Dockerfile . --no-cache > $LOG_PATH/car-builder.log 2>&1 &
-CAR_PROCESS_ID=$!
-docker build -t awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION -f ./apps/manufacturer/Dockerfile . --no-cache > $LOG_PATH/manufacturer.log 2>&1 &
-MANUFACTURER_ID=$!
-docker build -t awjh/vehicle-manufacture-iot-extension-insurer:$VERSION -f ./apps/insurer/Dockerfile . --no-cache > $LOG_PATH/insurer.log 2>&1 &
-INSURER_ID=$!
-docker build -t awjh/vehicle-manufacture-iot-extension-regulator:$VERSION -f ./apps/regulator/Dockerfile . --no-cache > $LOG_PATH/regulator.log 2>&1 &
-REGULATOR_ID=$!
+if [ "$BUILDING_CAR_BUILDER" = true ] ; then
+    docker build -t awjh/vehicle-manufacture-iot-extension-car-builder:$VERSION -f ./apps/car_builder/Dockerfile . --no-cache > $LOG_PATH/car-builder.log 2>&1 &
+    CAR_PROCESS_ID=$!
+fi
 
-show_spinner $CAR_PROCESS_ID
-wait $CAR_PROCESS_ID
-CAR_EXIT=$?
+if [ "$BUILDING_MANUFACTURER" = true ] ; then
+    docker build -t awjh/vehicle-manufacture-iot-extension-manufacturer:$VERSION -f ./apps/manufacturer/Dockerfile . --no-cache > $LOG_PATH/manufacturer.log 2>&1 &
+    MANUFACTURER_ID=$!
+fi
 
-show_spinner $MANUFACTURER_ID
-wait $MANUFACTURER_ID
-MANUFACTURER_EXIT=$?
+if [ "$BUILDING_INSURER" = true ] ; then
+    docker build -t awjh/vehicle-manufacture-iot-extension-insurer:$VERSION -f ./apps/insurer/Dockerfile . --no-cache > $LOG_PATH/insurer.log 2>&1 &
+    INSURER_ID=$!
+fi
 
-show_spinner $INSURER_ID
-wait $INSURER_ID
-INSURER_EXIT=$?
+if [ "$BUILDING_REGULATOR" = true ] ; then
+    docker build -t awjh/vehicle-manufacture-iot-extension-regulator:$VERSION -f ./apps/regulator/Dockerfile . --no-cache > $LOG_PATH/regulator.log 2>&1 &
+    REGULATOR_ID=$!
+fi
 
-show_spinner $REGULATOR_ID
-wait $REGULATOR_ID
-REGULATOR_EXIT=$?
+if [ "$BUILDING_CAR_BUILDER" = true ] ; then
+    show_spinner $CAR_PROCESS_ID
+    wait $CAR_PROCESS_ID
+    CAR_EXIT=$?
+else 
+    CAR_EXIT=0
+fi
+
+if [ "$BUILDING_MANUFACTURER" = true ] ; then
+    show_spinner $MANUFACTURER_ID
+    wait $MANUFACTURER_ID
+    MANUFACTURER_EXIT=$?
+else
+    MANUFACTURER_EXIT=0
+fi
+
+if [ "$BUILDING_INSURER" = true ] ; then
+    show_spinner $INSURER_ID
+    wait $INSURER_ID
+    INSURER_EXIT=$?
+else 
+    INSURER_EXIT=0
+fi
+
+if [ "$BUILDING_REGULATOR" = true ] ; then
+    show_spinner $REGULATOR_ID
+    wait $REGULATOR_ID
+    REGULATOR_EXIT=$?
+else
+    REGULATOR_EXIT=0
+fi
 
 if [ "$CAR_EXIT" != 0 ] || [ "$MANUFACTURER_EXIT" != 0 ] || [ "$INSURER_EXIT" != 0 ] || [ $REGULATOR_EXIT != 0 ]
 then
     echo "Failed to build docker images. Build processes exited with:"
-    echo "Car Builder: $CAR_EXIT"
-    echo "Manufacturer: $MANUFACTURER_EXIT"
-    echo "Insurer: $INSURER_EXIT"
-    echo "Regulator: $REGULATOR_EXIT"
+    if [ "$BUILDING_CAR_BUILDER" = true ] ; then
+        echo "Car Builder: $CAR_EXIT"
+    fi
+
+    if [ "$BUILDING_MANUFACTURER" = true ] ; then
+        echo "Manufacturer: $MANUFACTURER_EXIT"
+    fi
+
+    if [ "$BUILDING_INSURER" = true ] ; then
+        echo "Insurer: $INSURER_EXIT"
+    fi
+
+    if [ "$BUILDING_REGULATOR" = true ] ; then
+        echo "Regulator: $REGULATOR_EXIT"
+    fi
+
     echo "Check the logs for more details: $LOG_PATH"
 
     exit 1

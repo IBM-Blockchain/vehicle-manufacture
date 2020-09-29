@@ -19,6 +19,7 @@ import { PolicyService } from '../policy.service';
 import { VehicleService } from '../vehicle.service';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/switchMap';
+import { EventListener } from '../utils';
 
 interface Policy {
   id: string;
@@ -75,7 +76,6 @@ export class PolicyComponent implements OnInit, OnDestroy {
   public ready = false;
 
   private url = '/api';
-  private httpOptions: any;
 
   public liveData = {
     acceleration: '-.--',
@@ -87,21 +87,16 @@ export class PolicyComponent implements OnInit, OnDestroy {
   public deviceConnected = false;
   private deviceTimeout = null;
 
-  private listeners: Map<string, any> = new Map();
+  private listeners: Map<string, EventListener> = new Map();
 
   public readonly eventTypes = [ 'ACTIVATED', 'CRASHED', 'OVERHEATED', 'OIL FREEZING', 'ENGINE_FAILURE'];
 
   constructor(private winRef: WindowRef,
-              private http: HttpClient,
               private ref: ChangeDetectorRef,
               private policyService: PolicyService,
               private vehicleService: VehicleService) {
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa('policies:policies'));
-
-    this.httpOptions = {
-      headers
-    };
   }
 
   ngOnInit() {
@@ -114,35 +109,25 @@ export class PolicyComponent implements OnInit, OnDestroy {
       })
       .subscribe(() => {
         console.log('Successfully sent VIN');
-        this.setupListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, (data) => {
-          if (!data.hasOwnProperty('connected')) {
-            this.deviceConnected = true;
-            for (const key in data) {
-              if (data.hasOwnProperty(key)) {
-                data[key] = parseFloat(String(data[key])).toFixed(2);
-              }
-            }
-            this.liveData = data;
-            this.ref.detectChanges();
-          } else {
-            this.deviceConnected = data.connected;
-          }
-          this.connectionTimeout();
-        });
+
+        const telemetryEventListener = new EventListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, this.handleTelemetry)
+        telemetryEventListener.setup();
+
+        this.listeners.set('telemetaryEvents', telemetryEventListener);
       });
+
     this.handleMap();
 
-    const usageEventListener = this.setupListener(`${this.url}/vehicles/usage/events/added`, (event: any) => {
-      event.new = true;
-      this.usageEvents.unshift(event);
-    });
+    const usageEventListener = new EventListener(`${this.url}/vehicles/usage/events/added`, this.handleUsageEvent);
+    usageEventListener.setup();
+
     this.listeners.set('usageEvents', usageEventListener);
   }
 
   ngOnDestroy() {
-    this.listeners.forEach((listener: any) => {
+    this.listeners.forEach((listener) => {
       if (listener) {
-        listener.close();
+        listener.forceClose();
       }
     });
   }
@@ -158,29 +143,6 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
   cancelTimeout() {
     clearTimeout(this.deviceTimeout);
-  }
-
-  setupListener(url: string, onMessage: (msg: any) => void) {
-    const usageEventSource = new (window as any).EventSource(url);
-    usageEventSource.onopen = (evt) => {
-      console.log('OPEN', evt);
-    };
-
-    usageEventSource.onerror = (evt) => {
-        console.log('ERROR', evt);
-        this.setupListener(url, onMessage);
-    };
-
-    usageEventSource.onclose = (evt) => {
-      console.error('Usage event listener closed');
-    };
-
-    usageEventSource.onmessage = (evt) => {
-      const event = JSON.parse(evt.data);
-      onMessage(event);
-    };
-
-    return usageEventSource;
   }
 
   getPolicyDetails() {
@@ -269,5 +231,26 @@ export class PolicyComponent implements OnInit, OnDestroy {
     });
 
     const marker = this.L.marker(map_location, {icon: carIcon}).addTo(mymap);
+  }
+
+  handleTelemetry(data: any) {
+    if (!data.hasOwnProperty('connected')) {
+      this.deviceConnected = true;
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          data[key] = parseFloat(String(data[key])).toFixed(2);
+        }
+      }
+      this.liveData = data;
+      this.ref.detectChanges();
+    } else {
+      this.deviceConnected = data.connected;
+    }
+    this.connectionTimeout();
+  }
+
+  handleUsageEvent(event: any) {
+    event.new = true;
+    this.usageEvents.unshift(event);
   }
 }
