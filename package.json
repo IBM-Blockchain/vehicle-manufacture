@@ -1,6 +1,6 @@
 {
   "name": "vehicle-manufacture-iot-extension",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "The lifecycle of a vehicle using Hyperledger Fabric",
   "main": "index.js",
   "dependencies": {
