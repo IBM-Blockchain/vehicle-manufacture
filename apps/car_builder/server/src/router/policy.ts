@@ -12,7 +12,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 import { BaseRouter, Config } from 'common';
-import * as EventSource from 'eventsource';
 import { post } from 'request-promise-native';
 
 export class PolicyRouter extends BaseRouter {
@@ -47,21 +46,11 @@ export class PolicyRouter extends BaseRouter {
             this.initEventSourceListener(req, res, this.connections, 'POLICY_CREATED');
         });
 
-        const policyCreated = new EventSource(insurerUrl + '/policies/events/created');
-
-        policyCreated.onopen = (evt) => {
-            console.log('OPEN', evt);
-        };
-
-        policyCreated.onerror = (evt) => {
-            console.log('ERROR', evt);
-        };
-
-        policyCreated.onmessage = (evt) => {
+        this.setupEventListener(insurerUrl + '/policies/events/created', (evt) => {
             this.publishEvent({
                 event_name: 'POLICY_CREATED',
                 payload: Buffer.from(evt.data),
             });
-        };
+        });
     }
 }

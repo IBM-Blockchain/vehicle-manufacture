@@ -34,15 +34,30 @@ angular.module('bc-vda')
         }
       });
 
+    let connectRetries = 0;
+
     function setupBlockListener() {
       const blockUpdates = new EventSource(txUrl + '/events/created');
 
       blockUpdates.onopen = (evt) => {
         console.log('OPEN', evt);
+        connectRetries = 0;
       }
 
       blockUpdates.onerror = (evt) => {
         console.log('ERROR', evt);
+
+        connectRetries++;
+
+        if (connectRetries < 600) {
+          console.log('RETRYING CONNECTION', connectRetries);
+
+          setTimeout(() => {
+            setupBlockListener();
+          }, 100);
+        } else {
+          console.log('CONNECTION TIMED OUT');
+        }
       }
 
       blockUpdates.onclose = (evt) => {

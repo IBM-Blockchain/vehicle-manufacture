@@ -11,8 +11,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { VehicleService } from '../vehicle.service';
 
 export interface PolicyRequest {
@@ -51,22 +51,15 @@ export class PopupComponent implements OnInit {
   @Input() request: PolicyRequest;
   @Output() actioned: EventEmitter<{approve: boolean, requestId: string}> = new EventEmitter<{approve: boolean, requestId: string}>();
 
-  private url: string;
-
   public requestee: User;
   public vehicleDetails: VehicleDetails;
 
-  constructor(private http: HttpClient, private vehicleService: VehicleService) {
-    this.url = '/api';
-  }
+  constructor(private vehicleService: VehicleService, private ref: ChangeDetectorRef) {}
 
   ngOnInit() {
 
     let headers = new HttpHeaders();
     headers = headers.append('Authorization', 'Basic ' + btoa('policies:policiespw'));
-    const options = {
-      headers
-    };
 
     this.requestee = {
       forename: this.request.holderId.split('@')[0],
@@ -79,6 +72,8 @@ export class PopupComponent implements OnInit {
       .subscribe((vehicle) => {
         this.vehicleDetails = vehicle.vehicleDetails as any;
         this.vehicleDetails.manufactured = vehicle.manufactured;
+
+        this.ref.detectChanges();
       });
   }
 

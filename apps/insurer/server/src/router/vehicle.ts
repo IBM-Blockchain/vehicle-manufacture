@@ -15,7 +15,6 @@ import { ContractRouter, FabricProxy, CONTRACT_NAMES, IRequest, Config } from 'c
 import { Response } from 'express';
 import { v4 } from 'uuid';
 import { EventNames } from '../constants';
-import * as EventSource from 'eventsource';
 
 interface InsuranceRequest {
     requestId: string;
@@ -28,14 +27,14 @@ interface InsuranceRequest {
 export class VehicleRouter extends ContractRouter {
     public static basePath = 'vehicles';
 
-    private telemetryListeners: Map<string, any>;
+    private vinsListeningOn: string[];
 
     constructor(fabricProxy: FabricProxy) {
         super(fabricProxy);
 
         this.contractName = CONTRACT_NAMES.vehicle;
 
-        this.telemetryListeners = new Map();
+        this.vinsListeningOn = [];
     }
 
     public async prepareRoutes() {
@@ -50,25 +49,22 @@ export class VehicleRouter extends ContractRouter {
         this.router.get('/:vin/telemetry', (req: IRequest, res: Response) => {
             const vin = req.params.vin;
             const eventType = vin + '-TELEMETRY';
+            const telemtryURL = `${manufacturerUrl}/vehicles/${vin}/telemetry`;
+
             this.initEventSourceListener(req, res, this.connections, eventType);
-            if (!this.telemetryListeners.has(vin)) {
-                const telemetryAdded = new EventSource(`${manufacturerUrl}/vehicles/${vin}/telemetry`);
-                this.telemetryListeners.set(vin, telemetryAdded);
 
-                telemetryAdded.onopen = (evt) => {
-                    console.log('OPEN', evt);
-                };
 
-                telemetryAdded.onerror = (evt) => {
-                    console.log('ERROR', evt);
-                };
+            if (!this.vinsListeningOn.includes(vin) || this.eventSourceTimedOut(vin)) {
+                if(!this.vinsListeningOn.includes(vin)) {
+                    this.vinsListeningOn.push(vin);
+                }
 
-                telemetryAdded.onmessage = (evt) => {
+                this.setupEventListener(telemtryURL, (evt) => {
                     this.publishEvent({
                         event_name: eventType,
                         payload: Buffer.from(evt.data),
                     });
-                };
+                });
             }
         });
 

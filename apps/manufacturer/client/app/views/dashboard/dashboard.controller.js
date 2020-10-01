@@ -83,19 +83,30 @@ angular.module('bc-manufacturer')
 
   // Websockets
 
-  var placeOrder;
-  var updateOrder;
-  var destroyed = false;
+  let connectRetries = 0;
 
   function setupPlaceOrderListener() {
     const orderUpdates = new EventSource(baseOrderUrl + '/events/placed');
 
       orderUpdates.onopen = (evt) => {
         console.log('OPEN', evt);
+        connectRetries = 0;
       }
 
       orderUpdates.onerror = (evt) => {
-          console.log('ERROR', evt);
+        console.log('ERROR', evt);
+
+        connectRetries++;
+
+        if (connectRetries < 600) {
+          console.log('RETRYING CONNECTION', connectRetries);
+
+          setTimeout(() => {
+            setupPlaceOrderListener();
+          }, 100);
+        } else {
+          console.log('CONNECTION TIMED OUT');
+        }
       }
 
       orderUpdates.onclose = (evt) => {

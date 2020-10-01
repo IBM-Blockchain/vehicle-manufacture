@@ -11,8 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { BaseRouter, Config } from 'common';
-import * as EventSource from 'eventsource';
+import { Config, BaseRouter } from 'common';
 import { post, get } from 'request-promise-native';
 
 export class OrderRouter extends BaseRouter {
@@ -64,21 +63,11 @@ export class OrderRouter extends BaseRouter {
             this.initEventSourceListener(req, res, this.connections, 'UPDATE_ORDER');
         });
 
-        const orderUpdated = new EventSource(manufacturerUrl + '/orders/events/updated');
-
-        orderUpdated.onopen = (evt) => {
-            console.log('OPEN', evt);
-        };
-
-        orderUpdated.onerror = (evt) => {
-            console.log('ERROR', evt);
-        };
-
-        orderUpdated.onmessage = (evt) => {
+        this.setupEventListener(manufacturerUrl + '/orders/events/updated', (evt) => {
             this.publishEvent({
                 event_name: 'UPDATE_ORDER',
                 payload: Buffer.from(evt.data),
             });
-        };
+        });
     }
 }
