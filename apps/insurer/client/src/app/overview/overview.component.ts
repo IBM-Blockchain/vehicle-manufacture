@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { Component, NgZone, OnInit, OnDestroy } from '@angular/core';
+import { Component, NgZone, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { PolicyService } from '../policy.service';
 import { PolicyRequest } from '../popup/popup.component';
 import { EventListener } from '../utils';
@@ -53,7 +53,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   constructor(private vehicleService: VehicleService,
               private policyService: PolicyService,
-              private zone: NgZone) {
+              private ref: ChangeDetectorRef) {
 
     this.url = '/api';
     this.date = Date.now();
@@ -74,15 +74,15 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.usageLoaded = true;
       });
 
-    const usageEventListener = new EventListener(`${this.url}/vehicles/usage/events/added`, this.handleUsageEvent);
+    const usageEventListener = new EventListener(`${this.url}/vehicles/usage/events/added`, this.handleUsageEvent.bind(this));
     usageEventListener.setup();
     this.listeners.set('usageEvents', usageEventListener);
 
-    const policyCreateListener = new EventListener(`${this.url}/policies/events/created`, this.handlePolicyCreateEvent);
+    const policyCreateListener = new EventListener(`${this.url}/policies/events/created`, this.handlePolicyCreateEvent.bind(this));
     policyCreateListener.setup();
     this.listeners.set('policyCreate', policyCreateListener);
 
-    const policyRequestListener = new EventListener(`${this.url}/policies/events/requested`, this.handlePolicyRequestEvent);
+    const policyRequestListener = new EventListener(`${this.url}/policies/events/requested`, this.handlePolicyRequestEvent.bind(this));
     policyRequestListener.setup();
     this.listeners.set('policyRequest', policyRequestListener);
   }
@@ -110,11 +110,12 @@ export class OverviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  handlePolicyCreateEvent(event: any) {
+  handlePolicyCreateEvent() {
       this.num_policies++;
   }
 
   handlePolicyRequestEvent(request: PolicyRequest) {
     this.policyService.requestStack.push(request);
+    this.ref.detectChanges();
   }
 }

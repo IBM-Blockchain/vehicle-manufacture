@@ -12,6 +12,7 @@
   "dependencies": {
     "@ampretia/x509": "^0.4.0",
     "express": "^4.16.4",
+    "eventsource": "^1.0.7",
     "fabric-ca-client": "unstable-1.4",
     "fabric-client": "1.4.13",
     "fabric-network": "1.4.13"
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/express": "4.17.7",
     "@types/qs": "6.9.4",
+    "@types/eventsource": "^1.1.0",
     "@types/node": "^11.13.8",
     "tslint": "^5.16.0",
     "typescript": "3.2.2"

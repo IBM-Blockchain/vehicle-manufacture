@@ -50,6 +50,28 @@ limitations under the License.
     clear: both;
 }
 
+#loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #454856;
+}
+
+#loader {
+    border: 15px solid #DCD4F7;
+    border-top: 15px solid #5a3ec8; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 #title{
     font-family:OpenSans-Semibold;
     font-size:22px;

@@ -15,7 +15,6 @@ import { ContractRouter, FabricProxy, CONTRACT_NAMES, IRequest, Config } from 'c
 import { Response } from 'express';
 import { v4 } from 'uuid';
 import { EventNames } from '../constants';
-import * as EventSource from 'eventsource';
 
 interface InsuranceRequest {
     requestId: string;

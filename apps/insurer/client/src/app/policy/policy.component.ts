@@ -110,7 +110,7 @@ export class PolicyComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         console.log('Successfully sent VIN');
 
-        const telemetryEventListener = new EventListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, this.handleTelemetry)
+        const telemetryEventListener = new EventListener(`${this.url}/vehicles/${this.policy.vin}/telemetry`, this.handleTelemetry.bind(this))
         telemetryEventListener.setup();
 
         this.listeners.set('telemetaryEvents', telemetryEventListener);
@@ -118,7 +118,7 @@ export class PolicyComponent implements OnInit, OnDestroy {
 
     this.handleMap();
 
-    const usageEventListener = new EventListener(`${this.url}/vehicles/usage/events/added`, this.handleUsageEvent);
+    const usageEventListener = new EventListener(`${this.url}/vehicles/usage/events/added`, this.handleUsageEvent.bind(this));
     usageEventListener.setup();
 
     this.listeners.set('usageEvents', usageEventListener);

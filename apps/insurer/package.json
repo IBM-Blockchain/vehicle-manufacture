@@ -8,6 +8,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "build:angular": "ng build",
+    "serve:angular": "ng serve",
     "build:server": "tsc --p ts-server-config.json",
     "build": "tsc --p ts-server-config.json && ng build"
   },
